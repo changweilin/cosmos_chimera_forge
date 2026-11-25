@@ -22,8 +22,34 @@
   },
   "merfolk": {
    "eye": {"x": 0.4, "up": 0.05, "size": 0.16}
+  },
+  "simian": {
+   "eye": {"x": 0.4, "up": 0.12, "size": 0.12},
+   "snout": {"from": [0, -0.2, 0.6], "drop": 0.12, "r0": 0.42, "r1": 0.3, "min": 0.3, "max": 0.5, "tone": "muzzle"}
+  },
+  "tengu": {
+   "eye": {"x": 0.5, "up": 0.05, "size": 0.14}
+  },
+  "oxhead": {
+   "eye": {"x": 0.6, "up": 0.15, "size": 0.12},
+   "snout": {"from": [0, -0.2, 0.6], "drop": 0.15, "r0": 0.55, "r1": 0.42, "min": 0.55, "max": 0.8, "tone": "muzzle"}
+  },
+  "horseface": {
+   "eye": {"x": 0.62, "up": 0.25, "size": 0.12},
+   "snout": {"from": [0, -0.2, 0.6], "drop": 0.17, "r0": 0.45, "r1": 0.3, "min": 1.0, "max": 1.35},
+   "nose": {"up": -0.05, "ahead": 0.0, "r": 0.2}
+  },
+  "shrimpfolk": {
+   "eye": {"x": 0.55, "up": 0.35, "size": 0.16}
+  },
+  "crabfolk": {
+   "eye": {"x": 0.35, "up": 0.6, "size": 0.08}
+  },
+  "mantid": {
+   "eye": {"x": 0.7, "up": 0.25, "size": 0.26}
   }
  },
+ "races_comment": "Races 15-24 (cosmos_chimera docs/design/npc-world-races.md): simian, oxhead and horseface carry a snout; tengu, shrimpfolk, crabfolk and mantid are skull and eyes only, their beak or long nose, rostrum, feelers, eyestalks and mandibles being rigid parts. The crab's visible eyes are the rigid eyestalk balls (NpcMeshes.WorldHead draws no face eyes); the slot's own eyes sit small under the stalk roots, where the stalks hide them, so the eye shader and eye.* keys still have a home.",
  "eye_comment": "Eye centre on the skull's front at (x, up); size against the procedural default 0.12 scales the base's own eyeball, which keeps its eye.* keys.",
  "snout_comment": "A tapering tube from `from` forward by the snout length (head radii), dropping `drop` per unit length, radius r0 at the root and r1 at the tip; the basis is drawn at min and the npc_snout key at max (Look's per-resident draw lies between). tone: the tube takes its own material (a resident's muzzle is lighter or darker than the skin); without it the tube is skin.",
  "ruff_comment": "The werewolf ruff: the procedural neck ball (r.Neck, TrunkX x 1.02, 0.07 x height, TrunkZ x 1.5) at size min in the basis and max in the npc_ruff key."
