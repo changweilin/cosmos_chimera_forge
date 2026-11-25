@@ -35,7 +35,7 @@
 - 一組 incr／decr target 視為一個淨權重軸（上限 ±1）；基底 spec 已用掉的部分會讓該方向的步幅變小，實際步幅寫在報告 `step`，轉換器要除以它。報告也列出每個 key 在各網格的最大位移（mm），< 0.1 mm 標 `vanished`。
 
 ## 路人種族基底（npc-uma-looks.md#種族基底）
-不取自任何主角；28 個人形基底（14 族 × 男女）全由抽樣規則推導，重跑即重建：
+不取自任何主角；46 個人形基底（23 族 × 男女；骷髏與機械人另立 UMA 種族）全由抽樣規則推導，重跑即重建：
 1. `unity test` 跑 `UmaRaceBaseTests.ExportRaceBases`（Explicit）→ 遊戲 repo 的 `_UMA/Npc/race_bases.json`。
 2. `python tools/acg-character/npc_bases.py specs` → 人類男女基底；`npc_bases.py bake --blender <blender.exe> --only npc_human_male`（人類男性的報告即校正）。
 3. `python tools/acg-character/npc_bases.py specs --calibration Logs/npc/npc_human_male.json` → 其餘基底；`CLIPPED` 列出族平均超出 MakeHuman ±1 的通道。

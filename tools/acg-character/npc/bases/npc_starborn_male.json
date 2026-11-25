@@ -83,7 +83,7 @@
    "face.cheekboneWidth": 1.01333,
    "face.chinHeight": 0.99179,
    "face.chinJut": -0.00011,
-   "face.chinWidth": 0.86053,
+   "face.chinWidth": 1.01053,
    "face.jawAngle": 0.30212,
    "face.jawWidth": 0.90008,
    "face.jowl": 0,
@@ -263,8 +263,8 @@
     0.15843
    ],
    "face.chinWidth": [
-    0.09164,
-    1.53722
+    0.24164,
+    1.62989
    ],
    "face.jawAngle": [
     0,
@@ -392,7 +392,7 @@
   "belly": 0.95725,
   "calf": 0.99504,
   "cheekbone_w": 0.99708,
-  "chin_w": 0.71363,
+  "chin_w": 0.84859,
   "elbow": 1.01233,
   "face_len": 1.01334,
   "forearm": 0.99222,
