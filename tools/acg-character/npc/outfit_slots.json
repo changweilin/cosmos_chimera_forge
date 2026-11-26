@@ -1,0 +1,28 @@
+{
+ "comment": "NPC region piece and era trim slots (cosmos_chimera docs/design/npc-uma-looks.md#服裝, row 17), built by npc_outfit.py on both bases of every race below: what NpcMeshes Signature (piece_<ArchRegion>) and the era block of Dress (trim_<ArchEra>) draw, refitted to the base's body. Agrarian and Mercantile have no trim (their era shows in the cut and sleeves, Q-A26). The cut slots are not built until Q-A26 is decided.",
+ "races": [
+  "android",
+  "angel",
+  "avian",
+  "demon",
+  "dragonkin",
+  "dwarf",
+  "elf",
+  "goblin",
+  "horseface",
+  "human",
+  "lizardfolk",
+  "mantid",
+  "merfolk",
+  "orc",
+  "oxhead",
+  "shrimpfolk",
+  "simian",
+  "starborn",
+  "tengu",
+  "vampire",
+  "werewolf",
+  "zombie"
+ ],
+ "races_comment": "Every race the game assembles on UMA (NpcMeshes.UmaCarries): skeletons, automata and crabfolk stay procedural and, the first two, unclothed."
+}
