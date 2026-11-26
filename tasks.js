@@ -509,10 +509,12 @@
           if (gripInfo.offhand_types?.length) weaponAllowLines.push("副手盾牌：" + gripInfo.offhand_types.join("、"));
         }
         const virtualHandBlock = [
-          `- **虛擬大手規範**：${C.GRIP_MODES?.virtual_hand_rule || "宙獸以懸浮虛擬大手（Socket_Weapon_R／Socket_Weapon_L）持握與操作武器，而非本體實體肢體；但設計動作時本體軀幹與四肢／羽翼仍須同步做出蓄力、扭轉、前壓、舉盾或後座力等相應動作。"}`,
+          "- **虛擬大手與追隨者／BOSS 主控規範**：",
+          `  - ${C.GRIP_MODES?.virtual_hand_rule || "裝備已全部改為角色專屬，宙獸不再穿戴裝備；技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX），宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。"}`,
+          "  - 追隨者與 BOSS 主控動作：含 `follow_idle`（護衛待機）、`follow_dash`（跟進補位）、`link_channel`（共鳴供招）、`relay_enter`（車輪戰輪替上場）、`boss_moveset_switch`（BOSS 主控切換招式組）、`boss_summon_follower`（BOSS 號召追隨者），完整規格見 `Data/creature-grip-anims/creature-grip-anims.json`（`cosmimera-creature-grip-anim/1`）。",
           batch
             ? "- **持有組合追蹤（批量）**：依各宙獸已定案之 `grip_mode`（`two_handed`／`dual_wield`／`one_hand_shield`）過濾對應 clip（僅 `dual_wield` 需拆 `_r`/`_l` 交替動作），勿為不支援的持握方式製作無用動作。"
-            : `- **允許持握組合**：\`${gripMode}\`（${gripInfo?.zh || gripMode}）· 掛點：${gripInfo?.sockets || "Socket_Weapon_R + Socket_Weapon_L"} · 對應獨立武器類型（供預留空間參考，勿於宙獸內繪製）：${weaponAllowLines.join(" ｜ ")}。${gripInfo?.pose || ""}`
+            : `- **允許持握組合**：\`${gripMode}\`（${gripInfo?.zh || gripMode}）· 掛點：${gripInfo?.sockets || "Socket_Weapon_R + Socket_Weapon_L"} · 對應動作節奏參考（勿於宙獸內繪製武器）：${weaponAllowLines.join(" ｜ ")}。${gripInfo?.pose || ""}`
         ].join("\n");
 
         const manifestObj = {
@@ -589,13 +591,24 @@
     },
 
     {
-      // REQ: 使用者 2026-11-09 — 角色 img-to-3D 極致精簡與立繪規格對齊：立繪包已有的概念設定（名稱、性別、身高、道具等）不再重複，去除對 3D 無關緊要的贅詞。
-      id: "character-model-rig", version: "5.0.1", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
+      // REQ: 使用者 2026-11-09 — 角色 img-to-3D 極致精簡與立繪規格對齊；2026-11-26 — 主控戰鬥與 7 槽角色裝備動作擴充。
+      id: "character-model-rig", version: "5.1.0", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
       needs: "character", drop: "Art/_incoming", drive: true,
       options: [
         { key: "scope", type: "select", label: "模式", items: () => [{ v: "single", zh: "指定處理（單一立繪包）" }, { v: "batch", zh: "批量處理（01_portraits 內角色目錄）" }], def: "single" },
         { key: "source_pack", type: "text", label: "參照角色立繪包 ID (source_pack)", def: "", placeholder: "例：chr-20261106-7f3a-2105", when: o => o.scope !== "batch" },
         { key: "input_img", type: "text", label: "指定輸入 img", def: "", placeholder: "選填，留空預設使用正面正交 + turnaround 三視圖", when: o => o.scope !== "batch" },
+        { key: "grip_mode", type: "select", label: "武器持握模式", items: () => [
+          { v: "all", zh: "全持握模式（輸出全部 81 支角色動作，預設）" },
+          { v: "two_handed", zh: "雙手武器（two_handed）" },
+          { v: "dual_wield", zh: "雙持單手（dual_wield）" },
+          { v: "one_hand_shield", zh: "單手＋盾（one_hand_shield）" }
+        ], def: "all", when: o => o.scope !== "batch" },
+        { key: "weapon_scope", type: "select", label: "武器距離過濾", items: () => [
+          { v: "all_allowed", zh: "近戰＋遠程全收錄（預設）" },
+          { v: "melee_only", zh: "僅近戰武器動作" },
+          { v: "ranged_only", zh: "僅遠程武器動作" }
+        ], def: "all_allowed", when: o => o.scope !== "batch" },
         { key: "actions_character", type: "checks", label: "角色動作", items: () => C.ACTIONS.character.map(a => ({ v: a.id, zh: a.zh })), def: "all" }
       ],
       build(ctx) {
@@ -603,17 +616,34 @@
         const S = batch ? "<subject_id>" : ctx.subjectId;
         const outId = batch ? ctx.taskId + "-<subject-id>" : ctx.taskId;
         const unit = S;
+        const gripMode = batch ? "all" : (o.grip_mode || "all");
+        const allowedDist = batch ? "all"
+          : o.weapon_scope === "melee_only" ? "melee"
+          : o.weapon_scope === "ranged_only" ? "ranged"
+          : "all";
 
         const src = o.input_img
           ? `\`${o.input_img}\`（指定首要視圖，其餘由三視圖合圖裁切補齊）`
           : `\`images/${S}_front.png\`（正面正交基準 1:1，T-pose）＋ \`images/${S}_turnaround.png\`（T-pose 正交三視圖合圖 16:9）`;
 
         const picked = o.actions_character || [];
-        const clipLines = C.ACTIONS.character.filter(a => picked.includes(a.id)).map(a =>
+        const clipLines = C.ACTIONS.character.filter(a => {
+          if (!picked.includes(a.id)) return false;
+          if (!batch) {
+            if (gripMode !== "all" && a.grips && !a.grips.includes(gripMode)) return false;
+            if (allowedDist !== "all" && a.dist && a.dist !== allowedDist) return false;
+          }
+          return true;
+        }).map(a =>
           "| `chr_" + a.id + "` | " + a.zh + " | " + a.f + " | " + (a.loop ? "✓" : "") + " | " + (a.rm ? "✓" : "") + " | " + (a.ev || []).join(", ") + " |"
         ).join("\n");
 
-        const rigRule = "Unity Humanoid 相容骨架（≤ 75 骨骼）：標準 Humanoid 命名（Hips, Spine, Chest, UpperChest, Neck, Head, Shoulder, Arm, Hand, 手指三節 Thumb/Index/Middle/Ring/Little, Leg, Foot, Toes）；頭髮/披風以 `Extra_*` 前綴；插槽骨 `Socket_HandR_Prop`、`Socket_HandL_Prop`、`Socket_Back_Pack`、`Socket_Throw`、`Socket_Head_FX`。";
+        const rigRule = "Unity Humanoid 相容骨架（≤ 75 骨骼）：標準 Humanoid 命名（Hips, Spine, Chest, UpperChest, Neck, Head, Shoulder, Arm, Hand, 手指三節 Thumb/Index/Middle/Ring/Little, Leg, Foot, Toes）；頭髮/披風以 `Extra_*` 前綴；插槽骨 `Socket_HandR_Prop`、`Socket_HandL_Prop`、`Socket_Head_Armor`、`Socket_Hands_Armor`、`Socket_Back_Pack`、`Socket_Throw`、`Socket_Head_FX`。";
+        const masterCombatBlock = [
+          "- **角色專屬 7 槽與主控戰鬥規範**：",
+          "  - **7 槽裝備間距**：裝備全歸角色穿戴（右手 `main_hand`、左手 `off_hand`、頭盔 `head`→`Socket_Head_Armor`、上身 `upper`、手套 `hands`→`Socket_Hands_Armor`、下身 `lower`、飾品 `accessory`）；手臂揮砍與舉盾須避開頭盔、手套與背包穿模。",
+          "  - **主控戰鬥與招式切換**：角色親自以手中武器／盾牌施放當前追隨宙獸的招式組，含拔收武器（`weapon_draw`/`weapon_sheathe`）、格擋彈反與破防（`block_hit`/`perfect_block`/`guard_break`/`stagger`）、切換宙獸招式（`moveset_switch` 2 秒冷卻 / `moveset_forced_switch` 死亡強制輪替），完整格式見 `Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。"
+        ].join("\n");
 
         const manifestObj = {
           spec: "cosmimera-art-task/1",
@@ -658,6 +688,7 @@
           "",
           "## 3. 骨架體系（Unity Humanoid）",
           "- " + rigRule,
+          masterCombatBlock,
           "",
           "## 4. 動畫動作清單（30 fps）",
           "| clip | 說明 | 幀數 | loop | RM | 事件@幀 |",
@@ -742,7 +773,7 @@
             "形狀必須清楚表達判定範圍（玩家要看得出會不會被打到）；地面印記表示範圍邊界。",
             "強度越高：預備時間越長、畫面占比越大；超載必殺可加短暫的全螢幕色調變化（≤ 400 ms）。",
             "同屬性的特效共用配色語言：" + el.palette + "。",
-            "特效從宙獸插槽骨發出（Socket_Front / Socket_Core_FX / Socket_Ground_FX），尺寸隨施放者體型（S/M/L/XL）縮放，在 spec 的 geometry.note 寫明縮放規則。"
+            "特效支援雙發射來源：玩家主控施放時自角色手部／正前掛點（`Socket_HandR_Prop`/`Socket_HandL_Prop`/`Socket_Front`）發出；宙獸追隨者或 BOSS 主控施放時自宙獸插槽骨（`Socket_Front`/`Socket_Mouth`/`Socket_Core_FX`/`Socket_Ground_FX`）發出，尺寸隨施放者體型（S/M/L/XL）縮放並寫於 `geometry.note`。"
           ])
         ].join("\n");
         return common(ctx, body) + "\n\n" + deliverySection(ctx, "├── images/\n└── vfx/");
@@ -863,8 +894,8 @@
           "",
           "## 規格",
           list([
-            "武器與工具須明確標註 `grip_primary`（與雙手武器 `grip_secondary`），支援角色與多足/雙足宙獸持握。",
-            "上下身防具與飾品須保留關節活動空間，不遮擋臉部與核心剪影。",
+            "裝備全面為玩家角色專屬（7 槽：`main_hand`／`off_hand`／`head`／`upper`／`hands`／`lower`／`accessory`）；武器與盾牌標註 `Socket_HandR_Prop`／`Socket_HandL_Prop`（雙手武器含副握點 `grip_secondary`），頭盔與手套分別對齊 `Socket_Head_Armor` 與 `Socket_Hands_Armor`。",
+            "防具（盾／頭盔／上身／手套／下身：2 倍基礎六圍、2 個獨立附魔格）、武器（4 倍基礎六圍、4 個獨立附魔格）、飾品（8 個獨立附魔格），各部位預留角色揮擊與翻滾關節活動空間，不遮擋臉部與武器握點。",
             "製作器皿須延續符籙卡片／琉璃珠／魔術方塊之對應外觀語言並體現階級工藝差異。"
           ])
         ].join("\n");

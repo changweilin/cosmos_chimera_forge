@@ -36,7 +36,7 @@ function extractGetClipCategory() {
 }
 
 test('ACTIONS preserves all legacy clip IDs and expands character & creature sets', () => {
-  assert.equal(C.version, '2.11.0');
+  assert.equal(C.version, '2.12.0');
   const chrIds = C.ACTIONS.character.map(a => a.id);
   const crIds = C.ACTIONS.creature.map(a => a.id);
 
@@ -47,8 +47,15 @@ test('ACTIONS preserves all legacy clip IDs and expands character & creature set
     assert.ok(crIds.includes(id), `missing legacy creature clip: ${id}`);
   }
 
-  assert.equal(chrIds.length, 50);
-  assert.equal(crIds.length, 57);
+  for (const id of ['moveset_switch', 'moveset_forced_switch', 'weapon_draw', 'weapon_sheathe', 'perfect_block', 'atk_melee_front', 'atk_melee_front_r', 'sup_self']) {
+    assert.ok(chrIds.includes(id), `missing v2.12 character clip: ${id}`);
+  }
+  for (const id of ['follow_idle', 'follow_dash', 'link_channel', 'relay_enter', 'boss_moveset_switch', 'boss_summon_follower']) {
+    assert.ok(crIds.includes(id), `missing v2.12 creature clip: ${id}`);
+  }
+
+  assert.equal(chrIds.length, 81);
+  assert.equal(crIds.length, 63);
   assert.ok(C.GRIP_MODES && C.GRIP_MODES.two_handed && C.GRIP_MODES.dual_wield && C.GRIP_MODES.one_hand_shield);
 });
 
@@ -129,4 +136,81 @@ test('creature-model-rig filters clips by allowed grip_mode and includes virtual
   assert.match(shieldRangedOnly, /cr_juvenile_atk_ranged_line/);
   assert.doesNotMatch(shieldRangedOnly, /cr_juvenile_atk_melee_front/);
   assert.doesNotMatch(shieldRangedOnly, /_atk_ranged_line_r/);
+  assert.match(shieldRangedOnly, /cr_juvenile_follow_idle/);
+  assert.match(shieldRangedOnly, /cr_juvenile_boss_summon_follower/);
+});
+
+test('character-model-rig emits 7-slot sockets and filters clips by grip_mode', () => {
+  const tasksSrc = fs.readFileSync(path.join(root, 'tasks.js'), 'utf8');
+  const tCtx = { window: { COSMI_CATALOG: C } };
+  vm.runInNewContext(tasksSrc, tCtx);
+  const task = tCtx.window.COSMI_TASKS.find(t => t.id === 'character-model-rig');
+  assert.ok(task, 'character-model-rig should exist');
+  const allIds = C.ACTIONS.character.map(a => a.id);
+
+  const allPrompt = task.build({
+    header: '[COSMIMERA-TASK]',
+    task: { id: 'character-model-rig' },
+    taskId: 'chr-mdl-all',
+    subjectId: 'chr_test',
+    concept: {},
+    opts: { grip_mode: 'all', weapon_scope: 'all_allowed', actions_character: allIds }
+  });
+  assert.match(allPrompt, /Socket_Head_Armor/);
+  assert.match(allPrompt, /Socket_Hands_Armor/);
+  assert.match(allPrompt, /chr_moveset_switch/);
+  assert.match(allPrompt, /chr_atk_melee_front`/);
+  assert.match(allPrompt, /chr_atk_melee_front_r`/);
+
+  const dualPrompt = task.build({
+    header: '[COSMIMERA-TASK]',
+    task: { id: 'character-model-rig' },
+    taskId: 'chr-mdl-dual',
+    subjectId: 'chr_test',
+    concept: {},
+    opts: { grip_mode: 'dual_wield', weapon_scope: 'all_allowed', actions_character: allIds }
+  });
+  assert.match(dualPrompt, /chr_atk_melee_front_r`/);
+  assert.doesNotMatch(dualPrompt, /`chr_atk_melee_front`/);
+
+  const shieldPrompt = task.build({
+    header: '[COSMIMERA-TASK]',
+    task: { id: 'character-model-rig' },
+    taskId: 'chr-mdl-shield',
+    subjectId: 'chr_test',
+    concept: {},
+    opts: { grip_mode: 'one_hand_shield', weapon_scope: 'all_allowed', actions_character: allIds }
+  });
+  assert.match(shieldPrompt, /`chr_atk_melee_front`/);
+  assert.doesNotMatch(shieldPrompt, /chr_atk_melee_front_r/);
+});
+
+test('Data character-anims and creature-grip-anims JSON match catalog.js v2.12.0', () => {
+  const chrAnims = JSON.parse(fs.readFileSync(path.join(root, 'Data/character-anims/character-anims.json'), 'utf8'));
+  const crAnims = JSON.parse(fs.readFileSync(path.join(root, 'Data/creature-grip-anims/creature-grip-anims.json'), 'utf8'));
+
+  assert.equal(chrAnims.length, 3);
+  const chrCatalogIds = new Set(C.ACTIONS.character.map(a => a.id));
+  const chrCovered = new Set();
+  for (const entry of chrAnims) {
+    assert.equal(entry.spec, 'cosmimera-character-anim/1');
+    for (const c of entry.clips) {
+      assert.ok(chrCatalogIds.has(c.action_id), `unknown character clip in JSON: ${c.action_id}`);
+      chrCovered.add(c.action_id);
+    }
+  }
+  assert.equal(chrCovered.size, chrCatalogIds.size);
+
+  assert.equal(crAnims.length, 3);
+  const crCatalogIds = new Set(C.ACTIONS.creature.map(a => a.id));
+  const requiredNew = ['follow_idle', 'follow_dash', 'link_channel', 'relay_enter', 'boss_moveset_switch', 'boss_summon_follower'];
+  for (const entry of crAnims) {
+    const clipIds = new Set(entry.clips.map(c => c.action_id));
+    for (const req of requiredNew) {
+      assert.ok(clipIds.has(req), `${entry.id} missing creature clip: ${req}`);
+    }
+    for (const id of clipIds) {
+      assert.ok(crCatalogIds.has(id), `unknown creature clip in JSON: ${id}`);
+    }
+  }
 });

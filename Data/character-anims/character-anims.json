@@ -1,0 +1,4968 @@
+[
+  {
+    "id": "chr_anim_two_handed",
+    "spec": "cosmimera-character-anim/1",
+    "rig_type": "unity_humanoid",
+    "max_bones": 75,
+    "grip_mode": "two_handed",
+    "fps": 30,
+    "clip_prefix_pattern": "chr_",
+    "alternates_hands": false,
+    "equipment_slots": [
+      "main_hand",
+      "off_hand",
+      "head",
+      "upper",
+      "hands",
+      "lower",
+      "accessory"
+    ],
+    "sockets": [
+      {
+        "name": "Socket_HandR_Prop",
+        "role": "main_weapon",
+        "required": true
+      },
+      {
+        "name": "Socket_HandL_Prop",
+        "role": "two_hand_support",
+        "required": true
+      },
+      {
+        "name": "Socket_Head_Armor",
+        "role": "head_armor",
+        "required": true
+      },
+      {
+        "name": "Socket_Hands_Armor",
+        "role": "hands_armor",
+        "required": true
+      },
+      {
+        "name": "Socket_Back_Pack",
+        "role": "backpack",
+        "required": true
+      },
+      {
+        "name": "Socket_Throw",
+        "role": "throw_origin",
+        "required": true
+      },
+      {
+        "name": "Socket_Head_FX",
+        "role": "head_fx",
+        "required": true
+      }
+    ],
+    "pose_rules": {
+      "idle_stance": "雙手握持重型武器主戰待機；Socket_HandR_Prop 與 Socket_HandL_Prop 雙點承托並兼顧頭盔與手套防具輪廓清淨。",
+      "locomotion_rule": "移動與翻滾保留雙手武器擺幅與安全間距，不穿插背包、上身護甲與手套。",
+      "guard_rule": "橫架雙手武器於胸前格擋（基礎 35%＋防具格擋詞綴）；完美格擋於 150 ms 內彈開震擊（perfect_block）。",
+      "attack_rule": "角色親自施展主動技之雙手近戰揮砍／突進動作；第 1 幀至 ev_hit 完成蓄力重擊與 +35% 雙手威力節奏。",
+      "ranged_rule": "雙手長弓、連弩或法杖抬舉瞄準射擊；發射瞬間（ev_spawn_fx）保留後座穩定。",
+      "moveset_switch_rule": "按 1/2 更換所選宙獸招式組合時播 moveset_switch（20f，受 2 秒切換冷卻）；追隨者倒下強制輪替播 moveset_forced_switch（22f）。",
+      "equipment_clearance_rule": "裝備全為角色專屬 7 槽；動作須預留頭盔（Socket_Head_Armor）與手套（Socket_Hands_Armor）厚度，不得遮擋臉部與武器握點。"
+    },
+    "clips": [
+      {
+        "action_id": "idle",
+        "description": "待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "idle_long",
+        "description": "長時間靜止週期動作（深呼吸/極微幅肢體微動/定力循環）",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 120,
+        "duration_ms": 4000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：長時間靜止週期動作（深呼吸/極微幅肢體微動/定力循環）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "walk",
+        "description": "走路",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 8,
+            "time_ms": 267
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：走路；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "run",
+        "description": "奔跑",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 5,
+            "time_ms": 167
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：奔跑；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sneak_idle",
+        "description": "潛行待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：潛行待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sneak_move",
+        "description": "潛行移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：潛行移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "roll_dodge",
+        "description": "翻滾閃避（無敵幀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：翻滾閃避（無敵幀）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "jump",
+        "description": "跳躍（起跳/滯空/落地）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：跳躍（起跳/滯空/落地）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "swim_idle",
+        "description": "水面漂浮待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：水面漂浮待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "swim_move",
+        "description": "游泳移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：游泳移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "glide",
+        "description": "滑翔滯空（乘風／高空移動）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：滑翔滯空（乘風／高空移動）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mount_idle",
+        "description": "騎乘待機（坐姿握鞍）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：騎乘待機（坐姿握鞍）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mount_run",
+        "description": "騎乘奔跑（騎乘衝刺）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：騎乘奔跑（騎乘衝刺）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "block",
+        "description": "格擋（舉起→維持→放下）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：格擋（舉起→維持→放下）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "block_hit",
+        "description": "格擋受擊（防禦震退回饋）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 16,
+        "duration_ms": 533,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 2,
+            "time_ms": 67
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：格擋受擊（防禦震退回饋）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "perfect_block",
+        "description": "完美格擋（150ms 彈反震擊）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 4,
+            "time_ms": 133
+          },
+          {
+            "name": "ev_hit",
+            "frame": 6,
+            "time_ms": 200
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：完美格擋（150ms 彈反震擊）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "guard_break",
+        "description": "破防硬直（架勢條滿崩解 1.5s）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：破防硬直（架勢條滿崩解 1.5s）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "stagger",
+        "description": "失衡硬直（受破招/重擊暈眩）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：失衡硬直（受破招/重擊暈眩）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dodge_miss",
+        "description": "閃避（MISS 殘影）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 14,
+        "duration_ms": 467,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：閃避（MISS 殘影）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "weapon_draw",
+        "description": "拔出武器（進入主控戰鬥）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 6,
+            "time_ms": 200
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：拔出武器（進入主控戰鬥）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "weapon_sheathe",
+        "description": "收回武器（脫戰歸鞘）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：收回武器（脫戰歸鞘）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "moveset_switch",
+        "description": "切換招式組合（共鳴換手，2s 鎖定）",
+        "category": "moveset_switch",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 8,
+            "time_ms": 267
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：切換招式組合（共鳴換手，2s 鎖定）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "moveset_forced_switch",
+        "description": "強制切換招式組合（追隨宙獸倒下輪替）",
+        "category": "moveset_switch",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 6,
+            "time_ms": 200
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：強制切換招式組合（追隨宙獸倒下輪替）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_front",
+        "description": "近戰：正前（主控玩家施招）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：近戰：正前（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_sweep",
+        "description": "近戰：橫掃（主控玩家施招）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：近戰：橫掃（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_burst",
+        "description": "近戰：周身擴散（主控玩家施招）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：近戰：周身擴散（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dash",
+        "description": "突進：直線衝鋒攻擊",
+        "category": "dash",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：突進：直線衝鋒攻擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_line",
+        "description": "射擊：直線（主控玩家施招）",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：射擊：直線（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_cone",
+        "description": "射擊：扇形（主控玩家施招）",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：射擊：扇形（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_arc",
+        "description": "射擊：拋物線（主控玩家施招）",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：射擊：拋物線（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_burst_target",
+        "description": "遠程：指定目標點爆破引導",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：遠程：指定目標點爆破引導；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sup_self",
+        "description": "輔助：自身（玩家共鳴施放）",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：輔助：自身（玩家共鳴施放）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sup_ally",
+        "description": "輔助：他者（支援追隨宙獸）",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：輔助：他者（支援追隨宙獸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "hit_react",
+        "description": "受擊",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 15,
+        "duration_ms": 500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：受擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "knockdown",
+        "description": "倒地",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：倒地；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "getup",
+        "description": "起身",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：起身；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_point",
+        "description": "命令：指向目標",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：命令：指向目標；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_attack",
+        "description": "命令：全力進攻",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：命令：全力進攻；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_recall",
+        "description": "命令：後退集合",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：命令：後退集合；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_overload",
+        "description": "命令：觸發超載進化",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：命令：觸發超載進化；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "summon",
+        "description": "召喚宙獸",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：召喚宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "recall",
+        "description": "收回宙獸",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：收回宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "item_use_self",
+        "description": "使用道具（自身）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：使用道具（自身）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "item_use_other",
+        "description": "使用道具（他者/宙獸）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：使用道具（他者/宙獸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "field_deploy",
+        "description": "佈署場地",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 48,
+        "duration_ms": 1600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：佈署場地；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "backpack_open",
+        "description": "使用背包（取下→翻找→收回）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Back_Pack",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：使用背包（取下→翻找→收回）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "handbook_open",
+        "description": "翻閱冒險手冊／圖鑑",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：翻閱冒險手冊／圖鑑；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "interact_pickup",
+        "description": "近身互動／拾取素材",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：近身互動／拾取素材；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "gather_forage",
+        "description": "採集植物／散佈物（彎腰採摘）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 42,
+        "duration_ms": 1400,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：採集植物／散佈物（彎腰採摘）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mine_pick",
+        "description": "礦鎬採礦（揮鎬敲擊礦脈）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：礦鎬採礦（揮鎬敲擊礦脈）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_cast",
+        "description": "釣魚：拋竿",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：釣魚：拋竿；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_wait",
+        "description": "釣魚：持竿待機",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：釣魚：持竿待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_reel",
+        "description": "釣魚：拉竿收魚",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：釣魚：拉竿收魚；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "cook_camp",
+        "description": "營火料理（生火／翻炒烹飪）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：營火料理（生火／翻炒烹飪）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "craft_forge",
+        "description": "生活製作／鍛造加工",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 48,
+        "duration_ms": 1600,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          },
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：生活製作／鍛造加工；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "trap_place",
+        "description": "佈置／回收採集陷阱",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：佈置／回收採集陷阱；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "revive_ally",
+        "description": "營火復甦／治療昏厥宙獸",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 54,
+        "duration_ms": 1800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 28,
+            "time_ms": 933
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：營火復甦／治療昏厥宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "talk_idle",
+        "description": "對話待機",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 90,
+        "duration_ms": 3000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：對話待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "talk_gesture",
+        "description": "對話手勢",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：對話手勢；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_xs",
+        "description": "撫摸 XS 體型（托在掌心輕撫）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：撫摸 XS 體型（托在掌心輕撫）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_s",
+        "description": "撫摸 S 體型（蹲下摸頭）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：撫摸 S 體型（蹲下摸頭）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_m",
+        "description": "撫摸 M 體型（彎腰）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：撫摸 M 體型（彎腰）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_l",
+        "description": "撫摸 L 體型（抬手摸頸）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "left",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：撫摸 L 體型（抬手摸頸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_xl",
+        "description": "撫摸 XL 體型（宙獸低頭，角色雙手撫摸）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 72,
+        "duration_ms": 2400,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 36,
+            "time_ms": 1200
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：撫摸 XL 體型（宙獸低頭，角色雙手撫摸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_card",
+        "description": "投擲：符籙卡片（雙指甩出）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：投擲：符籙卡片（雙指甩出）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_bead",
+        "description": "投擲：琉璃珠（下手拋擲）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 15,
+            "time_ms": 500
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：投擲：琉璃珠（下手拋擲）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_cube",
+        "description": "投擲：魔術方塊（轉動後上手投）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：投擲：魔術方塊（轉動後上手投）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "victory",
+        "description": "勝利",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：勝利；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "defeated",
+        "description": "戰敗",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：戰敗；保留七槽裝備安全間距。"
+      }
+    ],
+    "weapon_types": {
+      "melee": [
+        "twinblade_staff",
+        "spear_halberd",
+        "greatsword",
+        "greataxe_hammer"
+      ],
+      "ranged": [
+        "repeater_bow",
+        "longbow",
+        "magic_staff",
+        "heavy_crossbow_cannon"
+      ]
+    }
+  },
+  {
+    "id": "chr_anim_dual_wield",
+    "spec": "cosmimera-character-anim/1",
+    "rig_type": "unity_humanoid",
+    "max_bones": 75,
+    "grip_mode": "dual_wield",
+    "fps": 30,
+    "clip_prefix_pattern": "chr_",
+    "alternates_hands": true,
+    "equipment_slots": [
+      "main_hand",
+      "off_hand",
+      "head",
+      "upper",
+      "hands",
+      "lower",
+      "accessory"
+    ],
+    "sockets": [
+      {
+        "name": "Socket_HandR_Prop",
+        "role": "main_weapon",
+        "required": true
+      },
+      {
+        "name": "Socket_HandL_Prop",
+        "role": "off_weapon",
+        "required": true
+      },
+      {
+        "name": "Socket_Head_Armor",
+        "role": "head_armor",
+        "required": true
+      },
+      {
+        "name": "Socket_Hands_Armor",
+        "role": "hands_armor",
+        "required": true
+      },
+      {
+        "name": "Socket_Back_Pack",
+        "role": "backpack",
+        "required": true
+      },
+      {
+        "name": "Socket_Throw",
+        "role": "throw_origin",
+        "required": true
+      },
+      {
+        "name": "Socket_Head_FX",
+        "role": "head_fx",
+        "required": true
+      }
+    ],
+    "pose_rules": {
+      "idle_stance": "低重心雙持警戒姿態；左右手分別掛載單手武器（+25% 攻速），預留雙臂揮動空間。",
+      "locomotion_rule": "敏捷奔跑與翻滾貼合雙刀／雙銃收腰姿態，避免左右武器互相穿插或切過腿部防具。",
+      "guard_rule": "雙持交叉招架格擋（基礎 35%）；完美格擋於 150 ms 內交叉彈反（perfect_block）。",
+      "attack_rule": "依雙持左右交替規則拆分 _r / _l（先右手後左手），節奏俐落配合高攻速連段。",
+      "ranged_rule": "雙手弩、短杖或飛刃交替出手（_r / _l），發射瞬間前臂平穩不抖動。",
+      "moveset_switch_rule": "雙持架勢下播 moveset_switch／moveset_forced_switch，以換手轉刃示意目前共鳴的追隨者招式組合。",
+      "equipment_clearance_rule": "動作預留 Socket_Head_Armor 頭盔肩頸角與 Socket_Hands_Armor 手套袖口厚度，雙手交叉架勢不穿透胸甲。"
+    },
+    "clips": [
+      {
+        "action_id": "idle",
+        "description": "待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "idle_long",
+        "description": "長時間靜止週期動作（深呼吸/極微幅肢體微動/定力循環）",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 120,
+        "duration_ms": 4000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：長時間靜止週期動作（深呼吸/極微幅肢體微動/定力循環）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "walk",
+        "description": "走路",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 8,
+            "time_ms": 267
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：走路；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "run",
+        "description": "奔跑",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 5,
+            "time_ms": 167
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：奔跑；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sneak_idle",
+        "description": "潛行待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：潛行待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sneak_move",
+        "description": "潛行移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：潛行移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "roll_dodge",
+        "description": "翻滾閃避（無敵幀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：翻滾閃避（無敵幀）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "jump",
+        "description": "跳躍（起跳/滯空/落地）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：跳躍（起跳/滯空/落地）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "swim_idle",
+        "description": "水面漂浮待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：水面漂浮待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "swim_move",
+        "description": "游泳移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：游泳移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "glide",
+        "description": "滑翔滯空（乘風／高空移動）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：滑翔滯空（乘風／高空移動）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mount_idle",
+        "description": "騎乘待機（坐姿握鞍）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：騎乘待機（坐姿握鞍）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mount_run",
+        "description": "騎乘奔跑（騎乘衝刺）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：騎乘奔跑（騎乘衝刺）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "block",
+        "description": "格擋（舉起→維持→放下）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：格擋（舉起→維持→放下）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "block_hit",
+        "description": "格擋受擊（防禦震退回饋）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 16,
+        "duration_ms": 533,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 2,
+            "time_ms": 67
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：格擋受擊（防禦震退回饋）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "perfect_block",
+        "description": "完美格擋（150ms 彈反震擊）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 4,
+            "time_ms": 133
+          },
+          {
+            "name": "ev_hit",
+            "frame": 6,
+            "time_ms": 200
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：完美格擋（150ms 彈反震擊）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "guard_break",
+        "description": "破防硬直（架勢條滿崩解 1.5s）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：破防硬直（架勢條滿崩解 1.5s）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "stagger",
+        "description": "失衡硬直（受破招/重擊暈眩）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：失衡硬直（受破招/重擊暈眩）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dodge_miss",
+        "description": "閃避（MISS 殘影）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 14,
+        "duration_ms": 467,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：閃避（MISS 殘影）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "weapon_draw",
+        "description": "拔出武器（進入主控戰鬥）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 6,
+            "time_ms": 200
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：拔出武器（進入主控戰鬥）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "weapon_sheathe",
+        "description": "收回武器（脫戰歸鞘）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：收回武器（脫戰歸鞘）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "moveset_switch",
+        "description": "切換招式組合（共鳴換手，2s 鎖定）",
+        "category": "moveset_switch",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 8,
+            "time_ms": 267
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：切換招式組合（共鳴換手，2s 鎖定）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "moveset_forced_switch",
+        "description": "強制切換招式組合（追隨宙獸倒下輪替）",
+        "category": "moveset_switch",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 6,
+            "time_ms": 200
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：強制切換招式組合（追隨宙獸倒下輪替）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_front_r",
+        "description": "雙持近戰（右手）：正前快斬",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 9,
+            "time_ms": 300
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持近戰（右手）：正前快斬；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_front_l",
+        "description": "雙持近戰（左手）：正前快斬",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "left",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 9,
+            "time_ms": 300
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持近戰（左手）：正前快斬；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_sweep_r",
+        "description": "雙持近戰（右手）：橫掃",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 25,
+        "duration_ms": 833,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 11,
+            "time_ms": 367
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 19,
+            "time_ms": 633
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持近戰（右手）：橫掃；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_sweep_l",
+        "description": "雙持近戰（左手）：橫掃",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "left",
+        "frames": 25,
+        "duration_ms": 833,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 11,
+            "time_ms": 367
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 19,
+            "time_ms": 633
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持近戰（左手）：橫掃；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_burst",
+        "description": "近戰：周身擴散（主控玩家施招）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：近戰：周身擴散（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dash_r",
+        "description": "雙持突進（右手）：疾風突刺",
+        "category": "dash",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持突進（右手）：疾風突刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dash_l",
+        "description": "雙持突進（左手）：疾風突刺",
+        "category": "dash",
+        "weapon_distance": "any",
+        "hand": "left",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持突進（左手）：疾風突刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_line_r",
+        "description": "雙持遠程（右手）：直線射擊／擲射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 11,
+            "time_ms": 367
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持遠程（右手）：直線射擊／擲射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_line_l",
+        "description": "雙持遠程（左手）：直線射擊／擲射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "left",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 11,
+            "time_ms": 367
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持遠程（左手）：直線射擊／擲射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_cone_r",
+        "description": "雙持遠程（右手）：扇形散射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 12,
+            "time_ms": 400
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持遠程（右手）：扇形散射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_cone_l",
+        "description": "雙持遠程（左手）：扇形散射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "left",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 12,
+            "time_ms": 400
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持遠程（左手）：扇形散射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_arc_r",
+        "description": "雙持遠程（右手）：拋物線擲射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持遠程（右手）：拋物線擲射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_arc_l",
+        "description": "雙持遠程（左手）：拋物線擲射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "left",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：雙持遠程（左手）：拋物線擲射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_burst_target",
+        "description": "遠程：指定目標點爆破引導",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：遠程：指定目標點爆破引導；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sup_self",
+        "description": "輔助：自身（玩家共鳴施放）",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：輔助：自身（玩家共鳴施放）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sup_ally",
+        "description": "輔助：他者（支援追隨宙獸）",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：輔助：他者（支援追隨宙獸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "hit_react",
+        "description": "受擊",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 15,
+        "duration_ms": 500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：受擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "knockdown",
+        "description": "倒地",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：倒地；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "getup",
+        "description": "起身",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：起身；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_point",
+        "description": "命令：指向目標",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：命令：指向目標；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_attack",
+        "description": "命令：全力進攻",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：命令：全力進攻；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_recall",
+        "description": "命令：後退集合",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：命令：後退集合；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_overload",
+        "description": "命令：觸發超載進化",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：命令：觸發超載進化；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "summon",
+        "description": "召喚宙獸",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：召喚宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "recall",
+        "description": "收回宙獸",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：收回宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "item_use_self",
+        "description": "使用道具（自身）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：使用道具（自身）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "item_use_other",
+        "description": "使用道具（他者/宙獸）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：使用道具（他者/宙獸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "field_deploy",
+        "description": "佈署場地",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 48,
+        "duration_ms": 1600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：佈署場地；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "backpack_open",
+        "description": "使用背包（取下→翻找→收回）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Back_Pack",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：使用背包（取下→翻找→收回）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "handbook_open",
+        "description": "翻閱冒險手冊／圖鑑",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：翻閱冒險手冊／圖鑑；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "interact_pickup",
+        "description": "近身互動／拾取素材",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：近身互動／拾取素材；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "gather_forage",
+        "description": "採集植物／散佈物（彎腰採摘）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 42,
+        "duration_ms": 1400,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：採集植物／散佈物（彎腰採摘）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mine_pick",
+        "description": "礦鎬採礦（揮鎬敲擊礦脈）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：礦鎬採礦（揮鎬敲擊礦脈）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_cast",
+        "description": "釣魚：拋竿",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：釣魚：拋竿；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_wait",
+        "description": "釣魚：持竿待機",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：釣魚：持竿待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_reel",
+        "description": "釣魚：拉竿收魚",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：釣魚：拉竿收魚；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "cook_camp",
+        "description": "營火料理（生火／翻炒烹飪）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：營火料理（生火／翻炒烹飪）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "craft_forge",
+        "description": "生活製作／鍛造加工",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 48,
+        "duration_ms": 1600,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          },
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：生活製作／鍛造加工；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "trap_place",
+        "description": "佈置／回收採集陷阱",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：佈置／回收採集陷阱；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "revive_ally",
+        "description": "營火復甦／治療昏厥宙獸",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 54,
+        "duration_ms": 1800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 28,
+            "time_ms": 933
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：營火復甦／治療昏厥宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "talk_idle",
+        "description": "對話待機",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 90,
+        "duration_ms": 3000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：對話待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "talk_gesture",
+        "description": "對話手勢",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：對話手勢；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_xs",
+        "description": "撫摸 XS 體型（托在掌心輕撫）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：撫摸 XS 體型（托在掌心輕撫）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_s",
+        "description": "撫摸 S 體型（蹲下摸頭）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：撫摸 S 體型（蹲下摸頭）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_m",
+        "description": "撫摸 M 體型（彎腰）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：撫摸 M 體型（彎腰）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_l",
+        "description": "撫摸 L 體型（抬手摸頸）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "left",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：撫摸 L 體型（抬手摸頸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_xl",
+        "description": "撫摸 XL 體型（宙獸低頭，角色雙手撫摸）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 72,
+        "duration_ms": 2400,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 36,
+            "time_ms": 1200
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：撫摸 XL 體型（宙獸低頭，角色雙手撫摸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_card",
+        "description": "投擲：符籙卡片（雙指甩出）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：投擲：符籙卡片（雙指甩出）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_bead",
+        "description": "投擲：琉璃珠（下手拋擲）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 15,
+            "time_ms": 500
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：投擲：琉璃珠（下手拋擲）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_cube",
+        "description": "投擲：魔術方塊（轉動後上手投）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：投擲：魔術方塊（轉動後上手投）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "victory",
+        "description": "勝利",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：勝利；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "defeated",
+        "description": "戰敗",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：戰敗；保留七槽裝備安全間距。"
+      }
+    ],
+    "weapon_types": {
+      "melee": [
+        "dagger_claw",
+        "sword_1h",
+        "axe_1h",
+        "mace_1h"
+      ],
+      "ranged": [
+        "thrown_shuriken",
+        "hand_crossbow",
+        "wand_gun",
+        "javelin"
+      ]
+    }
+  },
+  {
+    "id": "chr_anim_one_hand_shield",
+    "spec": "cosmimera-character-anim/1",
+    "rig_type": "unity_humanoid",
+    "max_bones": 75,
+    "grip_mode": "one_hand_shield",
+    "fps": 30,
+    "clip_prefix_pattern": "chr_",
+    "alternates_hands": false,
+    "equipment_slots": [
+      "main_hand",
+      "off_hand",
+      "head",
+      "upper",
+      "hands",
+      "lower",
+      "accessory"
+    ],
+    "sockets": [
+      {
+        "name": "Socket_HandR_Prop",
+        "role": "main_weapon",
+        "required": true
+      },
+      {
+        "name": "Socket_HandL_Prop",
+        "role": "off_shield",
+        "required": true
+      },
+      {
+        "name": "Socket_Head_Armor",
+        "role": "head_armor",
+        "required": true
+      },
+      {
+        "name": "Socket_Hands_Armor",
+        "role": "hands_armor",
+        "required": true
+      },
+      {
+        "name": "Socket_Back_Pack",
+        "role": "backpack",
+        "required": true
+      },
+      {
+        "name": "Socket_Throw",
+        "role": "throw_origin",
+        "required": true
+      },
+      {
+        "name": "Socket_Head_FX",
+        "role": "head_fx",
+        "required": true
+      }
+    ],
+    "pose_rules": {
+      "idle_stance": "右手 Socket_HandR_Prop 持單手武器、左手 Socket_HandL_Prop 舉盾斜護左胸，重心均衡。",
+      "locomotion_rule": "奔跑與跳躍時左臂自然內收護身，塔盾與重盔不遮擋玩家前向視線或穿入胸甲。",
+      "guard_rule": "左手舉盾正前防禦（持盾 75% 格擋值）；受擊播 block_hit，150 ms 內放開彈反播 perfect_block，架勢條滿播 guard_break。",
+      "attack_rule": "左盾穩固護前、右臂大開大合揮斬或突進衝鋒，不因盾牌遮擋武器判定軌跡。",
+      "ranged_rule": "遠程單手弩／投矛／魔導銃由右肩盾側探出瞄準擊發，左手維持掩護姿態。",
+      "moveset_switch_rule": "敲盾或武器回鞘換式播 moveset_switch（20f）／moveset_forced_switch（22f），於頭頂與雙手伴隨共鳴光效。",
+      "equipment_clearance_rule": "完整支援玩家專屬 7 槽穿戴：確保大型盾牌、頭盔飾片與手套甲片在最高幅度的揮擊／格擋幀中皆無互穿。"
+    },
+    "clips": [
+      {
+        "action_id": "idle",
+        "description": "待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "idle_long",
+        "description": "長時間靜止週期動作（深呼吸/極微幅肢體微動/定力循環）",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 120,
+        "duration_ms": 4000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：長時間靜止週期動作（深呼吸/極微幅肢體微動/定力循環）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "walk",
+        "description": "走路",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 8,
+            "time_ms": 267
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：走路；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "run",
+        "description": "奔跑",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 5,
+            "time_ms": 167
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：奔跑；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sneak_idle",
+        "description": "潛行待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：潛行待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sneak_move",
+        "description": "潛行移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：潛行移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "roll_dodge",
+        "description": "翻滾閃避（無敵幀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：翻滾閃避（無敵幀）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "jump",
+        "description": "跳躍（起跳/滯空/落地）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：跳躍（起跳/滯空/落地）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "swim_idle",
+        "description": "水面漂浮待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：水面漂浮待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "swim_move",
+        "description": "游泳移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：游泳移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "glide",
+        "description": "滑翔滯空（乘風／高空移動）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：滑翔滯空（乘風／高空移動）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mount_idle",
+        "description": "騎乘待機（坐姿握鞍）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：騎乘待機（坐姿握鞍）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mount_run",
+        "description": "騎乘奔跑（騎乘衝刺）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：騎乘奔跑（騎乘衝刺）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "block",
+        "description": "格擋（舉起→維持→放下）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "off_shield",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：格擋（舉起→維持→放下）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "block_hit",
+        "description": "格擋受擊（防禦震退回饋）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "off_shield",
+        "frames": 16,
+        "duration_ms": 533,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 2,
+            "time_ms": 67
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：格擋受擊（防禦震退回饋）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "perfect_block",
+        "description": "完美格擋（150ms 彈反震擊）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "off_shield",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 4,
+            "time_ms": 133
+          },
+          {
+            "name": "ev_hit",
+            "frame": 6,
+            "time_ms": 200
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：完美格擋（150ms 彈反震擊）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "guard_break",
+        "description": "破防硬直（架勢條滿崩解 1.5s）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "off_shield",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：破防硬直（架勢條滿崩解 1.5s）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "stagger",
+        "description": "失衡硬直（受破招/重擊暈眩）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：失衡硬直（受破招/重擊暈眩）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dodge_miss",
+        "description": "閃避（MISS 殘影）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 14,
+        "duration_ms": 467,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：閃避（MISS 殘影）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "weapon_draw",
+        "description": "拔出武器（進入主控戰鬥）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 6,
+            "time_ms": 200
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：拔出武器（進入主控戰鬥）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "weapon_sheathe",
+        "description": "收回武器（脫戰歸鞘）",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：收回武器（脫戰歸鞘）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "moveset_switch",
+        "description": "切換招式組合（共鳴換手，2s 鎖定）",
+        "category": "moveset_switch",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 8,
+            "time_ms": 267
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：切換招式組合（共鳴換手，2s 鎖定）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "moveset_forced_switch",
+        "description": "強制切換招式組合（追隨宙獸倒下輪替）",
+        "category": "moveset_switch",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 6,
+            "time_ms": 200
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：強制切換招式組合（追隨宙獸倒下輪替）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_front",
+        "description": "近戰：正前（主控玩家施招）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：近戰：正前（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_sweep",
+        "description": "近戰：橫掃（主控玩家施招）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：近戰：橫掃（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_melee_burst",
+        "description": "近戰：周身擴散（主控玩家施招）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：近戰：周身擴散（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dash",
+        "description": "突進：直線衝鋒攻擊",
+        "category": "dash",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          },
+          {
+            "name": "ev_end_lock",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：突進：直線衝鋒攻擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_line",
+        "description": "射擊：直線（主控玩家施招）",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：射擊：直線（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_cone",
+        "description": "射擊：扇形（主控玩家施招）",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：射擊：扇形（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_ranged_arc",
+        "description": "射擊：拋物線（主控玩家施招）",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：射擊：拋物線（主控玩家施招）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_burst_target",
+        "description": "遠程：指定目標點爆破引導",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：遠程：指定目標點爆破引導；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sup_self",
+        "description": "輔助：自身（玩家共鳴施放）",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：輔助：自身（玩家共鳴施放）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "sup_ally",
+        "description": "輔助：他者（支援追隨宙獸）",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：輔助：他者（支援追隨宙獸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "hit_react",
+        "description": "受擊",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 15,
+        "duration_ms": 500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：受擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "knockdown",
+        "description": "倒地",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：倒地；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "getup",
+        "description": "起身",
+        "category": "combat_state",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：起身；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_point",
+        "description": "命令：指向目標",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：命令：指向目標；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_attack",
+        "description": "命令：全力進攻",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：命令：全力進攻；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_recall",
+        "description": "命令：後退集合",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：命令：後退集合；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "command_overload",
+        "description": "命令：觸發超載進化",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：命令：觸發超載進化；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "summon",
+        "description": "召喚宙獸",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：召喚宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "recall",
+        "description": "收回宙獸",
+        "category": "command",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_FX",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：收回宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "item_use_self",
+        "description": "使用道具（自身）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 24,
+            "time_ms": 800
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：使用道具（自身）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "item_use_other",
+        "description": "使用道具（他者/宙獸）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：使用道具（他者/宙獸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "field_deploy",
+        "description": "佈署場地",
+        "category": "support",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 48,
+        "duration_ms": 1600,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：佈署場地；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "backpack_open",
+        "description": "使用背包（取下→翻找→收回）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Back_Pack",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：使用背包（取下→翻找→收回）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "handbook_open",
+        "description": "翻閱冒險手冊／圖鑑",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandL_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：翻閱冒險手冊／圖鑑；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "interact_pickup",
+        "description": "近身互動／拾取素材",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：近身互動／拾取素材；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "gather_forage",
+        "description": "採集植物／散佈物（彎腰採摘）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 42,
+        "duration_ms": 1400,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：採集植物／散佈物（彎腰採摘）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "mine_pick",
+        "description": "礦鎬採礦（揮鎬敲擊礦脈）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 16,
+            "time_ms": 533
+          },
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：礦鎬採礦（揮鎬敲擊礦脈）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_cast",
+        "description": "釣魚：拋竿",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：釣魚：拋竿；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_wait",
+        "description": "釣魚：持竿待機",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：釣魚：持竿待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fish_reel",
+        "description": "釣魚：拉竿收魚",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 20,
+            "time_ms": 667
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：釣魚：拉竿收魚；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "cook_camp",
+        "description": "營火料理（生火／翻炒烹飪）",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：營火料理（生火／翻炒烹飪）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "craft_forge",
+        "description": "生活製作／鍛造加工",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 48,
+        "duration_ms": 1600,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          },
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：生活製作／鍛造加工；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "trap_place",
+        "description": "佈置／回收採集陷阱",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 40,
+        "duration_ms": 1333,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 22,
+            "time_ms": 733
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：佈置／回收採集陷阱；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "revive_ally",
+        "description": "營火復甦／治療昏厥宙獸",
+        "category": "life_skill",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 54,
+        "duration_ms": 1800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 28,
+            "time_ms": 933
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：營火復甦／治療昏厥宙獸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "talk_idle",
+        "description": "對話待機",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 90,
+        "duration_ms": 3000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：對話待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "talk_gesture",
+        "description": "對話手勢",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Head_FX"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：對話手勢；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_xs",
+        "description": "撫摸 XS 體型（托在掌心輕撫）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：撫摸 XS 體型（托在掌心輕撫）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_s",
+        "description": "撫摸 S 體型（蹲下摸頭）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：撫摸 S 體型（蹲下摸頭）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_m",
+        "description": "撫摸 M 體型（彎腰）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：撫摸 M 體型（彎腰）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_l",
+        "description": "撫摸 L 體型（抬手摸頸）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "left",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 30,
+            "time_ms": 1000
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：撫摸 L 體型（抬手摸頸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "pet_xl",
+        "description": "撫摸 XL 體型（宙獸低頭，角色雙手撫摸）",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 72,
+        "duration_ms": 2400,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 36,
+            "time_ms": 1200
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：撫摸 XL 體型（宙獸低頭，角色雙手撫摸）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_card",
+        "description": "投擲：符籙卡片（雙指甩出）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：投擲：符籙卡片（雙指甩出）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_bead",
+        "description": "投擲：琉璃珠（下手拋擲）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 15,
+            "time_ms": 500
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：投擲：琉璃珠（下手拋擲）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "throw_cube",
+        "description": "投擲：魔術方塊（轉動後上手投）",
+        "category": "item",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Throw",
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_release",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：投擲：魔術方塊（轉動後上手投）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "victory",
+        "description": "勝利",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：勝利；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "defeated",
+        "description": "戰敗",
+        "category": "social",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 45,
+        "duration_ms": 1500,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：戰敗；保留七槽裝備安全間距。"
+      }
+    ],
+    "weapon_types": {
+      "melee": [
+        "dagger_claw",
+        "sword_1h",
+        "axe_1h",
+        "mace_1h"
+      ],
+      "ranged": [
+        "thrown_shuriken",
+        "hand_crossbow",
+        "wand_gun",
+        "javelin"
+      ],
+      "offhand": [
+        "round_shield",
+        "kite_shield",
+        "tower_shield",
+        "wooden_round_shield",
+        "rune_shield",
+        "plank_shield"
+      ]
+    }
+  }
+]
