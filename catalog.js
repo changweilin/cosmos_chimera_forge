@@ -2,7 +2,7 @@
 // 改動規則見 README.md：新增選項 → minor；改既有 ID / 刪除 / 改動作事件 → major。
 // 權重 w 為相對值，不必加總為 100。
 window.COSMI_CATALOG = {
-  version: "2.12.0",
+  version: "2.13.0",
 
   ELEMENTS: [
     { v: "metal",   zh: "金", palette: "銀白、淡金、鋼藍高光" },
@@ -2072,6 +2072,7 @@ window.COSMI_CATALOG = {
       { id: "summon_appear", zh: "被召喚登場", f: 36 },
       { id: "recall_vanish", zh: "被收回", f: 24 },
       { id: "capture_struggle", zh: "被收服時掙扎", f: 45 },
+      { id: "hatch_emerge", zh: "破蛋而出（自蜷縮 pose 對齊 Socket_EggCore：破口露簽名部位→脫殼→初啼看向玩家；依 cosmos_chimera creature-eggs.md 形體分演）", f: 210, ev: ["ev_spawn_fx@0", "ev_spawn_fx@60", "ev_end_lock@200"] },
       { id: "overload_enter", zh: "進入超載", f: 60, ev: ["ev_spawn_fx@20"] },
       { id: "overload_exit", zh: "超載結束", f: 36 },
       { id: "hatch", zh: "破蛋而出（僅幼年）", f: 72 },

@@ -1,3 +1,7 @@
+## 2026-11-26 · catalog@2.13.0 · 宙獸破蛋動作 hatch_emerge
+
+- `catalog.js` `ACTIONS.creature` 新增 `hatch_emerge`（210 幀＝30 fps 7 秒，涵蓋 cosmos_chimera `docs/design/creature-eggs.md` 破蛋節拍 ③ 破口～⑤ 初啼；`ev_spawn_fx@0` 破口、`@60` 脫殼、`ev_end_lock@200`）。每個物種一支，起始為蜷縮 pose，蜷縮中心對齊蛋殼 `Socket_EggCore`；各形體（`body_plan`）的破蛋方式見 `creature-eggs-catalog.md`。
+
 ## 2026-11-23 · catalog@2.11.0 · tool@2.10.0 · 整合 AGC 宙獸形態標籤與混搭路由至鍛造台
 
 - 宙獸設計去重與表格強化：更換 11 條與已生成宙獸或彼此撞型之未生成草稿線原型並修正 `line_metal_citadelbull` 4 足翼牛構造，於 `Data/schemas/creature.schema.json`、`gen_designed.py`、`designed.js`、`forge.js`（已設計項目規格／審查預覽）與 `game-data.js`（宙獸列表／詳細卡）納入多標籤 `design_prototypes` 與 `base_entity`／`morphology_primary`／`morphology_secondary`，並新增全圖鑑對照表 `docs/design/creature-roster-table.md`；同步更新所有 27 條未生成宙獸 `creature-concept` 生圖 Prompt。
