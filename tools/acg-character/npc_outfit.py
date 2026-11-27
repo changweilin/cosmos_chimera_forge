@@ -1,4 +1,4 @@
-"""Builds the NPC region piece and era trim slots on one baked race base and exports them for Unity (ADR-0015,
+"""Builds the NPC wardrobe slots (region pieces, era trims and, from npc_cut.py, the cut garments) on one baked race base and exports them for Unity (ADR-0015,
 cosmos_chimera docs/design/npc-uma-looks.md row 17, #服裝).
 
 Usage: blender -b Logs/npc/<id>.blend --python tools/acg-character/npc_outfit.py -- --fbx <game>/_UMA/Npc/Outfit/<id>.fbx
@@ -16,11 +16,15 @@ moves as the body skin nearest it does (inverse-distance mean of its NEAREST ski
 skeleton's proportions reshape the piece with the body. Bone weights come the same way, at most 4. Colour is a shader
 parameter in Unity: each part's material is named for its recipe colour (OUTFIT_ROLES), the mesh carries no colour.
 
-Not here: the cut slots (Q-A26 open), head-worn bits (the lava brow band, the crystal brow gem: procedural, as the
-headwear), the twilight wide cuffs (part of the sleeve), the future arm and shin light bands (they ride sleeves and boots).
+A cut slot also carries its own parameter keys (npc_cut.KEYS: hem, ease, fall, flare), built as the same mesh at the
+parameter's high end. Cloth below the hip takes its bone weights from the nearest skin like everything else: the race
+DNA moves and scales the thigh bones (hip width, bulk), and cloth weighted partly to the pelvis let the legs and the
+trousers under it push through. Not here: head-worn bits (the lava brow band, the crystal brow gem:
+procedural, as the headwear).
 
 Pre: the .blend was saved by race.py (base with its shape keys). Post: the FBX holds the rig and one mesh per slot,
-"piece_<Region>" / "trim_<Era>"; --preview renders every slot front and back. Side effects: edits the open scene in
+"piece_<Region>" / "trim_<Era>" and the npc_cut.SLOTS names; --preview renders every slot (or those --slots names) front
+and back. Side effects: edits the open scene in
 memory only (never saved); overwrites the outputs.
 """
 import argparse
@@ -40,13 +44,15 @@ import npc_hair  # noqa: E402
 
 NEAREST = 6
 KEY_FLOOR_M = 1e-4
-# Procedural NpcMeshes fit (cloth ease over the trunk) of the loosest cut; pieces and trims ride outside it.
-OUTER_FIT = 1.2
+# Procedural NpcMeshes fit (cloth ease over the trunk) of the loosest cut is 1.2 (npc_cut tops at npc_ease 1); pieces and
+# trims ride just outside it, or they flicker through the top where the two meet.
+OUTER_FIT = 1.22
 # Cloth thickness of shell pieces (metres) and the clearance of rigid bits off the cloth surface.
 CLOTH_M = 0.003
 CLEAR_M = 0.003
 # Material per recipe colour (NpcUmaRecipe.ColourNames) or fixed tone; Unity tints each by name (NpcUmaRaces.OutfitRoles).
-OUTFIT_ROLES = ("accent", "accentdark", "leather", "leatherlight", "metal", "glow", "bone", "fur", "dark")
+OUTFIT_ROLES = ("accent", "accentdark", "leather", "leatherlight", "metal", "glow", "bone", "fur", "dark",
+                "cloth", "clothlow", "clothdark", "cloth2", "cloth2shade", "cloth2dark", "braid")
 TORSO = ("pelvis", "spine_01", "spine_02", "spine_03", "clavicle_l", "clavicle_r", "neck_01")
 HAND = ("hand_l", "hand_r") + tuple("%s_0%d_%s" % (f, i, s) for f in ("thumb", "index", "middle", "ring", "pinky")
                                     for i in (1, 2, 3) for s in ("l", "r"))
@@ -57,6 +63,7 @@ def _args():
     p = argparse.ArgumentParser()
     p.add_argument("--fbx", required=True)
     p.add_argument("--preview")
+    p.add_argument("--slots", help="comma-separated slot name prefixes to build (default: all)")
     return p.parse_args(argv)
 
 
@@ -227,8 +234,12 @@ def _profile(fig, c, n, half, mask, bins=48):
     # Directions with no skin (between sparse rows) take the circular interpolation of their neighbours.
     xs = np.concatenate([have - bins, have, have + bins])
     radii = np.interp(np.arange(bins), xs, np.tile(radii[have], 3))
-    # A ring around the trunk never dips into a hollow: no direction is shorter than its neighbours' mean.
+    # A ring around the trunk never dips into a hollow: no direction is shorter than its neighbours' mean, nor than the
+    # section's convex envelope, which the cut tops (npc_cut._support) are measured on.
     radii = np.maximum(radii, 0.5 * (np.roll(radii, 1) + np.roll(radii, -1)))
+    a = (np.arange(bins) + 0.5) / bins * 2 * math.pi - math.pi
+    dirs = np.outer(np.cos(a), np.array(u)) + np.outer(np.sin(a), np.array(v))
+    radii = np.maximum(radii, (q @ dirs.T).max(axis=0))
     return u, v, radii
 
 
@@ -502,7 +513,17 @@ def _solid(part):
     t = getattr(part, "thickness", 0.0)
     out = getattr(part, "outward", None)
     centre = getattr(part, "centre", None)
-    if centre is not None:
+    axis = getattr(part, "axis", None)
+    if axis is not None:
+        # A tube round a slanted limb (sleeve, trouser leg): outward is away from the limb's own line.
+        a, d = axis
+
+        def radial(p):
+            q = p - a
+            return q - d * q.dot(d)
+
+        flip = sum(f.normal.dot(radial(f.calc_center_median())) for f in bm.faces) < 0
+    elif centre is not None:
         flip = sum(f.normal.dot((f.calc_center_median() - centre) * Vector((1.0, 1.0, 0.0))) for f in bm.faces) < 0
     else:
         flip = out is not None and sum((f.normal for f in bm.faces), Vector()).dot(out) < 0
@@ -604,6 +625,32 @@ def _weights(fig, ob, idx, wts):
     acg_render._limit_weights(ob, set(fig.rig.data.bones.keys()), 4)
 
 
+def _param_keys(fig, ob, name, build, params, low, mats):
+    """One shape key per parameter with a range (npc_cut.KEYS): the slot rebuilt with that parameter at its high end
+    and the others low. Same builder, same topology, so the vertices correspond one to one."""
+    import npc_cut
+    kept = 0
+    for p, (lo, hi) in params.items():
+        if hi <= lo:
+            continue
+        values = dict(low)
+        values[p] = hi
+        tmp, _ = _assemble(name + "_tmp", build(fig, **values), mats)
+        if len(tmp.data.vertices) != len(ob.data.vertices):
+            raise SystemExit("%s: %s changes the topology (%d vs %d vertices)" % (name, p, len(tmp.data.vertices),
+                                                                                 len(ob.data.vertices)))
+        co = np.empty(len(tmp.data.vertices) * 3)
+        tmp.data.vertices.foreach_get("co", co)
+        me = tmp.data
+        bpy.data.objects.remove(tmp)
+        bpy.data.meshes.remove(me)
+        sk = ob.shape_key_add(name=npc_cut.KEYS[p], from_mix=False)
+        sk.data.foreach_set("co", co)
+        sk.value = 0.0
+        kept += 1
+    return kept
+
+
 def _preview(fig, obs, path):
     """Workbench sheet: every slot on the body, front and back."""
     sc = bpy.context.scene
@@ -626,7 +673,9 @@ def _preview(fig, obs, path):
         k.value = 0.0
     tones = {"accent": (0.75, 0.25, 0.2), "accentdark": (0.5, 0.15, 0.12), "leather": (0.35, 0.24, 0.16),
              "leatherlight": (0.5, 0.36, 0.26), "metal": (0.78, 0.6, 0.25), "glow": (0.5, 1.0, 1.0), "bone": (0.92, 0.88, 0.78),
-             "fur": (0.94, 0.92, 0.88), "dark": (0.23, 0.21, 0.2)}
+             "fur": (0.94, 0.92, 0.88), "dark": (0.23, 0.21, 0.2), "cloth": (0.3, 0.45, 0.62), "clothlow": (0.26, 0.4, 0.55),
+             "clothdark": (0.24, 0.36, 0.5), "cloth2": (0.55, 0.5, 0.4), "cloth2shade": (0.5, 0.45, 0.36),
+             "cloth2dark": (0.33, 0.3, 0.24), "braid": (0.6, 0.2, 0.16)}
     for role, c in tones.items():
         m = bpy.data.materials.get("npc_wear_" + role)
         m.diffuse_color = c + (1.0,)
@@ -654,12 +703,18 @@ def main():
     mats = {}
     for role in OUTFIT_ROLES:
         mats[role] = bpy.data.materials.get("npc_wear_" + role) or bpy.data.materials.new("npc_wear_" + role)
+    import npc_cut
+    slots = {name: (build, {}) for name, build in SLOTS.items()}
+    slots.update(npc_cut.SLOTS)
+    if a.slots:
+        slots = {n: v for n, v in slots.items() if n.startswith(tuple(a.slots.split(",")))}
     obs, report = [], []
-    for name, build in SLOTS.items():
-        parts = build(fig)
-        ob, near = _assemble(name, parts, mats)
+    for name, (build, params) in slots.items():
+        low = {p: r[0] for p, r in params.items()}
+        ob, near = _assemble(name, build(fig, **low), mats)
         idx, wts = _nearest(fig, ob, near)
         kept = _keys(fig, ob, idx, wts)
+        kept += _param_keys(fig, ob, name, build, params, low, mats)
         _weights(fig, ob, idx, wts)
         obs.append(ob)
         report.append("%s:%d/%d" % (name, len(ob.data.vertices), kept))
