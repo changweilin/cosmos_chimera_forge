@@ -27,16 +27,9 @@
 
 綁定姿勢：T-pose 會把前臂與手掌拉直到上臂延長線上（MakeHuman 前臂原本前彎約 45°），袖筒與袖口才會包住前臂、手才會從袖口伸出。膝蓋與手肘以 Taubin 平滑抹掉寫實的膝蓋骨凹凸；匯出時每頂點骨權重限 4 根（Unity 上限）。`idle_pose` 不要把腳掌「放平」：Humanoid 的腳沒有內外翻，Unity 會把它轉嫁成小腿扭轉，膝蓋看起來像斷掉。Unity 材質另設 `_OutlineDepthBias`，把描邊外殼沿視線往後推，關節凹處不會透出裂痕般的線。
 
-## UMA 種族形變（ADR-0014、ADR-0015）
+## UMA 種族形變（ADR-0014；ADR-0015 已撤回）
 `tools/acg-character/race.py` 在裸身基底上烘焙 DNA 用的 shape key：`blender -b --python tools/acg-character/race.py -- --spec <spec> --blend <out.blend> [--fbx <out.fbx>] [--report <out.json>] [--only 通道,…]`。
 
-- 通道與來源的唯一對照：遊戲 repo 的 `Assets/_Project/Art/Characters/_UMA/Npc/race_channels.json`（與 `NpcMeshes.UmaChannels` 一一對應，EditMode `UmaRecipeGateTests.RaceChannelTableMatchesTheMapper` 檢查）。`bone` 在 Unity 端以骨骼 DNA 做、不烘；`target`／`param` 由本腳本烘；`slot`、`shader`、`sculpt` 另做。
+- ADR-0015（路人 NPC UMA）已撤回：路人／訓練家 NPC 全面改為遊戲端 `NpcMeshes` 程序化生成，`tools/acg-character/npc*` 腳本與 `_UMA/Npc` 基底已移除；`race.py` 僅供玩家主角／英雄 UMA 種族烘焙與 shape key 驗證。
 - 每個 key 都把整個裸身建置重跑一次再與基底相減，眼、眉、嘴貼片與頭部平滑、下巴塑形都算進去；頭身比的頭部縮放固定為基底解出的值，避免頭部 target 被重新求解抵消。
 - 一組 incr／decr target 視為一個淨權重軸（上限 ±1）；基底 spec 已用掉的部分會讓該方向的步幅變小，實際步幅寫在報告 `step`，轉換器要除以它。報告也列出每個 key 在各網格的最大位移（mm），< 0.1 mm 標 `vanished`。
-
-## 路人種族基底（npc-uma-looks.md#種族基底）
-不取自任何主角；46 個人形基底（23 族 × 男女；骷髏與機械人另立 UMA 種族）全由抽樣規則推導，重跑即重建：
-1. `unity test` 跑 `UmaRaceBaseTests.ExportRaceBases`（Explicit）→ 遊戲 repo 的 `_UMA/Npc/race_bases.json`。
-2. `python tools/acg-character/npc_bases.py specs` → 人類男女基底；`npc_bases.py bake --blender <blender.exe> --only npc_human_male`（人類男性的報告即校正）。
-3. `python tools/acg-character/npc_bases.py specs --calibration Logs/npc/npc_human_male.json` → 其餘基底；`CLIPPED` 列出族平均超出 MakeHuman ±1 的通道。
-4. `npc_bases.py bake --blender <blender.exe> --jobs 4` → `Logs/npc/<id>.blend|.json`，FBX 與 `race_keys.json` 寫進遊戲 repo 的 `_UMA/Npc/`（`Bases/<id>.fbx`；路徑見 `game_paths.py`，預設相鄰的 `../cosmos_chimera`，可用 `COSMIMERA_GAME` 改）；EditMode `UmaRaceBaseTests.BakedKeysReachAndShowEveryResident` 檢查涵蓋與可見門檻。

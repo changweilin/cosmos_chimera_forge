@@ -169,7 +169,7 @@ def main():
     base = _coords(spec)
     body = spec["id"]
     probe = acg_measure.Probe(bpy.data.objects[body])
-    # The race base's own DNA means (npc_bases.py); a spec without them is calibrated around the human unit values.
+    # Optional per-race DNA means; a spec without them is calibrated around the human unit values.
     means = spec.get("npc", {}).get("dna", {})
     deltas = {}
     report = {"spec": spec["id"], "head_scale": spec["proportions"].get("head_scale"), "hr_m": round(probe.hr, 5),
