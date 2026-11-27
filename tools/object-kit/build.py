@@ -43,18 +43,26 @@ def build_one(name, era):
     tris = {}
     distinct = {}
     for slot in spec["slots"]:
-        tris[slot] = []
-        seen = set()
-        for k in range(VARIANTS):
-            part = Part(era, rng_for(name, era, slot, k), rng_for(name, era, "frame"))
-            spec["form"](part, slot)
-            morph(part, k)
-            if not part.bm.faces:
-                raise SystemExit("empty slot %s/%s/%s v%d" % (name, era, slot, k))
-            ob, t = finish(part, "%s_v%d" % (slot, k), coll)
-            tris[slot].append(t)
-            seen.add(tuple(round(c, 4) for v in ob.data.vertices for c in v.co))
-        distinct[slot] = len(seen)
+        for cut in (False, True):
+            obs, tris[slot] = [], []
+            seen = set()
+            for k in range(VARIANTS):
+                part = Part(era, rng_for(name, era, slot, k), rng_for(name, era, "frame"))
+                spec["form"](part, slot)
+                morph(part, k, cut)
+                if not part.bm.faces:
+                    raise SystemExit("empty slot %s/%s/%s v%d" % (name, era, slot, k))
+                ob, t = finish(part, "%s_v%d" % (slot, k), coll)
+                obs.append(ob)
+                tris[slot].append(t)
+                seen.add(tuple(round(c, 4) for v in ob.data.vertices for c in v.co))
+            distinct[slot] = len(seen)
+            if len(seen) > 1 or cut:
+                break
+            for ob in obs:
+                mesh = ob.data
+                bpy.data.objects.remove(ob)
+                bpy.data.meshes.remove(mesh)
     return coll, tris, distinct
 
 

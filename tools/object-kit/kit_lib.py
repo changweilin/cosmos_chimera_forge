@@ -294,9 +294,14 @@ def _extent(cos):
 MORPH = ((0.0, 0.0), (0.10, 0.04), (-0.08, 0.05), (0.06, -0.06), (-0.05, 0.07), (0.14, -0.03))
 
 
-def morph(part, k):
+def morph(part, k, cut=False):
     """Radially swells or pinches a part along its own height; both ends stay put, so the joints with the
-    neighbouring slots (which sit at a part's top and bottom) do not move."""
+    neighbouring slots (which sit at a part's top and bottom) do not move.
+
+    cut: for a slot whose six variants came out identical (build.py retries with it). Both sin terms vanish at
+    t = 0 and 1, so a part with vertices only at its ends (a box, a ringless cylinder) never bends; two cuts give
+    the profile something to bend. A part flat in z instead scales in its own plane about its centre. Off by
+    default so slots that already vary keep their delivered geometry."""
     a, b = MORPH[k % len(MORPH)]
     verts = part.bm.verts
     if (a == 0 and b == 0) or not verts:
@@ -304,7 +309,21 @@ def morph(part, k):
     zs = [v.co.z for v in verts]
     lo, hi = min(zs), max(zs)
     if hi - lo < 0.005:
+        if cut:
+            f = 1 + 0.5 * (a + b)
+            cx = sum(v.co.x for v in verts) / len(verts)
+            cy = sum(v.co.y for v in verts) / len(verts)
+            for v in verts:
+                v.co.x = cx + (v.co.x - cx) * f
+                v.co.y = cy + (v.co.y - cy) * f
         return
+    eps = (hi - lo) * 1e-3
+    if cut and not any(lo + eps < v.co.z < hi - eps for v in verts):
+        bm = part.bm
+        for t in (1 / 3, 2 / 3):
+            bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:],
+                                   plane_co=Vector((0, 0, lo + (hi - lo) * t)), plane_no=Vector((0, 0, 1)))
+        verts = bm.verts
     cx = sum(v.co.x for v in verts) / len(verts)
     cy = sum(v.co.y for v in verts) / len(verts)
     for v in verts:
