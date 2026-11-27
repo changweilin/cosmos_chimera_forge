@@ -22,8 +22,11 @@ DNA moves and scales the thigh bones (hip width, bulk), and cloth weighted partl
 trousers under it push through. Not here: head-worn bits (the lava brow band, the crystal brow gem:
 procedural, as the headwear).
 
-Pre: the .blend was saved by race.py (base with its shape keys). Post: the FBX holds the rig and one mesh per slot,
-"piece_<Region>" / "trim_<Era>" and the npc_cut.SLOTS names; --preview renders every slot (or those --slots names) front
+The wings, tails and capes of npc_appendage.py (and the storm cape, "piece_Storm") go in the same FBX for the base's own
+race, weighted to swing chains added to the rig instead of to the skin they hang past.
+
+Pre: the .blend was saved by race.py (base with its shape keys). Post: the FBX holds the rig (with the "sw_" chains) and
+one mesh per slot, "piece_<Region>" / "trim_<Era>", the npc_cut.SLOTS names and npc_appendage.slots_for(race); --preview renders every slot (or those --slots names) front
 and back. Side effects: edits the open scene in
 memory only (never saved); overwrites the outputs.
 """
@@ -343,42 +346,6 @@ def _ice(fig):
     return [collar, gloves]
 
 
-def _cape(fig):
-    """Storm: a cape hung from the back of the shoulders to a quarter of the Chest height, in deep folds that open toward
-    the hem (NpcMeshes.Cape, fall 0.75). Static on the trunk here; its own bone chain comes with the cape slots (row 15)."""
-    h = fig.h
-    rows, cols, folds = 7, 15, 3.5
-    sl, sr = fig.head_of["upperarm_l"], fig.head_of["upperarm_r"]
-    yb = fig.axis_y(fig.chest)
-    back = fig.co[fig.torso & (np.abs(fig.co[:, 2] - fig.chest) < 0.02), 1].max()
-    depth = back - yb
-    top_y = yb + depth * 0.4
-    hem_z = max(0.05 * h, fig.chest * 0.25)
-    part = Part("accent", near="torso")
-    for i in range(rows):
-        v = i / (rows - 1)
-        for k in range(cols):
-            u = k / (cols - 1)
-            arc = math.sin(math.pi * u)
-            x = sl.x + (sr.x - sl.x) * u
-            top = Vector((x, top_y + (back + 0.01 * h - top_y) * arc + 0.02 * h, sl.z + 0.02 * h + 0.015 * h * arc))
-            hem = Vector((x * 1.45, top.y + 0.12 * h + 0.04 * h * arc, hem_z))
-            fold = math.sin(u * math.pi * 2 * folds + 0.4)
-            p = top.lerp(hem, v)
-            p.y += 0.035 * h * math.sin(math.pi * min(1.0, v * 1.6)) * arc
-            p.y += 0.022 * h * fold * v
-            p.z += 0.018 * h * fold * v * v
-            part.verts.append(p)
-    for i in range(rows - 1):
-        for k in range(cols - 1):
-            a = i * cols + k
-            part.faces.append((a, a + 1, a + cols + 1, a + cols))
-    part.thickness = 0.004
-    part.lining = "accentdark"
-    part.outward = Vector((0.0, 1.0, 0.0))
-    return [part]
-
-
 def _crystal(fig):
     """Crystal: a broad belt between Hip and Waist and a strap hanging at the left hip (NpcMeshes Signature)."""
     h = fig.h
@@ -486,7 +453,6 @@ SLOTS = {
     "piece_Verdant": _capelet,
     "piece_Lava": _sash,
     "piece_Ice": _ice,
-    "piece_Storm": _cape,
     "piece_Crystal": _crystal,
     "piece_Twilight": _twilight,
     "trim_Primal": _primal,
@@ -549,7 +515,8 @@ def _assemble(name, parts, mats):
         lining = getattr(part, "lining", None)
         for f in bm.faces:
             faces.append(tuple(at[v] for v in f.verts))
-            role = lining if lining and f.normal.y < 0 else part.role
+            # The lining faces the body (a cape's -y side) or, on a wing membrane or feather, its lining_dir.
+            role = lining if lining and f.normal.dot(getattr(part, "lining_dir", Vector((0.0, -1.0, 0.0)))) > 0 else part.role
             if role not in roles:
                 roles.append(role)
             fmat.append(roles.index(role))
@@ -680,6 +647,16 @@ def _preview(fig, obs, path):
     for role, c in tones.items():
         m = bpy.data.materials.get("npc_wear_" + role)
         m.diffuse_color = c + (1.0,)
+    # npc_appendage roles: a name and an optional percentage.
+    family = {"body": (0.72, 0.52, 0.38), "mane": (0.3, 0.2, 0.14), "plume": (0.5, 0.36, 0.26), "angel": (0.96, 0.95, 0.91),
+              "angeltip": (1.0, 0.99, 0.96), "angelcovert": (0.93, 0.9, 0.85), "claw": (0.16, 0.13, 0.14),
+              "vampire": (0.12, 0.09, 0.13), "vampirelining": (0.48, 0.12, 0.16)}
+    for m in bpy.data.materials:
+        role = m.name[len("npc_wear_"):] if m.name.startswith("npc_wear_") else None
+        name = role.rstrip("0123456789") if role else None
+        if name in family and role not in tones:
+            k = int(role[len(name):] or 100) / 100
+            m.diffuse_color = tuple(min(1.0, x * k) for x in family[name]) + (1.0,)
     for o in bpy.data.objects:
         if o.type == "MESH" and o not in obs and o.parent == fig.rig and o != fig.body and o.name.startswith("prop_"):
             o.hide_render = True
@@ -705,10 +682,15 @@ def main():
     for role in OUTFIT_ROLES:
         mats[role] = bpy.data.materials.get("npc_wear_" + role) or bpy.data.materials.new("npc_wear_" + role)
     import npc_cut
+    import npc_appendage
     slots = {name: (build, {}) for name, build in SLOTS.items()}
     slots.update(npc_cut.SLOTS)
+    race = os.path.basename(bpy.data.filepath).split("_")[1]
+    swung = npc_appendage.slots_for(race)
     if a.slots:
-        slots = {n: v for n, v in slots.items() if n.startswith(tuple(a.slots.split(",")))}
+        want = tuple(a.slots.split(","))
+        slots = {n: v for n, v in slots.items() if n.startswith(want)}
+        swung = {n: v for n, v in swung.items() if n.startswith(want)}
     obs, report = [], []
     for name, (build, params) in slots.items():
         low = {p: r[0] for p, r in params.items()}
@@ -719,6 +701,29 @@ def main():
         _weights(fig, ob, idx, wts)
         obs.append(ob)
         report.append("%s:%d/%d" % (name, len(ob.data.vertices), kept))
+    chains = []
+    for name, build in swung.items():
+        slot = build(fig)
+        for part in slot.parts:
+            for role in (part.role, getattr(part, "lining", None)):
+                if role and role not in mats:
+                    mats[role] = bpy.data.materials.get("npc_wear_" + role) or bpy.data.materials.new("npc_wear_" + role)
+            # _assemble copies `near` per vertex; these parts are weighted by chain, so it carries the part itself.
+            part.near = part
+        ob, owners = _assemble(name, slot.parts, mats)
+        owner = npc_appendage.weigh(ob, slot, owners)
+        kept = npc_appendage.keys(fig, ob, slot, owner)
+        ob.parent = fig.rig
+        ob.modifiers.new("Armature", "ARMATURE").object = fig.rig
+        chains += slot.chains
+        obs.append(ob)
+        report.append("%s:%d/%d/%d" % (name, len(ob.data.vertices), kept, len(slot.chains)))
+    if chains:
+        import acg_swing
+        bpy.context.view_layer.objects.active = rig
+        bpy.ops.object.mode_set(mode="EDIT")
+        acg_swing._add_bones(rig, chains)
+        bpy.ops.object.mode_set(mode="OBJECT")
     if a.preview:
         _preview(fig, obs, a.preview)
     npc_hair._export(rig, obs, a.fbx)

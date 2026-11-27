@@ -17,7 +17,7 @@
       runs npc_beast_head.py on both bases of the races in npc/beast_heads.json "races", writing <game>/_UMA/Npc/Head/<id>.fbx
       (log <id>_head.log beside the .blend).
   python tools/acg-character/npc_bases.py outfit --blender <blender.exe> [--blends <dir>] [--jobs N] [--only <id>,...]
-      runs npc_outfit.py (pieces, trims and the npc_cut.py cut slots) on both bases of the races in npc/outfit_slots.json
+      runs npc_outfit.py (pieces, trims, the npc_cut.py cut slots and the npc_appendage.py wings, tails and capes) on both bases of the races in npc/outfit_slots.json
       "races", writing <game>/_UMA/Npc/Outfit/<id>.fbx
       (log <id>_outfit.log beside the .blend).
   python tools/acg-character/npc_bases.py sheet <lineup dir> <out.png>
