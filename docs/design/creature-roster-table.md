@@ -1,6 +1,6 @@
 # 宙獸全圖鑑原型與形態分類總表（SSOT）
 
-本表由 [designed.js](../../designed.js) 自動同步產生（共 **45** 條宙獸演化線：18 條已生成／御三家、27 條已設計待生成），將**設計原型（多標籤 `design_prototypes`）**與**形態分類維度（`base_entity`、`morphology_primary`、`morphology_secondary`）**納入單一對照表，避免重複選用相同生物或器物原型。
+本表由 [designed.js](../../designed.js) 自動同步產生（共 **45** 條宙獸演化線：18 條已生成／御三家、27 條已設計待生成），將**設計原型（多標籤 `design_prototypes`）**與**形態分類維度（`base_entity`、`morphology_primary`、`morphology_secondary`）**納入單一對照表。**防重複規則**：宙獸**主設計原型強制不得重複（全庫唯一）**，**副設計原型與整體特徵維持重疊率 ≤ 60% 不重複限制**；完整全庫檢索與即時稽核以 `Drive/creatures/_designed_prompts/_creature_feature_lookup_table.{json,md}` 為準。
 
 ## 一、45 條宙獸演化線總表
 

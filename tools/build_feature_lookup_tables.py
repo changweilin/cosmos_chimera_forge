@@ -9,6 +9,7 @@ Usage:
 
 from __future__ import annotations
 
+import argparse
 import glob
 import json
 import os
@@ -105,6 +106,75 @@ def compute_overlaps(items: list[dict[str, Any]], key_field: str = "prompt_keywo
     return items, all_pairs
 
 
+def unescape_gdoc_md(text: str) -> str:
+    """Strip backslash escapes inserted when exporting Google Docs as Markdown."""
+    return re.sub(r"\\([\\`*_#\[\]()+.!-])", r"\1", text)
+
+
+def extract_creature_archetypes(proto_tags: str, core_proto: str) -> tuple[str, list[str]]:
+    """Split archetype tokens into a required primary archetype and secondary archetypes."""
+    tokens = split_tokens(proto_tags or core_proto)
+    if not tokens:
+        return "", []
+    primary = tokens[0]
+    secondary = tokens[1:]
+    if not secondary and proto_tags and core_proto:
+        core_tokens = split_tokens(core_proto)
+        if len(core_tokens) > 1:
+            secondary = [t for t in core_tokens[1:] if t != primary]
+    return primary, secondary
+
+
+def audit_creature_primary_archetypes(items: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
+    """Enforce zero duplication on primary_archetype across all creatures."""
+    by_primary: dict[str, list[dict[str, Any]]] = {}
+    for it in items:
+        key = it.get("primary_archetype", "").strip()
+        if key:
+            by_primary.setdefault(key, []).append(it)
+
+    duplicates: list[dict[str, Any]] = []
+    for key, group in sorted(by_primary.items()):
+        if len(group) > 1:
+            duplicates.append({
+                "primary_archetype": key,
+                "count": len(group),
+                "ids": [g["id"] for g in group],
+                "names": [g["name_zh"] for g in group],
+            })
+            partners = ", ".join(g["id"] for g in group)
+            for g in group:
+                g["primary_archetype_unique"] = False
+                g["primary_archetype_audit"] = f"❌ 主原型重複({partners})"
+        else:
+            group[0]["primary_archetype_unique"] = True
+            group[0]["primary_archetype_audit"] = "✅ 唯一"
+
+    for it in items:
+        if not it.get("primary_archetype"):
+            it["primary_archetype_unique"] = False
+            it["primary_archetype_audit"] = "❌ 缺主設計原型"
+
+    # Compute secondary archetype overlap against other creatures' secondary_archetypes
+    sec_sets = [set(it.get("secondary_archetypes", [])) for it in items]
+    for i, it in enumerate(items):
+        a = sec_sets[i]
+        if not a:
+            it["secondary_max_overlap_pct"] = 0.0
+            continue
+        max_sec = 0.0
+        for j, b in enumerate(sec_sets):
+            if i == j or not b:
+                continue
+            ov = round(len(a & b) / min(len(a), len(b)) * 100.0, 1)
+            if ov > max_sec:
+                max_sec = ov
+        it["secondary_max_overlap_pct"] = max_sec
+
+    flagged_cnt = sum(1 for it in items if not it.get("primary_archetype_unique", False))
+    return duplicates, flagged_cnt
+
+
 def infer_creature_element(cid: str) -> str:
     for el in ELEMENT_ZH:
         if f"_{el}_" in cid or cid.startswith(f"{el}_"):
@@ -132,15 +202,15 @@ def infer_creature_element(cid: str) -> str:
     return "unknown"
 
 
-def parse_creature_prompt(path: Path, status: str, category: str) -> dict[str, Any]:
-    txt = path.read_text(encoding="utf-8")
+def parse_creature_prompt(path: Path, status: str, category: str, cid_override: str | None = None, rel_override: str | None = None) -> dict[str, Any]:
+    txt = unescape_gdoc_md(path.read_text(encoding="utf-8"))
     lines = txt.splitlines()
     title = lines[0].lstrip("# ").strip() if lines else path.stem
     m_id = re.match(r"\[([^\]]+)\]\s*(.+)", title)
-    subject_id = m_id.group(1) if m_id else path.parent.name if status.startswith("已開工") else path.stem.replace(".prompt", "")
+    cid = cid_override or (path.parent.name if status.startswith("已開工") else path.stem.replace(".prompt", ""))
+    subject_id = m_id.group(1) if m_id else cid
     name_zh = m_id.group(2).strip() if m_id else title
 
-    cid = path.parent.name if status.startswith("已開工") else path.stem.replace(".prompt", "")
     element = infer_creature_element(cid)
 
     def get_bullet(key: str) -> str:
@@ -155,10 +225,12 @@ def parse_creature_prompt(path: Path, status: str, category: str) -> dict[str, A
     motifs = get_bullet("標誌性紋樣")
     anchors = get_bullet("共通構造錨點")
 
+    primary_archetype, secondary_archetypes = extract_creature_archetypes(proto_tags, core_proto)
+
     # Stage sizes
     stage_sizes: dict[str, str] = {}
     for st in ("juvenile", "adolescent", "adult", "overload"):
-        m_st = re.search(rf"### .*?\({st}.*?\).*?\n- \*\*體型尺度\*\*：([^\n]+)", txt)
+        m_st = re.search(rf"### .*?\({st}.*?\).*?\n+(?:- \*\*體型尺度\*\*：([^\n]+))", txt)
         if m_st:
             stage_sizes[st] = m_st.group(1).strip()
 
@@ -198,7 +270,7 @@ def parse_creature_prompt(path: Path, status: str, category: str) -> dict[str, A
     dim_scale: list[str] = []
     for st, label in (("juvenile", "幼年"), ("adolescent", "少年"), ("adult", "成年"), ("overload", "超載")):
         if st in stage_sizes:
-            m_cls = re.search(r"`(XS|S|M|L|XL)`", stage_sizes[st])
+            m_cls = re.search(r"(?:`|[（(])(XS|S|M|L|XL)(?:`|[）)])", stage_sizes[st])
             if m_cls:
                 dim_scale.append(f"{label}體級_{m_cls.group(1)}")
 
@@ -215,7 +287,7 @@ def parse_creature_prompt(path: Path, status: str, category: str) -> dict[str, A
             if kw not in prompt_keywords:
                 prompt_keywords.append(kw)
 
-    rel_path = str(path.relative_to(DRIVE / "creatures")).replace("\\", "/")
+    rel_path = rel_override or str(path.relative_to(DRIVE / "creatures")).replace("\\", "/")
     return {
         "id": cid,
         "subject_id": subject_id,
@@ -225,59 +297,143 @@ def parse_creature_prompt(path: Path, status: str, category: str) -> dict[str, A
         "status": status,
         "source_prompt": rel_path,
         "core_archetype": core_proto,
+        "primary_archetype": primary_archetype,
+        "secondary_archetypes": secondary_archetypes,
         "palette": palette,
         "keywords_by_dimension": keywords_by_dim,
         "prompt_keywords": prompt_keywords,
     }
 
 
-def build_creatures_table() -> dict[str, Any]:
-    items: list[dict[str, Any]] = []
+def _creature_category(name: str) -> str:
+    if name.startswith("ch_starter_"):
+        return "御三家(starter)"
+    if "trial_boss" in name:
+        return "試煉BOSS(trial_boss)"
+    if name.startswith("ch_1st_batch_"):
+        return "第一批(1st_batch)"
+    return "一般演化線(line)"
 
-    # 1. Active folders ch_*
-    for folder in sorted((DRIVE / "creatures").glob("ch_*")):
-        if not folder.is_dir():
+
+def _load_creature_cache(json_path: Path) -> dict[str, dict[str, Any]]:
+    cache: dict[str, dict[str, Any]] = {}
+    if not json_path.exists():
+        return cache
+    try:
+        data = json.loads(json_path.read_text(encoding="utf-8"))
+    except Exception:
+        return cache
+    for item in data.get("creatures", []):
+        cid = item.get("id", "")
+        if not cid:
             continue
+        cache[cid] = item
+        if cid.startswith("line_"):
+            cache.setdefault(f"ch_{cid}", item)
+        elif cid.startswith("ch_line_"):
+            cache.setdefault(cid.removeprefix("ch_"), item)
+    return cache
+
+
+def _hydrate_cached_creature(cached: dict[str, Any], folder: Path) -> dict[str, Any]:
+    item = dict(cached)
+    cid = folder.name
+    item["id"] = cid
+    item["status"] = "已開工（Drive 主目錄）"
+    item["category"] = item.get("category") or _creature_category(cid)
+    gdocs = list(folder.glob("*.prompt.md.gdoc"))
+    if gdocs:
+        item["source_prompt"] = f"{cid}/{gdocs[0].name}"
+    morph = [
+        k.removeprefix("原型_")
+        for k in item.get("keywords_by_dimension", {}).get("morphology_and_archetype", [])
+        if k.startswith("原型_")
+    ]
+    if morph:
+        item["primary_archetype"] = morph[0]
+        item["secondary_archetypes"] = morph[1:]
+    else:
+        primary, secondary = extract_creature_archetypes("", item.get("core_archetype", ""))
+        item["primary_archetype"] = primary
+        item["secondary_archetypes"] = secondary
+    return item
+
+
+def build_creatures_table(extra_prompts_dir: Path | None = None) -> dict[str, Any]:
+    c_root = DRIVE / "creatures"
+    dp_root = c_root / "_designed_prompts"
+    cache = _load_creature_cache(dp_root / "_creature_feature_lookup_table.json")
+
+    items: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+
+    # 1. Active folders ch_* and line_* in Drive/creatures
+    for folder in sorted(c_root.iterdir()):
+        if not folder.is_dir() or folder.name in ("_prompts", "_designed_prompts", "SKILL"):
+            continue
+        if not (folder.name.startswith("ch_") or folder.name.startswith("line_")):
+            continue
+        cat = _creature_category(folder.name)
         prompts = list(folder.glob("*.prompt.md"))
-        if not prompts:
-            continue
-        name = folder.name
-        if name.startswith("ch_starter_"):
-            cat = "御三家(starter)"
-        elif name.startswith("ch_trial_boss_"):
-            cat = "試煉BOSS(trial_boss)"
+        extra_prompt = (extra_prompts_dir / f"{folder.name}.prompt.md") if extra_prompts_dir else None
+        if prompts:
+            item = parse_creature_prompt(prompts[0], "已開工（Drive 主目錄）", cat)
+        elif extra_prompt and extra_prompt.exists():
+            item = parse_creature_prompt(
+                extra_prompt,
+                "已開工（Drive 主目錄）",
+                cat,
+                cid_override=folder.name,
+                rel_override=f"{folder.name}/{folder.name}.prompt.md.gdoc",
+            )
+        elif folder.name in cache:
+            item = _hydrate_cached_creature(cache[folder.name], folder)
         else:
-            cat = "第一批(1st_batch)"
-        items.append(parse_creature_prompt(prompts[0], "已開工（Drive 主目錄）", cat))
+            continue
+        items.append(item)
+        seen_ids.add(item["id"])
 
     # 2. _designed_prompts
-    dp_root = DRIVE / "creatures" / "_designed_prompts"
     for sub, cat in (("_starters", "御三家(starter)"), ("_trial_bosses", "試煉BOSS(trial_boss)"), ("_lines", "一般演化線(line)")):
         sub_dir = dp_root / sub
         if not sub_dir.exists():
             continue
         for p in sorted(sub_dir.glob("*.prompt.md")):
-            items.append(parse_creature_prompt(p, "待製作（_designed_prompts）", cat))
+            cid = p.stem.replace(".prompt", "")
+            if cid in seen_ids or f"ch_{cid}" in seen_ids:
+                continue
+            item = parse_creature_prompt(p, "待製作（_designed_prompts）", cat)
+            items.append(item)
+            seen_ids.add(item["id"])
 
+    dup_primaries, primary_flagged = audit_creature_primary_archetypes(items)
     items, high_pairs = compute_overlaps(items)
 
     by_element: dict[str, Any] = {}
     for it in items:
         el = it["element"]
-        b = by_element.setdefault(el, {"name_zh": ELEMENT_ZH.get(el, el), "total": 0, "flagged_over_60": 0, "passed": 0})
+        b = by_element.setdefault(
+            el,
+            {"name_zh": ELEMENT_ZH.get(el, el), "total": 0, "primary_duplicates": 0, "flagged_over_60": 0, "passed": 0},
+        )
         b["total"] += 1
+        if not it.get("primary_archetype_unique", True):
+            b["primary_duplicates"] += 1
         if it["max_overlap_pct"] > MAX_OVERLAP_PCT:
             b["flagged_over_60"] += 1
-        else:
+        if it.get("primary_archetype_unique", True) and it["max_overlap_pct"] <= MAX_OVERLAP_PCT:
             b["passed"] += 1
 
     kw_counts = [it["kw_count"] for it in items]
+    active_cnt = sum(1 for i in items if i["status"].startswith("已開工"))
+    pending_cnt = sum(1 for i in items if i["status"].startswith("待製作"))
     return {
         "schema_version": "1.0",
         "project": "cosmos_chimera_forge",
-        "scope": f"creatures 全庫（已開工 {sum(1 for i in items if i['status'].startswith('已開工'))} 條 + 待製作 {sum(1 for i in items if i['status'].startswith('待製作'))} 條 = 共 {len(items)} 條演化線）",
+        "scope": f"creatures 全庫（已開工 {active_cnt} 條 + 待製作 {pending_cnt} 條 = 共 {len(items)} 條演化線）",
         "overlap_rule": {
-            "metric": "Overlap Coefficient = |A ∩ B| / min(|A|, |B|) on prompt_keywords",
+            "primary_archetype_rule": "主設計原型（primary_archetype）強制不得重複（0% 重複容忍，全庫唯一）",
+            "metric": "Overlap Coefficient = |A ∩ B| / min(|A|, |B|) on prompt_keywords（含副設計原型與視覺特徵）",
             "max_allowed_pct": MAX_OVERLAP_PCT,
             "min_keywords_per_item": 10,
         },
@@ -286,8 +442,10 @@ def build_creatures_table() -> dict[str, Any]:
             "min_kw_count": min(kw_counts) if kw_counts else 0,
             "max_kw_count": max(kw_counts) if kw_counts else 0,
             "avg_kw_count": round(sum(kw_counts) / len(kw_counts), 1) if kw_counts else 0.0,
+            "primary_archetype_flagged_count": primary_flagged,
+            "duplicate_primary_archetypes": dup_primaries,
             "flagged_over_60_count": sum(1 for it in items if it["max_overlap_pct"] > MAX_OVERLAP_PCT),
-            "passed_count": sum(1 for it in items if it["max_overlap_pct"] <= MAX_OVERLAP_PCT),
+            "passed_count": sum(1 for it in items if it.get("primary_archetype_unique", True) and it["max_overlap_pct"] <= MAX_OVERLAP_PCT),
             "total_high_overlap_pairs_over_60": len(high_pairs),
             "by_element": dict(sorted(by_element.items())),
         },
@@ -296,15 +454,56 @@ def build_creatures_table() -> dict[str, Any]:
     }
 
 
-def extract_char_narrative_keywords(cid: str, txt: str, links_by_id: dict[str, Any]) -> tuple[str, dict[str, list[str]]]:
+PROTAGONIST_NAMES: dict[str, tuple[str, str]] = {
+    "chr_protagonist_amemori_sumiha": ("雨森澄羽", "Amemori Sumiha"),
+    "chr_protagonist_roen": ("洛恩", "Roen"),
+    "chr_protagonist_yeh_chengxi": ("葉澄汐", "Yeh Chengxi"),
+}
+
+
+def split_char_name_and_title(raw_label: str, category: str, explicit_title: str = "") -> tuple[str, str, str, str]:
+    """Split raw display label into (name_zh, name_en, title_zh, title_en)."""
+    raw = raw_label.strip()
+    m_en = re.match(r"^([^(\（]+?)\s*[(\（]([^)\）]+)[)\）]\s*$", raw)
+    zh_part = m_en.group(1).strip() if m_en else raw
+    en_part = m_en.group(2).strip() if m_en else ""
+
+    title_zh = explicit_title.strip()
+    title_en = ""
+    if category.startswith("生活任務NPC") and "·" in zh_part:
+        name_zh, t_zh = [p.strip() for p in zh_part.split("·", 1)]
+        if not title_zh:
+            title_zh = t_zh
+        en_toks = en_part.split() if en_part else []
+        name_en = en_toks[0] if en_toks else ""
+        title_en = " ".join(en_toks[1:]) if len(en_toks) > 1 else ""
+    else:
+        name_zh = zh_part
+        name_en = en_part
+
+    return name_zh, name_en, title_zh, title_en
+
+
+def extract_char_narrative_keywords(cid: str, txt: str, links_by_id: dict[str, Any]) -> tuple[str, str, dict[str, list[str]]]:
     lines = txt.splitlines()
     title = lines[0].lstrip("# ").strip() if lines else cid
     # Name extraction
     m_name = re.search(r"-\s*姓名[：:]\s*([^\n]+)", txt) or re.search(r"-\s*Character name[：:]\s*([^\n]+)", txt, re.I) or re.search(r"-\s*Name[：:]\s*([^\n]+)", txt, re.I)
+    m_title = re.search(r"-\s*稱號[：:]\s*([^\n]+)", txt)
+    explicit_title = m_title.group(1).strip() if m_title else ""
+
     if m_name:
-        name_zh = m_name.group(1).strip()
+        raw_name = m_name.group(1).strip()
+    elif cid in PROTAGONIST_NAMES:
+        zh, en = PROTAGONIST_NAMES[cid]
+        raw_name = f"{zh} ({en})"
     else:
-        name_zh = title.split("—")[0].split("｜")[0].strip()
+        header = title.split("｜")[0].strip()
+        if "—" in header:
+            left, right = [p.strip() for p in header.split("—", 1)]
+            raw_name = right if (left == cid or "Prompt" in right or "提示詞" in right) and "Prompt" not in right and "提示詞" not in right else (right if left == cid else left)
+        else:
+            raw_name = header
 
     cat = "主角(protagonist)" if cid.startswith("chr_protagonist_") else "試煉關主(warden)"
     dim_demo = [f"定位_{cat}"]
@@ -405,7 +604,58 @@ def extract_char_narrative_keywords(cid: str, txt: str, links_by_id: dict[str, A
         "palette": dim_palette,
         "silhouette_and_gear": dim_gear,
     }
-    return name_zh, keywords_by_dim
+    return raw_name, explicit_title, keywords_by_dim
+
+
+def audit_character_names_and_titles(items: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]], int]:
+    """Enforce uniqueness across character names (zh/en) and titles (zh/en)."""
+    name_zh_map: dict[str, list[dict[str, Any]]] = {}
+    name_en_map: dict[str, list[dict[str, Any]]] = {}
+    title_zh_map: dict[str, list[dict[str, Any]]] = {}
+    title_en_map: dict[str, list[dict[str, Any]]] = {}
+
+    for it in items:
+        if it.get("name_zh"):
+            name_zh_map.setdefault(it["name_zh"].strip(), []).append(it)
+        if it.get("name_en"):
+            name_en_map.setdefault(it["name_en"].strip().lower(), []).append(it)
+        if it.get("title_zh"):
+            title_zh_map.setdefault(it["title_zh"].strip(), []).append(it)
+        if it.get("title_en"):
+            title_en_map.setdefault(it["title_en"].strip().lower(), []).append(it)
+
+    dup_names: list[dict[str, Any]] = []
+    dup_titles: list[dict[str, Any]] = []
+    reasons_by_id: dict[str, list[str]] = {it["id"]: [] for it in items}
+
+    for lang, mp in (("zh", name_zh_map), ("en", name_en_map)):
+        for key, group in sorted(mp.items()):
+            if len(group) > 1:
+                val = group[0]["name_zh"] if lang == "zh" else group[0]["name_en"]
+                dup_names.append({"lang": lang, "value": val, "count": len(group), "ids": [g["id"] for g in group]})
+                for g in group:
+                    reasons_by_id[g["id"]].append(f"名稱({lang}):{val}")
+
+    for lang, mp in (("zh", title_zh_map), ("en", title_en_map)):
+        for key, group in sorted(mp.items()):
+            if len(group) > 1:
+                val = group[0]["title_zh"] if lang == "zh" else group[0]["title_en"]
+                dup_titles.append({"lang": lang, "value": val, "count": len(group), "ids": [g["id"] for g in group]})
+                for g in group:
+                    reasons_by_id[g["id"]].append(f"稱號({lang}):{val}")
+
+    flagged = 0
+    for it in items:
+        reasons = reasons_by_id.get(it["id"], [])
+        if reasons:
+            it["name_title_unique"] = False
+            it["name_title_audit"] = "❌ 重複(" + "、".join(reasons) + ")"
+            flagged += 1
+        else:
+            it["name_title_unique"] = True
+            it["name_title_audit"] = "✅ 名稱與稱號唯一"
+
+    return dup_names, dup_titles, flagged
 
 
 def parse_character_prompt(path: Path, status: str, links_by_id: dict[str, Any]) -> dict[str, Any]:
@@ -416,12 +666,13 @@ def parse_character_prompt(path: Path, status: str, links_by_id: dict[str, Any])
         lines = txt.splitlines()
         title = lines[0].lstrip("# ").strip() if lines else cid
         m_id = re.match(r"\[([^\]]+)\]\s*(.+)", title)
-        name_zh = m_id.group(2).strip() if m_id else title
+        raw_name = m_id.group(2).strip() if m_id else title
 
         def get_b(k: str) -> str:
             m = re.search(rf"^- \*\*{re.escape(k)}\*\*：(.+)$", txt, re.M)
             return m.group(1).strip() if m else ""
 
+        explicit_title = get_b("稱號")
         body = get_b("基本體貌")
         style = get_b("服裝風格")
         culture = get_b("地區文化 / 年代文化 / 外觀風格")
@@ -475,8 +726,10 @@ def parse_character_prompt(path: Path, status: str, links_by_id: dict[str, Any])
         }
         category = "生活任務NPC(quest)"
     else:
-        name_zh, keywords_by_dim = extract_char_narrative_keywords(cid, txt, links_by_id)
+        raw_name, explicit_title, keywords_by_dim = extract_char_narrative_keywords(cid, txt, links_by_id)
         category = "主角(protagonist)" if cid.startswith("chr_protagonist_") else "試煉關主(warden)"
+
+    name_zh, name_en, title_zh, title_en = split_char_name_and_title(raw_name, category, explicit_title)
 
     prompt_keywords: list[str] = []
     for lst in keywords_by_dim.values():
@@ -488,6 +741,10 @@ def parse_character_prompt(path: Path, status: str, links_by_id: dict[str, Any])
     return {
         "id": cid,
         "name_zh": name_zh,
+        "name_en": name_en,
+        "title_zh": title_zh,
+        "title_en": title_en,
+        "display_name": raw_name,
         "category": category,
         "status": status,
         "source_prompt": rel_path,
@@ -515,16 +772,19 @@ def build_characters_table() -> dict[str, Any]:
     for p in sorted((DRIVE / "characters" / "_designed_prompts").glob("*.prompt.md")):
         items.append(parse_character_prompt(p, "待製作（_designed_prompts）", links_by_id))
 
+    dup_names, dup_titles, name_title_flagged = audit_character_names_and_titles(items)
     items, high_pairs = compute_overlaps(items)
 
     by_category: dict[str, Any] = {}
     for it in items:
         cat = it["category"]
-        b = by_category.setdefault(cat, {"total": 0, "flagged_over_60": 0, "passed": 0})
+        b = by_category.setdefault(cat, {"total": 0, "name_title_flagged": 0, "flagged_over_60": 0, "passed": 0})
         b["total"] += 1
+        if not it.get("name_title_unique", True):
+            b["name_title_flagged"] += 1
         if it["max_overlap_pct"] > MAX_OVERLAP_PCT:
             b["flagged_over_60"] += 1
-        else:
+        if it.get("name_title_unique", True) and it["max_overlap_pct"] <= MAX_OVERLAP_PCT:
             b["passed"] += 1
 
     kw_counts = [it["kw_count"] for it in items]
@@ -533,6 +793,7 @@ def build_characters_table() -> dict[str, Any]:
         "project": "cosmos_chimera_forge",
         "scope": f"characters 全庫（已開工 {sum(1 for i in items if i['status'].startswith('已開工'))} 位 + 待製作 {sum(1 for i in items if i['status'].startswith('待製作'))} 位 = 共 {len(items)} 位角色）",
         "overlap_rule": {
+            "name_and_title_rule": "角色名稱（中／英文名）與稱號（中／英文稱號）皆強制不得重複（全庫唯一）",
             "metric": "Overlap Coefficient = |A ∩ B| / min(|A|, |B|) on prompt_keywords",
             "max_allowed_pct": MAX_OVERLAP_PCT,
             "min_keywords_per_item": 8,
@@ -542,8 +803,11 @@ def build_characters_table() -> dict[str, Any]:
             "min_kw_count": min(kw_counts) if kw_counts else 0,
             "max_kw_count": max(kw_counts) if kw_counts else 0,
             "avg_kw_count": round(sum(kw_counts) / len(kw_counts), 1) if kw_counts else 0.0,
+            "name_title_flagged_count": name_title_flagged,
+            "duplicate_names": dup_names,
+            "duplicate_titles": dup_titles,
             "flagged_over_60_count": sum(1 for it in items if it["max_overlap_pct"] > MAX_OVERLAP_PCT),
-            "passed_count": sum(1 for it in items if it["max_overlap_pct"] <= MAX_OVERLAP_PCT),
+            "passed_count": sum(1 for it in items if it.get("name_title_unique", True) and it["max_overlap_pct"] <= MAX_OVERLAP_PCT),
             "total_high_overlap_pairs_over_60": len(high_pairs),
             "by_category": by_category,
         },
@@ -558,29 +822,32 @@ def render_creature_md(data: dict[str, Any]) -> str:
         "# 宙獸特徵檢索表（_creature_feature_lookup_table）",
         "",
         f"> **範圍**：{data['scope']}",
-        f"> **重疊判定**：`{data['overlap_rule']['metric']}`，上限 `{data['overlap_rule']['max_allowed_pct']}%`",
-        f"> **統計**：共 {s['total_creatures']} 條演化線｜通過 ≤60%：{s['passed_count']}｜超過警戒：{s['flagged_over_60_count']}｜高重疊配對：{s['total_high_overlap_pairs_over_60']}",
+        f"> **主設計原型規則**：{data['overlap_rule']['primary_archetype_rule']}",
+        f"> **副設計原型與視覺重疊判定**：`{data['overlap_rule']['metric']}`，上限 `{data['overlap_rule']['max_allowed_pct']}%`",
+        f"> **統計**：共 {s['total_creatures']} 條演化線｜全數通過：{s['passed_count']}｜主原型重複：{s['primary_archetype_flagged_count']}｜視覺超過警戒(>60%)：{s['flagged_over_60_count']}｜高重疊配對：{s['total_high_overlap_pairs_over_60']}",
         "",
         "## 使用規範（設計新宙獸前必讀）",
         "1. 設計任何新宙獸演化線前，**必須先閱讀本表（或同目錄 `.json`）**。",
-        "2. 檢查目標屬性與定位下已存在的「核心原型」、「形態路由」、「共通配色」與「標誌性紋樣」，避免與現有項目重疊超過 60%。",
+        "2. **主設計原型強制不得重複（0% 重複容忍）**：不得與任何既有宙獸共用相同的主設計原型（`primary_archetype`）。",
+        "3. **副設計原型與整體視覺特徵維持 ≤ 60% 不重複限制**：檢查目標屬性與定位下已存在的副設計原型（`secondary_archetypes`）、形態路由、共通配色與標誌性紋樣，確保關鍵字重疊率不超過 60%。",
         "",
         "## 依元素統計",
-        "| 元素 | 總數 | 通過 | 警戒(>60%) |",
-        "|---|---:|---:|---:|",
+        "| 元素 | 總數 | 通過 | 主原型重複 | 警戒(>60%) |",
+        "|---|---:|---:|---:|---:|",
     ]
     for el, info in s["by_element"].items():
-        lines.append(f"| {info['name_zh']} (`{el}`) | {info['total']} | {info['passed']} | {info['flagged_over_60']} |")
+        lines.append(f"| {info['name_zh']} (`{el}`) | {info['total']} | {info['passed']} | {info['primary_duplicates']} | {info['flagged_over_60']} |")
 
     lines += [
         "",
         "## 宙獸清單",
-        "| ID | 名稱 | 元素 | 定位 | 狀態 | 關鍵字數 | 最高重疊 | 稽核 |",
-        "|---|---|---|---|---|---:|---:|---|",
+        "| ID | 名稱 | 元素 | 主設計原型 | 副設計原型 | 狀態 | 主原型稽核 | 最高重疊 | 視覺稽核 |",
+        "|---|---|---|---|---|---|---|---:|---|",
     ]
     for c in data["creatures"]:
+        sec_str = "、".join(c.get("secondary_archetypes", [])) or "—"
         lines.append(
-            f"| `{c['id']}` | {c['name_zh']} | {c['element']} | {c['category']} | {c['status']} | {c['kw_count']} | {c['max_overlap_pct']}% | {c['audit_flag']} |"
+            f"| `{c['id']}` | {c['name_zh']} | {c['element']} | {c.get('primary_archetype', '—')} | {sec_str} | {c['status']} | {c.get('primary_archetype_audit', '—')} | {c['max_overlap_pct']}% | {c['audit_flag']} |"
         )
     return "\n".join(lines) + "\n"
 
@@ -591,42 +858,58 @@ def render_character_md(data: dict[str, Any]) -> str:
         "# 角色特徵檢索表（_character_feature_lookup_table）",
         "",
         f"> **範圍**：{data['scope']}",
-        f"> **重疊判定**：`{data['overlap_rule']['metric']}`，上限 `{data['overlap_rule']['max_allowed_pct']}%`",
-        f"> **統計**：共 {s['total_characters']} 位角色｜通過 ≤60%：{s['passed_count']}｜超過警戒：{s['flagged_over_60_count']}｜高重疊配對：{s['total_high_overlap_pairs_over_60']}",
+        f"> **名稱與稱號規則**：{data['overlap_rule']['name_and_title_rule']}",
+        f"> **視覺特徵重疊判定**：`{data['overlap_rule']['metric']}`，上限 `{data['overlap_rule']['max_allowed_pct']}%`",
+        f"> **統計**：共 {s['total_characters']} 位角色｜全數通過：{s['passed_count']}｜名稱／稱號重複：{s['name_title_flagged_count']}｜視覺超過警戒(>60%)：{s['flagged_over_60_count']}｜高重疊配對：{s['total_high_overlap_pairs_over_60']}",
         "",
         "## 使用規範（設計新角色前必讀）",
         "1. 設計任何新角色前，**必須先閱讀本表（或同目錄 `.json`）**。",
-        "2. 檢查已存在的「性別／年齡／族裔分佈」、「髮型與臉部特徵」、「服裝配色」與「隨身裝備」，避免與現有角色剪影或配色撞車超過 60%。",
+        "2. **名稱與稱號皆強制不得重複**：中／英文名稱與中／英文稱號均須全庫唯一。",
+        "3. 檢查已存在的「性別／年齡／族裔分佈」、「髮型與臉部特徵」、「服裝配色」與「隨身裝備」，避免與現有角色剪影或配色撞車超過 60%。",
         "",
         "## 依定位統計",
-        "| 定位 | 總數 | 通過 | 警戒(>60%) |",
-        "|---|---:|---:|---:|",
+        "| 定位 | 總數 | 通過 | 名稱／稱號重複 | 警戒(>60%) |",
+        "|---|---:|---:|---:|---:|",
     ]
     for cat, info in s["by_category"].items():
-        lines.append(f"| {cat} | {info['total']} | {info['passed']} | {info['flagged_over_60']} |")
+        lines.append(f"| {cat} | {info['total']} | {info['passed']} | {info['name_title_flagged']} | {info['flagged_over_60']} |")
 
     lines += [
         "",
         "## 角色清單",
-        "| ID | 名稱 | 定位 | 狀態 | 關鍵字數 | 最高重疊 | 稽核 |",
-        "|---|---|---|---|---:|---:|---|",
+        "| ID | 名稱 | 稱號 | 定位 | 名稱/稱號稽核 | 最高重疊 | 視覺稽核 |",
+        "|---|---|---|---|---|---:|---|",
     ]
     for c in data["characters"]:
+        name_disp = f"{c['name_zh']} ({c['name_en']})" if c.get("name_en") else c["name_zh"]
+        if c.get("title_zh") and c.get("title_en"):
+            title_disp = f"{c['title_zh']} ({c['title_en']})"
+        else:
+            title_disp = c.get("title_zh") or c.get("title_en") or "—"
         lines.append(
-            f"| `{c['id']}` | {c['name_zh']} | {c['category']} | {c['status']} | {c['kw_count']} | {c['max_overlap_pct']}% | {c['audit_flag']} |"
+            f"| `{c['id']}` | {name_disp} | {title_disp} | {c['category']} | {c.get('name_title_audit', '—')} | {c['max_overlap_pct']}% | {c['audit_flag']} |"
         )
     return "\n".join(lines) + "\n"
 
 
 def main() -> None:
-    creatures_data = build_creatures_table()
+    parser = argparse.ArgumentParser(description="Build creature and character feature lookup tables.")
+    parser.add_argument("--extra-prompts-dir", type=Path, default=None, help="Directory with exported *.prompt.md files for .gdoc-backed creatures.")
+    parser.add_argument("--creature-md-out", type=Path, default=None, help="Optional path to write creature lookup Markdown (avoids duplicating .md.gdoc).")
+    args = parser.parse_args()
+
+    creatures_data = build_creatures_table(extra_prompts_dir=args.extra_prompts_dir)
     c_out_dir = DRIVE / "creatures" / "_designed_prompts"
     (c_out_dir / "_creature_feature_lookup_table.json").write_text(
         json.dumps(creatures_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    (c_out_dir / "_creature_feature_lookup_table.md").write_text(
-        render_creature_md(creatures_data), encoding="utf-8"
-    )
+    creature_md_text = render_creature_md(creatures_data)
+    gdoc_md = c_out_dir / "_creature_feature_lookup_table.md.gdoc"
+    if args.creature_md_out:
+        args.creature_md_out.parent.mkdir(parents=True, exist_ok=True)
+        args.creature_md_out.write_text(creature_md_text, encoding="utf-8")
+    elif not gdoc_md.exists():
+        (c_out_dir / "_creature_feature_lookup_table.md").write_text(creature_md_text, encoding="utf-8")
 
     chars_data = build_characters_table()
     ch_out_dir = DRIVE / "characters" / "_designed_prompts"
