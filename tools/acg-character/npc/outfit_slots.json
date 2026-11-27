@@ -1,0 +1,182 @@
+{
+ "comment": "NPC wardrobe slots (cosmos_chimera docs/design/npc-uma-looks.md#服裝, row 17), built by npc_outfit.py (pieces, trims) and npc_cut.py (cuts) on both bases of every race below: what NpcMeshes Signature (piece_<ArchRegion>), the era block of Dress (trim_<ArchEra>) and Dress itself (the cuts) draw, refitted to the base's body. Agrarian and Mercantile have no trim (their era shows in the cut and sleeves).",
+ "races": [
+  "android",
+  "angel",
+  "avian",
+  "demon",
+  "dragonkin",
+  "dwarf",
+  "elf",
+  "goblin",
+  "horseface",
+  "human",
+  "lizardfolk",
+  "mantid",
+  "merfolk",
+  "orc",
+  "oxhead",
+  "shrimpfolk",
+  "simian",
+  "starborn",
+  "tengu",
+  "vampire",
+  "werewolf",
+  "zombie"
+ ],
+ "races_comment": "Every race the game assembles on UMA (NpcMeshes.UmaCarries): skeletons, automata and crabfolk stay procedural and, the first two, unclothed.",
+ "cuts": {
+  "comment": "Q-A26 = A. Mirrored by NpcMeshes.GarmentFitOf (cosmos_chimera): change both. top: one slot per cut and the sleeve lengths it can be drawn with (NpcMeshes Dress: robes and coats force long sleeves, labourers go bare, wraps reach short at most); hem (share of the leg below the hip) and ease (procedural fit) are the shape keys npc_hem / npc_ease, 0 at the low end and 1 at the high end. Era hems 0.06-0.8 x lerp(0.78, 1.14, Textile01); dress, vest and coat clamp them; wrap fixes it; the robe top stops at 0.12 over its ankle-long skirt, which carries the braid (NpcMeshes hangs both, hem 0.9 and fall 0.93, which would cross). skirt: fall (share of the leg) and flare, keys npc_fall / npc_flare. border: the braid band as a share of the hem's drop below the hip, NpcMeshes Dress lerp(0.07, 0.32, Textile01), key npc_border on every top but the robe's and on the robe's skirt. legs: trouser ease. boots: height as the share of ankle to knee / 1.6, per lower era (ancient wears the industrial pair; primal goes barefoot).",
+  "border": [
+   0.07,
+   0.32
+  ],
+  "top": {
+   "Tunic": {
+    "sleeves": [
+     "Bare",
+     "Short",
+     "Long"
+    ],
+    "hem": [
+     0.04,
+     0.92
+    ],
+    "ease": [
+     1.07,
+     1.2
+    ]
+   },
+   "Robe": {
+    "sleeves": [
+     "Long"
+    ],
+    "hem": [
+     0.12,
+     0.12
+    ],
+    "ease": [
+     1.07,
+     1.2
+    ]
+   },
+   "Dress": {
+    "sleeves": [
+     "Bare",
+     "Short",
+     "Long"
+    ],
+    "hem": [
+     0.04,
+     0.2
+    ],
+    "ease": [
+     1.07,
+     1.2
+    ]
+   },
+   "Coat": {
+    "sleeves": [
+     "Bare",
+     "Long"
+    ],
+    "hem": [
+     0.72,
+     0.92
+    ],
+    "ease": [
+     1.17,
+     1.2
+    ]
+   },
+   "Mantle": {
+    "sleeves": [
+     "Bare",
+     "Short",
+     "Long"
+    ],
+    "hem": [
+     0.04,
+     0.92
+    ],
+    "ease": [
+     1.07,
+     1.2
+    ]
+   },
+   "Vest": {
+    "sleeves": [
+     "Bare",
+     "Short",
+     "Long"
+    ],
+    "hem": [
+     0.04,
+     0.12
+    ],
+    "ease": [
+     1.07,
+     1.2
+    ]
+   },
+   "Wrap": {
+    "sleeves": [
+     "Bare",
+     "Short"
+    ],
+    "hem": [
+     0.02,
+     0.02
+    ],
+    "ease": [
+     1.07,
+     1.2
+    ]
+   }
+  },
+  "skirt": {
+   "Robe": {
+    "fall": [
+     0.93,
+     0.93
+    ],
+    "flare": [
+     1.2,
+     2.0
+    ]
+   },
+   "Dress": {
+    "fall": [
+     0.5,
+     0.92
+    ],
+    "flare": [
+     1.2,
+     2.0
+    ]
+   },
+   "Wrap": {
+    "fall": [
+     0.3,
+     0.45
+    ],
+    "flare": [
+     0.6,
+     0.6
+    ]
+   }
+  },
+  "legs": {
+   "Tight": 1.08,
+   "Loose": 1.3
+  },
+  "boots": {
+   "Agrarian": 0.12,
+   "Mercantile": 0.5,
+   "Industrial": 0.15,
+   "Steampunk": 0.5,
+   "Future": 0.3,
+   "Wasteland": 0.4
+  }
+ }
+}

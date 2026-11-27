@@ -14,11 +14,18 @@ import math
 import os
 import sys
 
+import bmesh
 import bpy
 from mathutils import Matrix, Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import kit_forms  # noqa: E402
+import glob  # noqa: E402
+import importlib  # noqa: E402
+
+# Each forms_<group>.py registers its functions into kit_forms.FUNCTIONS on import; sorted so the order is fixed.
+for _path in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "forms_*.py"))):
+    importlib.import_module(os.path.splitext(os.path.basename(_path))[0])
 from kit_lib import ERAS, VARIANTS, Part, finish, morph, rng_for  # noqa: E402
 
 GENERATOR_VERSION = 1
@@ -51,8 +58,20 @@ def build_one(name, era):
     return coll, tris, distinct
 
 
+def triangulate(coll):
+    """Unity's FBX importer discards non-planar n-gons as self-intersecting (holes in the part); Blender
+    splits them cleanly. Triangle count is unchanged: the budget already counts triangles."""
+    for o in coll.objects:
+        bm = bmesh.new()
+        bm.from_mesh(o.data)
+        bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+        bm.to_mesh(o.data)
+        bm.free()
+
+
 def export(coll, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    triangulate(coll)
     bpy.ops.export_scene.fbx(filepath=path, collection=coll.name, object_types={"MESH"}, mesh_smooth_type="FACE",
                              use_mesh_modifiers=False, bake_anim=False, add_leaf_bones=False, path_mode="RELATIVE",
                              embed_textures=False, colors_type="LINEAR", apply_unit_scale=True,

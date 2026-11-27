@@ -11,7 +11,7 @@
     return id;
   }
   function kindFor(taskId) {
-    if (taskId==="move-vfx") return "moves";
+    if (taskId==="move-vfx"||taskId==="passive-vfx") return "moves";
     if (String(taskId||"").startsWith("character")) return "characters";
     if (String(taskId||"").startsWith("creature")) return "creatures";
     throw Error("不支援此類型的圖鑑");

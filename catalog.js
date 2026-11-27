@@ -2,7 +2,7 @@
 // 改動規則見 README.md：新增選項 → minor；改既有 ID / 刪除 / 改動作事件 → major。
 // 權重 w 為相對值，不必加總為 100。
 window.COSMI_CATALOG = {
-  version: "2.11.0",
+  version: "2.15.0",
 
   ELEMENTS: [
     { v: "metal",   zh: "金", palette: "銀白、淡金、鋼藍高光" },
@@ -1942,6 +1942,9 @@ window.COSMI_CATALOG = {
       { id: "run", zh: "奔跑", f: 22, loop: true, ev: ["ev_footstep@5", "ev_footstep@16"] },
       { id: "sneak_idle", zh: "潛行待機", f: 60, loop: true },
       { id: "sneak_move", zh: "潛行移動", f: 40, loop: true },
+      { id: "crouch_move", zh: "蹲下移動（壓低重心緩行）", f: 38, loop: true, ev: ["ev_footstep@10", "ev_footstep@29"] },
+      { id: "crouch_roll", zh: "蹲下翻滾（低姿翻滾閃避，無敵幀）", f: 20, rm: true, ev: ["ev_end_lock@16"] },
+      { id: "crouch_jump", zh: "蹲下跳躍（低姿蓄力起跳／滯空／落地）", f: 30 },
       { id: "roll_dodge", zh: "翻滾閃避（無敵幀）", f: 20, rm: true, ev: ["ev_end_lock@16"] },
       { id: "jump", zh: "跳躍（起跳/滯空/落地）", f: 30 },
       { id: "swim_idle", zh: "水面漂浮待機", f: 60, loop: true },
@@ -1950,6 +1953,38 @@ window.COSMI_CATALOG = {
       { id: "mount_idle", zh: "騎乘待機（坐姿握鞍）", f: 60, loop: true },
       { id: "mount_run", zh: "騎乘奔跑（騎乘衝刺）", f: 24, loop: true },
       { id: "block", zh: "格擋（舉起→維持→放下）", f: 30 },
+      { id: "crouch_block", zh: "蹲下格擋（低重心舉武／舉盾防禦）", f: 28 },
+      { id: "block_hit", zh: "格擋受擊（防禦震退回饋）", f: 16, ev: ["ev_spawn_fx@2"] },
+      { id: "perfect_block", zh: "完美格擋（150ms 彈反震擊）", f: 22, ev: ["ev_spawn_fx@4", "ev_hit@6", "ev_end_lock@16"] },
+      { id: "guard_break", zh: "破防硬直（架勢條滿崩解 1.5s）", f: 45 },
+      { id: "stagger", zh: "失衡硬直（受破招/重擊暈眩）", f: 45 },
+      { id: "dodge_miss", zh: "閃避（MISS 殘影）", f: 14, rm: true },
+      { id: "weapon_draw", zh: "拔出武器（進入主控戰鬥）", f: 18, ev: ["ev_spawn_fx@6"] },
+      { id: "weapon_sheathe", zh: "收回武器（脫戰歸鞘）", f: 18 },
+      { id: "moveset_switch", zh: "切換招式組合（共鳴換手，2s 鎖定）", f: 20, ev: ["ev_spawn_fx@8", "ev_end_lock@14"] },
+      { id: "moveset_forced_switch", zh: "強制切換招式組合（追隨宙獸倒下輪替）", f: 22, ev: ["ev_spawn_fx@6", "ev_end_lock@16"] },
+      { id: "atk_melee_front", zh: "近戰：正前（主控玩家施招）", f: 26, ev: ["ev_hit@12", "ev_end_lock@20"], grips: ["two_handed", "one_hand_shield"], dist: "melee" },
+      { id: "atk_melee_front_r", zh: "雙持近戰（右手）：正前快斬", f: 22, ev: ["ev_hit@9", "ev_end_lock@16"], grips: ["dual_wield"], dist: "melee" },
+      { id: "atk_melee_front_l", zh: "雙持近戰（左手）：正前快斬", f: 22, ev: ["ev_hit@9", "ev_end_lock@16"], grips: ["dual_wield"], dist: "melee" },
+      { id: "atk_melee_sweep", zh: "近戰：橫掃（主控玩家施招）", f: 30, ev: ["ev_hit@14", "ev_end_lock@24"], grips: ["two_handed", "one_hand_shield"], dist: "melee" },
+      { id: "atk_melee_sweep_r", zh: "雙持近戰（右手）：橫掃", f: 25, ev: ["ev_hit@11", "ev_end_lock@19"], grips: ["dual_wield"], dist: "melee" },
+      { id: "atk_melee_sweep_l", zh: "雙持近戰（左手）：橫掃", f: 25, ev: ["ev_hit@11", "ev_end_lock@19"], grips: ["dual_wield"], dist: "melee" },
+      { id: "atk_melee_burst", zh: "近戰：周身擴散（主控玩家施招）", f: 34, ev: ["ev_spawn_fx@16", "ev_hit@18"], dist: "melee" },
+      { id: "atk_dash", zh: "突進：直線衝鋒攻擊", f: 28, rm: true, ev: ["ev_hit@12", "ev_end_lock@22"], grips: ["two_handed", "one_hand_shield"] },
+      { id: "atk_dash_r", zh: "雙持突進（右手）：疾風突刺", f: 24, rm: true, ev: ["ev_hit@10", "ev_end_lock@18"], grips: ["dual_wield"] },
+      { id: "atk_dash_l", zh: "雙持突進（左手）：疾風突刺", f: 24, rm: true, ev: ["ev_hit@10", "ev_end_lock@18"], grips: ["dual_wield"] },
+      { id: "atk_ranged_line", zh: "射擊：直線（主控玩家施招）", f: 30, ev: ["ev_spawn_fx@14"], grips: ["two_handed", "one_hand_shield"], dist: "ranged" },
+      { id: "atk_ranged_line_r", zh: "雙持遠程（右手）：直線射擊／擲射", f: 24, ev: ["ev_spawn_fx@11", "ev_end_lock@18"], grips: ["dual_wield"], dist: "ranged" },
+      { id: "atk_ranged_line_l", zh: "雙持遠程（左手）：直線射擊／擲射", f: 24, ev: ["ev_spawn_fx@11", "ev_end_lock@18"], grips: ["dual_wield"], dist: "ranged" },
+      { id: "atk_ranged_cone", zh: "射擊：扇形（主控玩家施招）", f: 30, ev: ["ev_spawn_fx@14"], grips: ["two_handed", "one_hand_shield"], dist: "ranged" },
+      { id: "atk_ranged_cone_r", zh: "雙持遠程（右手）：扇形散射", f: 26, ev: ["ev_spawn_fx@12", "ev_end_lock@20"], grips: ["dual_wield"], dist: "ranged" },
+      { id: "atk_ranged_cone_l", zh: "雙持遠程（左手）：扇形散射", f: 26, ev: ["ev_spawn_fx@12", "ev_end_lock@20"], grips: ["dual_wield"], dist: "ranged" },
+      { id: "atk_ranged_arc", zh: "射擊：拋物線（主控玩家施招）", f: 34, ev: ["ev_spawn_fx@18"], grips: ["two_handed", "one_hand_shield"], dist: "ranged" },
+      { id: "atk_ranged_arc_r", zh: "雙持遠程（右手）：拋物線擲射", f: 28, ev: ["ev_spawn_fx@14", "ev_end_lock@22"], grips: ["dual_wield"], dist: "ranged" },
+      { id: "atk_ranged_arc_l", zh: "雙持遠程（左手）：拋物線擲射", f: 28, ev: ["ev_spawn_fx@14", "ev_end_lock@22"], grips: ["dual_wield"], dist: "ranged" },
+      { id: "atk_burst_target", zh: "遠程：指定目標點爆破引導", f: 34, ev: ["ev_spawn_fx@16", "ev_hit@18"], dist: "ranged" },
+      { id: "sup_self", zh: "輔助：自身（玩家共鳴施放）", f: 36, ev: ["ev_spawn_fx@18"] },
+      { id: "sup_ally", zh: "輔助：他者（支援追隨宙獸）", f: 36, ev: ["ev_spawn_fx@18"] },
       { id: "hit_react", zh: "受擊", f: 15 },
       { id: "knockdown", zh: "倒地", f: 30 },
       { id: "getup", zh: "起身", f: 30 },
@@ -1993,6 +2028,9 @@ window.COSMI_CATALOG = {
       { id: "walk", zh: "移動", f: 32, loop: true, ev: ["ev_footstep@8"] },
       { id: "run", zh: "奔跑", f: 20, loop: true, ev: ["ev_footstep@5"] },
       { id: "sneak", zh: "潛行", f: 40, loop: true },
+      { id: "crouch_move", zh: "蹲下移動（低伏潛行移動）", f: 38, loop: true, ev: ["ev_footstep@10", "ev_footstep@29"] },
+      { id: "crouch_roll", zh: "蹲下翻滾（低姿翻滾閃避，無敵幀）", f: 18, rm: true, ev: ["ev_end_lock@14"] },
+      { id: "crouch_jump", zh: "蹲下跳躍（低伏蓄力起跳／滯空／落地）", f: 30 },
       { id: "jump", zh: "跳躍（起跳/滯空/落地）", f: 30 },
       { id: "roll_dodge", zh: "翻滾閃避（主控無敵幀）", f: 18, rm: true, ev: ["ev_end_lock@14"] },
       { id: "swim", zh: "游泳／水面移動", f: 36, loop: true },
@@ -2002,6 +2040,7 @@ window.COSMI_CATALOG = {
       { id: "mount_idle", zh: "被騎乘待機（穩定承載姿態）", f: 60, loop: true },
       { id: "mount_run", zh: "被騎乘奔跑（高速載騎衝刺）", f: 22, loop: true, ev: ["ev_footstep@5"] },
       { id: "block", zh: "格擋", f: 30 },
+      { id: "crouch_block", zh: "蹲下格擋（低伏防禦架勢）", f: 28 },
       { id: "block_hit", zh: "格擋受擊（防禦震退回饋）", f: 16, ev: ["ev_spawn_fx@2"] },
       { id: "perfect_block", zh: "完美格擋（150ms 彈反震擊）", f: 22, ev: ["ev_spawn_fx@4", "ev_hit@6", "ev_end_lock@16"] },
       { id: "guard_break", zh: "破防硬直（架勢條滿崩解 1.5s）", f: 45 },
@@ -2041,15 +2080,23 @@ window.COSMI_CATALOG = {
       { id: "summon_appear", zh: "被召喚登場", f: 36 },
       { id: "recall_vanish", zh: "被收回", f: 24 },
       { id: "capture_struggle", zh: "被收服時掙扎", f: 45 },
+      { id: "hatch_emerge", zh: "破蛋而出（自蜷縮 pose 對齊 Socket_EggCore：破口露簽名部位→脫殼→初啼看向玩家；依 cosmos_chimera creature-eggs.md 形體分演）", f: 210, ev: ["ev_spawn_fx@0", "ev_spawn_fx@60", "ev_end_lock@200"] },
       { id: "overload_enter", zh: "進入超載", f: 60, ev: ["ev_spawn_fx@20"] },
       { id: "overload_exit", zh: "超載結束", f: 36 },
       { id: "hatch", zh: "破蛋而出（僅幼年）", f: 72 },
-      { id: "victory", zh: "勝利", f: 60 }
+      { id: "victory", zh: "勝利", f: 60 },
+      { id: "follow_idle", zh: "追隨者待機（貼身護衛姿態）", f: 60, loop: true },
+      { id: "follow_dash", zh: "追隨者疾步跟進（跟隨主控趕路／補位）", f: 22, rm: true },
+      { id: "link_channel", zh: "共鳴供招（作為主控當前招式組來源時微光呼應）", f: 40, loop: true, ev: ["ev_spawn_fx@10"] },
+      { id: "relay_enter", zh: "車輪戰輪替上場（替補追隨者衝入戰場）", f: 32, ev: ["ev_spawn_fx@14"] },
+      { id: "boss_moveset_switch", zh: "BOSS 主控切換招式組（切換本體／追隨者招式）", f: 26, ev: ["ev_spawn_fx@10", "ev_end_lock@18"] },
+      { id: "boss_summon_follower", zh: "BOSS 號召／喚出追隨者（第二隻或車輪戰替補）", f: 36, ev: ["ev_spawn_fx@16"] }
     ]
   },
 
   GRIP_MODES: {
-    virtual_hand_rule: "武器與盾牌由虛擬大手持握並執行另外設計的獨立對應動畫，技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX）；因此宙獸本體模型與骨架動畫**不繪製、不包含任何武器、盾牌或虛擬大手**。Socket_Weapon_R／Socket_Weapon_L 僅作為空掛點預留於身體兩側適當安全間距，宙獸本體仍依持有模式節奏做出相應的軀幹、頭頸與四肢／羽翼動作。",
+    virtual_hand_rule: "裝備全部改為角色裝備：玩家角色直接於 Socket_HandR_Prop／Socket_HandL_Prop 持握武器與盾牌，宙獸無個人裝備改為純粹本體＋追隨作戰。保留虛擬大手與獨立掛點規格供遺留／BOSS 演出參考，技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX）；宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。",
+    crouch_rule: "蹲下狀態提供 crouch_move、crouch_roll、crouch_jump、crouch_block 四支低姿動作；蹲下時發動攻擊、使用道具、投擲或捕獲等動作，須先站立回歸站姿再執行標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。",
     two_handed: {
       zh: "雙手武器（two_handed）",
       sockets: "Socket_Weapon_R（主手）＋ Socket_Weapon_L（雙手輔助）空掛點",
@@ -2090,14 +2137,38 @@ window.COSMI_CATALOG = {
     ]
   },
 
+  PASSIVE_VFX: {
+    impact_moments: [
+      { v: "on_attack", zh: "發動攻擊時（攻擊／暴擊／射程／冷卻強化）" },
+      { v: "on_defend", zh: "被攻擊時（防禦／抗性／格擋／閃避／失衡抗性強化）" },
+      { v: "on_ailment_inflict", zh: "成功造成對手異常狀態時（異常累積／觸發）" },
+      { v: "on_ailment_resist", zh: "抵抗異常狀態時（異常抗性強化）" },
+      { v: "on_heal_or_threshold", zh: "回復或血線／進場啟動瞬間（治療／背水／換手增益）" },
+      { v: "on_mobility", zh: "移動／衝刺加速生效時（移速強化）" }
+    ],
+    cue_styles: [
+      { v: "crest_flash", zh: "紋章閃現（短促符紋浮現即散）" },
+      { v: "rim_pulse", zh: "輪廓脈衝（身體邊緣光脈動）" },
+      { v: "aura_ring", zh: "貼地光環（低調腳底／核心環波）" },
+      { v: "spark_burst", zh: "微粒迸散（定向輕量粒子提示）" }
+    ],
+    intensities: [
+      { v: "star1_subtle", zh: "★ 輕提示（極簡微光）" },
+      { v: "star2_clear", zh: "★★ 清晰提示（雙層紋樣／邊光）" },
+      { v: "star3_signature", zh: "★★★ 獨有提示（專屬圖騰微爆，仍低遮擋）" }
+    ]
+  },
+
   CRAFT_OBJECTS: {
     slots: [
       { v: "weapon_1h",   zh: "單手武器（D0-U3）", look: "單手劍、短斧、法杖或手弩，須與副手盾牌或雙持相容，明確標示握柄點" },
       { v: "weapon_2h",   zh: "雙手武器（D0-U3）", look: "雙手大劍、長槍、戰鎚或長弓，須標示主手與副手雙握點" },
-      { v: "shield",      zh: "盾牌（D0-U3）",     look: "圓盾、塔盾或能量護盾發生器，副手格擋減傷專用" },
-      { v: "upper_armor", zh: "上身防具（D0-U3）", look: "胸甲、旅人外衣或生態防護服，支援角色與宙獸穿戴" },
-      { v: "lower_armor", zh: "下身防具（D0-U3）", look: "護腿、戰靴或機動裙甲，不阻礙翻滾與攀爬動作" },
-      { v: "accessory",   zh: "飾品（D0-U3）",     look: "護符、晶石指環、徽章或掛墜，提供屬性與暴擊/命中加成" },
+      { v: "shield",      zh: "盾牌（D0-U3）",     look: "圓盾、塔盾或能量護盾發生器，副手格擋減傷專用（角色裝備，2 倍防具基礎值與 2 詞綴）" },
+      { v: "head_armor",  zh: "頭盔（7 槽擴充）",  look: "金屬頭盔、兜帽或護目冠飾，僅角色裝備（2 倍防具基礎值與 2 詞綴）" },
+      { v: "upper_armor", zh: "上身防具（D0-U3）", look: "胸甲、旅人外衣或生態防護服，僅角色裝備（2 倍防具基礎值與 2 詞綴）" },
+      { v: "hands_armor", zh: "手套（7 槽擴充）",  look: "鐵護手、戰術手套或符紋腕甲，僅角色裝備（2 倍防具基礎值與 2 詞綴）" },
+      { v: "lower_armor", zh: "下身防具（D0-U3）", look: "護腿、戰靴或機動裙甲，不阻礙翻滾與攀爬動作（2 倍防具基礎值與 2 詞綴）" },
+      { v: "accessory",   zh: "飾品（D0-U3）",     look: "護符、晶石指環、徽章或掛墜，提供屬性與抗性（4 倍詞綴數＝8 詞綴）" },
       { v: "gather_tool", zh: "採集工具（D0-U2）", look: "礦鎬、伐木斧、釣竿、採集鐮刀，工具不消耗耐久且具明顯機能頭" },
       { v: "trap",        zh: "陷阱（D0-U2）",     look: "絲繭陷阱、羽絨陷阱等野外佈署型捕捉/採集裝置，含展開與觸發態" },
       { v: "craft_vessel",zh: "製作器皿（D0-U2）", look: "基礎/精良/大師器皿（符籙/琉璃珠/方塊之進階工藝版），收服成功才消耗" },

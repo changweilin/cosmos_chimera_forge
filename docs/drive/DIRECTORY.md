@@ -108,7 +108,7 @@ cosmos_chimera_forge/                              [1AQR7UfEk7lL85rHHiZTK9PBOHc4
 | `03b_blender` | `<kind>/prompts/03b_blender.prompt.md` | AI Blender（圖生／文生 3D） | 第三層保留 `<id>[_<stage>]_03b_blender[_<ver>].glb`；其餘（`.blend`、`_manifest.json`、貼圖、渲染圖）存於 `03b_blender/[<ver>/]` |
 | `04_review_3d` | `<kind>/prompts/04_review_3d.prompt.md` | 3D 最終驗收 | `04_review_3d/[<ver>/]<id>[_<stage>]_04_review_3d[_<ver>].json` |
 | `05_wiki` | `<kind>/prompts/05_encyclopedia.prompt.md` | 獨立圖鑑生成 | 第三層保留 `<id>[_<stage>]_05_wiki[_<ver>].md`（僅於目標檔案不存在時建立） |
-| `skeleton_actions` | `<kind>/prompts/skeleton_actions.md` | 骨架與動作規格 | 角色（50 動作）／宙獸（57 動作＋`Socket_Weapon_R`/`L` 虛擬大手規範）／招式（施放動作與掛點對照） |
+| `skeleton_actions` | `<kind>/prompts/skeleton_actions.md` | 骨架與動作規格 | 角色（85 動作含蹲下 4 支＋七槽裝備掛點）／宙獸（68 動作含蹲下 4 支、追隨者與 BOSS 主控＋無武器空掛點）／招式（雙端施放動作與掛點對照） |
 | — | `docs/pipeline/TRIGGERS.md` | 簡易觸發語句 | 各步驟觸發指令與管線分支說明 |
 
 

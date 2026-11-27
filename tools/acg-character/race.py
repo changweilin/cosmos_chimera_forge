@@ -34,6 +34,8 @@ import build  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 VANISHED_M = 1e-4
 TARGET_CAP = 3.0
+# Re-aims of a key at the race's farthest resident; the first bake is at one unit.
+REAIMS = 3
 
 
 def _args():
@@ -192,11 +194,16 @@ def main():
             # Bake the key at the race's farthest resident on this side: inside a baked range the converter only
             # interpolates. Targets stop at TARGET_CAP; the gate test reports a key that still falls short.
             far = _far(spec, name, sign)
-            if far is not None and far > 0 and per and per > 0:
+            # The linear estimate can fall short where a key's effect grows slower than its weight (a starborn's deep
+            # cranium, a mantid's thin neck): re-aim from the last bake, a little past the resident after the first try.
+            for attempt in range(REAIMS):
+                if far is None or far <= 0 or not per or per <= 0:
+                    break
                 want = sign * far / (per / abs(units))
                 # Short of the farthest resident by any margin is a re-bake; past it by up to 10 % is kept.
-                if abs(want) > abs(units) * 1.001 or abs(want) < 0.9 * abs(units):
-                    got, step, units, per = bake(want)
+                if not (abs(want) > abs(units) * 1.001 or abs(want) < 0.9 * abs(units)):
+                    break
+                got, step, units, per = bake(want * (1.03 if attempt > 0 and abs(want) > abs(units) else 1.0))
             moved, entry = {}, {}
             for m, pts in got.items():
                 d = [p - q for p, q in zip(pts, base[m])]

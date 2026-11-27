@@ -39,6 +39,7 @@ TASK_PREFIX = {
     "model-rig": "mdl",
     "animation-set": "anim",
     "move-vfx": "fx",
+    "passive-vfx": "pfx",
     "capture-vessel": "vsl",
     "culture-research": "res",
 }
@@ -52,6 +53,7 @@ IMAGE_PREFIXES = {
     "model-rig": ("cr_", "chr_"),
     "animation-set": ("cr_", "chr_"),
     "move-vfx": ("fx_",),
+    "passive-vfx": ("pfx_",),
     "capture-vessel": ("vsl_",),
 }
 
@@ -78,6 +80,9 @@ ELEMENTS = ("metal", "wood", "water", "fire", "earth", "ice", "wind", "thunder",
 VFX_SHAPES = ("melee_front", "melee_sweep", "melee_burst", "ranged_line", "ranged_cone", "ranged_arc",
               "support_self", "support_ally", "field")
 VFX_TIERS = ("light", "medium", "heavy", "overload")
+PASSIVE_VFX_MOMENTS = ("on_attack", "on_defend", "on_ailment_inflict", "on_ailment_resist",
+                       "on_heal_or_threshold", "on_mobility")
+PASSIVE_VFX_STYLES = ("crest_flash", "rim_pulse", "aura_ring", "spark_burst")
 # tasks.js 371-376: per-vessel deliverables.
 VESSEL_IMAGE_SUFFIXES = ("concept", "variants", "icon", "model_front", "model_side", "capture_storyboard")
 
@@ -211,6 +216,10 @@ def _name_rule(task_type: Optional[str], sid: Optional[str], rel: str) -> Option
             return (rf"fx_(?:(?:{_alt(ELEMENTS)})_(?:{_alt(VFX_SHAPES)})_(?:{_alt(VFX_TIERS)})"
                     rf"_(?:{_alt(VFX_SUFFIXES)})|common_{_SNAKE}_storyboard)\.png",
                     f"fx_<element>_<shape>_<tier>_<{_alt(VFX_SUFFIXES)}>.png or fx_common_<id>_storyboard.png")
+        if task_type == "passive-vfx":
+            return (rf"pfx_(?:{_alt(ELEMENTS)})_(?:{_alt(PASSIVE_VFX_MOMENTS)})_(?:{_alt(PASSIVE_VFX_STYLES)})"
+                    rf"_(?:{_alt(VFX_SUFFIXES)})\.png",
+                    f"pfx_<element>_<impact_moment>_<style>_<{_alt(VFX_SUFFIXES)}>.png")
         if task_type == "capture-vessel":
             return (rf"vsl_(?P<vessel>{_SNAKE})_(?:{_alt(VESSEL_IMAGE_SUFFIXES)})\.png",
                     f"vsl_<vessel>_<{_alt(VESSEL_IMAGE_SUFFIXES)}>.png")
@@ -512,7 +521,7 @@ def plan_apply(task_dir: Path, repo_root: Path, result: Result) -> tuple[list[Mo
     moves: list[Move] = []
     kept: list[str] = []
     task_type = result.task_type or ""
-    if task_type in ("model-rig", "animation-set", "move-vfx"):
+    if task_type in ("model-rig", "animation-set", "move-vfx", "passive-vfx"):
         # Needs a stage/clip/move_id folder that neither manifest nor spec table determines; do not guess.
         findings.append(Finding("no_destination_rule", ".",
                                 f"task type '{task_type}' has no destination rule derivable from the spec; "

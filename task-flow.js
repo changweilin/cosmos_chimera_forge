@@ -4,7 +4,7 @@
   const categories = Object.freeze([
     { id: "character", zh: "角色", icon: "👤", concept: "character-concept", model: "character-model-rig" },
     { id: "creature", zh: "宙獸", icon: "🐉", concept: "creature-concept", model: "creature-model-rig" },
-    { id: "move", zh: "主動技", icon: "✨", concept: "move-vfx", model: null }
+    { id: "move", zh: "主動技", icon: "✨", concept: "move-vfx", passive: "passive-vfx", model: null }
   ]);
   const flow = Object.freeze({
     image: [
@@ -22,7 +22,8 @@
     ],
     move: [
       { id: "encyclopedia", stage: "encyclopedia", task: "concept", name: "生成主動技圖鑑", detail: "先按主動技的屬性、功能、外觀與動作需求生成獨立 Markdown 圖鑑，存於 moves/<id>/。", output: "moves/<id>/<id>_05_wiki.md" },
-      { id: "move_vfx", stage: "move_vfx", task: "concept", name: "主動技與特效設計", detail: "獨立主動技圖鑑條目：設定屬性、形狀與強度，生成規格、六格分鏡、分層拆解與序列圖。施放者僅用於示範。", output: "spec.json、storyboard、layers、flipbook" }
+      { id: "move_vfx", stage: "move_vfx", task: "concept", name: "主動技與特效設計", detail: "獨立主動技圖鑑條目：設定屬性、形狀與強度，生成規格、六格分鏡、分層拆解與序列圖。施放者僅用於示範。", output: "spec.json、storyboard、layers、flipbook" },
+      { id: "passive_vfx", stage: "passive_vfx", task: "passive", name: "被動技效果提示設計", detail: "獨立被動技圖鑑條目：僅於被動效果發揮影響力時短暫提示，不影響戰鬥系統、不連續重疊；生成規格、四格分鏡、分層拆解與序列圖。", output: "pfx_*_spec.json、storyboard、layers、flipbook" }
     ]
   });
   function category(id) { return categories.find(c => c.id === id) || null; }
@@ -36,12 +37,12 @@
     const selected = steps(kind, route).find(s => s.id === stepId);
     if (!c || !selected) return null;
     return { category: kind, route: kind === "move" ? "move" : route, step: stepId,
-      taskId: selected.task === "model" ? c.model : c.concept, ...selected };
+      taskId: selected.task === "model" ? c.model : selected.task === "passive" ? c.passive : c.concept, ...selected };
   }
   function infer(taskId, stage, opts) {
-    const c = categories.find(x => x.concept === taskId || x.model === taskId);
+    const c = categories.find(x => x.concept === taskId || x.model === taskId || x.passive === taskId);
     if (!c) return null;
-    if (c.id === "move") return { category: "move", route: "move", step: "move_vfx" };
+    if (c.id === "move") return { category: "move", route: "move", step: taskId === "passive-vfx" || stage === "passive_vfx" ? "passive_vfx" : "move_vfx" };
     const text = stage === "blender" && (!opts || (!opts.source_pack && !opts.input_img));
     const route = text ? "text" : "image";
     let step = stage === "colab" ? "image_colab" :

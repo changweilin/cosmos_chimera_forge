@@ -74,7 +74,7 @@
       const m = /^(characters|creatures|moves)\//.exec(drivePath);
       if (m) return m[1];
       const t = String(input.manifest?.task_type || input.type || input.task?.id || "");
-      if (t === "move-vfx" || t === "move") return "moves";
+      if (t === "move-vfx" || t === "passive-vfx" || t === "move") return "moves";
       if (t.startsWith("character")) return "characters";
       if (t.startsWith("creature")) return "creatures";
       return pipelineRoot(
@@ -92,7 +92,8 @@
       s === "move" ||
       s === "moves" ||
       s === "move-vfx" ||
-      /^(?:asset_)?(?:fx|vsl)[-_]/i.test(s)
+      s === "passive-vfx" ||
+      /^(?:asset_)?(?:fx|pfx|vsl)[-_]/i.test(s)
     )
       return "moves";
     if (
@@ -122,9 +123,11 @@
     portrait_3d: "01_portrait",
     vfx: "01b_vfx",
     move_vfx: "01b_vfx",
+    passive_vfx: "01b_vfx",
     "01_vfx": "01b_vfx",
     "01b_vfx": "01b_vfx",
     "01b_move_vfx": "01b_vfx",
+    "01b_passive_vfx": "01b_vfx",
     review_portrait: "02_review_portrait",
     "02_review_portrait": "02_review_portrait",
     colab: "03a_colab",

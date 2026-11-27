@@ -667,7 +667,7 @@
     if (t.needs === "creature") return "creature";
     if (t.needs === "either" && o.scope === "batch") return null;
     if (t.needs === "either") return o.subject === "creature" ? "creature" : "character";
-    if (t.id === "move-vfx" && o.use_creature === "yes") return "creature";
+    if ((t.id === "move-vfx" || t.id === "passive-vfx") && o.use_creature === "yes") return "creature";
     return null;
   }
 
@@ -699,7 +699,7 @@
     const is3dTask = is3dType(t.id);
     const chosenPkg = (is3dTask && o.source_pack) ? reviewState.packages.find(p => p.id === o.source_pack) : null;
     let concept = chosenPkg?.concept || (subj === "character" ? characterConcept() : subj === "creature" ? creatureConcept() : null);
-    let subjId = chosenPkg?.subjectId || (subj ? subjectId(subj) : is3dTask ? "batch" : t.id === "capture-vessel" ? "vessels" : t.id === "culture-research" ? "region_" + o.region : t.id === "craft-item-design" ? "itm_" + o.slot : t.id === "world-object-design" ? "wld_" + o.category : "fx_" + o.element + "_" + o.shape);
+    let subjId = chosenPkg?.subjectId || (subj ? subjectId(subj) : is3dTask ? "batch" : t.id === "capture-vessel" ? "vessels" : t.id === "culture-research" ? "region_" + o.region : t.id === "craft-item-design" ? "itm_" + o.slot : t.id === "world-object-design" ? "wld_" + o.category : t.id === "passive-vfx" ? (o.trait_id || "pfx_" + o.element + "_" + o.impact_moment) : "fx_" + o.element + "_" + o.shape);
 
     if (["character-concept", "creature-concept", "character-model-rig", "creature-model-rig", "model-rig"].includes(t.id)) {
       const key = [subjId, t.id, o.stage || "", state.seed, o.source_pack || ""].join(":");
@@ -3716,7 +3716,7 @@
     $("#copy").disabled = $("#download").disabled = b.errors.length > 0;
     $("#header").textContent = b.ctx.header;
     $("#chars").textContent = displayedText.length.toLocaleString() + " 字元";
-    const encyclopediaKind = t.id === "move-vfx" ? "moves" : t.id.startsWith("character") ? "characters" : "creatures";
+    const encyclopediaKind = (t.id === "move-vfx" || t.id === "passive-vfx") ? "moves" : t.id.startsWith("character") ? "characters" : "creatures";
     const wikiDesc = window.COSMI_WIKI.describe(b.ctx);
     const wikiPath = wikiDesc.path;
     const stageVal = document.getElementById("pipelineStage")?.value || "task";
@@ -3968,6 +3968,7 @@
     if (taskId.startsWith("chr")) return "character-concept";
     if (taskId.startsWith("cr") || taskId.startsWith("ch_")) return "creature-concept";
     if (taskId.startsWith("mv_")) return "move-vfx";
+    if (taskId.startsWith("pfx")) return "passive-vfx";
     if (taskId.startsWith("mdl") || taskId.startsWith("anim")) {
       if (manifestData?.source_pack?.startsWith("chr") || manifestData?.subject_id?.startsWith("chr")) return "character-model-rig";
       return "creature-model-rig";
@@ -5750,11 +5751,11 @@
   // ==================== 3D 模型與骨骼動作檢視引擎 (Three.js) ====================
   function getClipCategory(clipName) {
     const name = (clipName || "").toLowerCase();
-    if (name.includes("idle") || name.includes("walk") || name.includes("run") || name.includes("sneak") || name.includes("dodge") || name.includes("roll") || name.includes("jump") || name.includes("move") || name.includes("swim") || name.includes("dive") || name.includes("fly") || name.includes("glide") || name.includes("mount")) return "基礎移動";
-    if (name.includes("block") || name.includes("hit") || name.includes("knock") || name.includes("getup") || name.includes("faint") || name.includes("defeat") || name.includes("victory") || name.includes("guard_break") || name.includes("stagger") || name.includes("enrage")) return "戰鬥受擊";
-    if (name.includes("command") || name.includes("summon") || name.includes("recall") || name.includes("capture") || name.includes("hatch")) return "指令召喚";
+    if (name.includes("idle") || name.includes("walk") || name.includes("run") || name.includes("sneak") || name.includes("dodge") || name.includes("roll") || name.includes("jump") || name.includes("move") || name.includes("swim") || name.includes("dive") || name.includes("fly") || name.includes("glide") || name.includes("mount") || name.includes("follow")) return "基礎移動";
+    if (name.includes("block") || name.includes("hit") || name.includes("knock") || name.includes("getup") || name.includes("faint") || name.includes("defeat") || name.includes("victory") || name.includes("guard_break") || name.includes("stagger") || name.includes("enrage") || name.includes("weapon_")) return "戰鬥受擊";
+    if (name.includes("command") || name.includes("summon") || name.includes("recall") || name.includes("capture") || name.includes("hatch") || name.includes("moveset") || name.includes("relay")) return "指令召喚";
     if (name.startsWith("atk") || name.includes("_atk_") || name.includes("slash") || name.includes("strike") || name.includes("cleave") || name.includes("burst")) return "主動技攻擊";
-    if (name.startsWith("sup") || name.includes("_sup_") || name.includes("buff") || name.includes("heal") || name.includes("roar") || name.includes("deploy") || name.includes("overload")) return "輔助場地";
+    if (name.startsWith("sup") || name.includes("_sup_") || name.includes("buff") || name.includes("heal") || name.includes("roar") || name.includes("deploy") || name.includes("overload") || name.includes("link_channel")) return "輔助場地";
     if (name.includes("item") || name.includes("backpack") || name.includes("throw") || name.includes("vessel") || name.includes("card") || name.includes("bead") || name.includes("cube")) return "道具背包";
     if (name.includes("gather") || name.includes("mine") || name.includes("fish") || name.includes("cook") || name.includes("craft") || name.includes("trap") || name.includes("revive") || name.includes("interact") || name.includes("pickup") || name.includes("handbook") || name.includes("field_utility")) return "生活採集";
     if (name.includes("talk") || name.includes("pet") || name.includes("gesture") || name.includes("petted") || name.includes("eat") || name.includes("feed") || name.includes("sleep") || name.includes("rest") || name.includes("alert")) return "互動撫摸";
@@ -7523,7 +7524,7 @@
       recordPipelineJob(b.ctx, stage);
       const portrait = stage === "portrait" && window.COSMI_PIPELINE?.supports(b.ctx);
       const root = window.COSMI_DRIVE?.pipelineRoot?.(b.ctx)
-        || (b.ctx.task?.id === "move-vfx" ? "moves" : b.ctx.task?.id?.startsWith("character") ? "characters" : "creatures");
+        || ((b.ctx.task?.id === "move-vfx" || b.ctx.task?.id === "passive-vfx") ? "moves" : b.ctx.task?.id?.startsWith("character") ? "characters" : "creatures");
       const subject = window.COSMI_DRIVE?.cleanSubjectId?.(root, b.ctx.subjectId || b.ctx.taskId) || b.ctx.subjectId || b.ctx.taskId;
       const stem = window.COSMI_DRIVE?.assetStem?.({
         kind: root,

@@ -1,3 +1,13 @@
+## 2026-11-26 · catalog@2.14.0 · template@(passive-vfx@1.0.0) · 新增被動技效果動畫 Prompt 模板
+
+- `catalog.js` 新增 `PASSIVE_VFX`（6 種發揮影響力觸發時刻 `impact_moments`、4 種輕量提示樣式 `cue_styles`、3 階星級提示強度 `intensities`）。
+- `tasks.js` 新增 `passive-vfx@1.0.0`（前綴 `pfx`）：明確規範被動效果僅於實際發揮影響力時觸發（攻擊強化於攻擊時、防禦強化於受擊時、異常類於成功造成對手異常狀態時）、純視覺提示不影響戰鬥系統（`visual_only: true`、`affects_combat_rules: false`、`hit_stop_ms: 0`）、不連續重疊出現（`non_overlapping: true`、`retrigger_policy: "ignore_while_active"`、`min_interval_ms: 1500`、`max_concurrent_per_unit: 1`）。
+- 串接 `task-flow.js`、`pipeline.js`、`wiki.js`、`drive-storage.js`、`forge.js`、`index.html` 與 `tools/validate_art.py`。
+
+## 2026-11-26 · catalog@2.13.0 · 宙獸破蛋動作 hatch_emerge
+
+- `catalog.js` `ACTIONS.creature` 新增 `hatch_emerge`（210 幀＝30 fps 7 秒，涵蓋 cosmos_chimera `docs/design/creature-eggs.md` 破蛋節拍 ③ 破口～⑤ 初啼；`ev_spawn_fx@0` 破口、`@60` 脫殼、`ev_end_lock@200`）。每個物種一支，起始為蜷縮 pose，蜷縮中心對齊蛋殼 `Socket_EggCore`；各形體（`body_plan`）的破蛋方式見 `creature-eggs-catalog.md`。
+
 ## 2026-11-25 · tool@2.12.0 · 四型態鎖定同步操作
 
 - 四型態審查預設勾選「鎖定同步操作」，同步旋轉、依體型換算的縮放／平移、統一正側背與 45° 視角、相同動畫、播放／暫停、進度與參考圖；取消勾選可獨立操作。無相符動畫時明示，不播放其他動作替代。

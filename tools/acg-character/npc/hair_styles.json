@@ -1,6 +1,7 @@
 {
  "comment": "NPC hair slots (cosmos_chimera docs/design/npc-uma-looks.md, row 10). One entry per NpcMeshes HairStyle except bald; sizes in metres on the human male base head (ref_head_z), scaled per base by its head. Group fields: acg_hair._clump.",
  "races": [
+  "android",
   "angel",
   "demon",
   "dwarf",

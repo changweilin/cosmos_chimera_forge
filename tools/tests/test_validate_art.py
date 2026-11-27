@@ -321,5 +321,40 @@ class Cli(unittest.TestCase):
         self.assertEqual(2, validate_art.main([str(REPO / "no_such_task_dir")]))
 
 
+class PassiveVfx(unittest.TestCase):
+    def test_valid_passive_vfx_package_is_compliant_and_manual_apply(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            task_id = "pfx-20261126-abcd-2030"
+            task_dir = Path(tmp) / task_id
+            (task_dir / "images").mkdir(parents=True)
+            (task_dir / "vfx").mkdir(parents=True)
+            (task_dir / "images" / "pfx_fire_on_attack_crest_flash_storyboard.png").write_bytes(png_bytes(64, 32))
+            (task_dir / "images" / "pfx_fire_on_attack_crest_flash_layers.png").write_bytes(png_bytes(64, 32))
+            (task_dir / "vfx" / "pfx_fire_on_attack_crest_flash_spec.json").write_text(
+                json.dumps({"visual_only": True, "affects_combat_rules": False, "non_overlapping": True}),
+                encoding="utf-8",
+            )
+            manifest = {
+                "spec": "cosmimera-art-task/1",
+                "task_header": f"[COSMIMERA-TASK spec=1 tool=2.10.0 catalog=2.14.0 template=passive-vfx@1.0.0 task_id={task_id} seed=abcd]",
+                "task_id": task_id,
+                "task_type": "passive-vfx",
+                "subject_id": "trait_fire_smoldering_core",
+                "produced_by": "ChatGPT",
+                "files": [
+                    {"path": "vfx/pfx_fire_on_attack_crest_flash_spec.json", "kind": "spec", "level": "L1"},
+                    {"path": "images/pfx_fire_on_attack_crest_flash_storyboard.png", "kind": "storyboard", "level": "L1"},
+                    {"path": "images/pfx_fire_on_attack_crest_flash_layers.png", "kind": "view", "level": "L1"},
+                ],
+                "missing": [{"item": "vfx/pfx_fire_on_attack_crest_flash_flipbook.png", "level": "L2", "reason": "optional"}],
+                "notes": "",
+            }
+            (task_dir / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            result = validate_art.validate(task_dir)
+            self.assertEqual([], [str(f) for f in result.findings])
+            _moves, plan_findings, _kept = validate_art.plan_apply(task_dir, Path(tmp), result)
+            self.assertTrue(any(f.code == "no_destination_rule" for f in plan_findings))
+
+
 if __name__ == "__main__":
     unittest.main()
