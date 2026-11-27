@@ -5,7 +5,8 @@ What each slot is follows the procedural NpcMeshes.Dress and Overgarment, refitt
 - "top_<Cut>_<Sleeve>": the upper garment's trunk (hem, braid band, belt) and its sleeves (Bare / Short / Long), plus what
   makes the cut read (coat lapels and the open front, the poncho, the vest's open fronts, the wrap's sash). One slot per
   cut and sleeve length a resident can draw (CUTS["top"]); the era's hem length and ease are the shape keys
-  "npc_hem" and "npc_ease" (0 = the cut's shortest and closest, 1 its longest and loosest).
+  "npc_hem" and "npc_ease" (0 = the cut's shortest and closest, 1 its longest and loosest); the braid band's width is
+  "npc_border" (0 = the thinnest band, 1 the widest; the robe's band is on its skirt).
 - "skirt_<Cut>": the robe, dress and wrap skirts; "npc_fall" (length) and "npc_flare" are shape keys.
 - "legs_Tight" / "legs_Loose": trousers at the procedural ease 1.08 (mercantile, future) and 1.3 (the rest).
 - "boots_<era>": boots of the lower era's height; the future pair in the trousers' tone.
@@ -32,12 +33,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TABLE = json.load(open(os.path.join(HERE, "npc", "outfit_slots.json"), encoding="utf-8"))["cuts"]
 TRUNK_BINS = 32
 LIMB_BINS = 12
-# Share of the hem band (NpcMeshes Dress `border`, lerp(0.07, 0.32, Textile01)) at its middle textile.
+# Share of the hem band (NpcMeshes Dress `border`, lerp(0.07, 0.32, Textile01)) at its middle textile: where the robe's
+# top, which has no braid of its own (its skirt carries it) and so no border key, keeps its band.
 BORDER = 0.18
 # Shape key of each parameter on the slots that vary it.
 # Boot leather off the skin (metres).
 BOOT_M = 0.007
-KEYS = {"hem": "npc_hem", "ease": "npc_ease", "fall": "npc_fall", "flare": "npc_flare"}
+KEYS = {"hem": "npc_hem", "ease": "npc_ease", "fall": "npc_fall", "flare": "npc_flare", "border": "npc_border"}
 
 
 def _mask(fig, prefixes, side):
@@ -152,9 +154,10 @@ def _tube_part(rings, role, a, d, near="all"):
 # ---- tops ---------------------------------------------------------------------------------------------------------
 
 
-def _trunk(fig, hem, fit, band_role="braid"):
+def _trunk(fig, hem, fit, border, band_role="braid"):
     """The upper garment from collar to hem (NpcMeshes Dress rings): measured on the trunk above the hip, round both
-    legs below it, widening toward the hem (hemFlare 1 + hem / 2) and never inside the legs' own envelope."""
+    legs below it, widening toward the hem (hemFlare 1 + hem / 2) and never inside the legs' own envelope. The braid
+    band takes `border` of the hem's drop below the hip (NpcMeshes Dress `border`)."""
     h = fig.h
     hip_c, n = O._flat(fig, fig.hip)
     _, _, u, v, hip_r = _flat_profile(fig, hip_c, fig.hip, fig.torso)
@@ -172,8 +175,8 @@ def _trunk(fig, hem, fit, band_role="braid"):
           _torso_ring(fig, fig.chest - 0.05 * h, fit, O.CLEAR_M),
           _torso_ring(fig, fig.chest + 0.005 * h, fit * 0.97, O.CLEAR_M),
           _torso_ring(fig, fig.chest + 0.6 * (fig.neck - fig.chest), 1.0, O.CLEAR_M + 0.002)]
-    mid = [low(f) for f in (1.0 - BORDER, 0.66, 0.33)] + [hip_ring]
-    band = [low(1.0), low(1.0 - 0.74 * BORDER), low(1.0 - BORDER)]
+    mid = [low(f) for f in (1.0 - border, 0.66, 0.33)] + [hip_ring]
+    band = [low(1.0), low(1.0 - 0.74 * border), low(1.0 - border)]
     centre = O._flat(fig, fig.chest)[0]
     parts = []
     for rings, role in ((band, band_role), (mid, "clothlow"), (up, "cloth")):
@@ -318,10 +321,10 @@ def _wrap_sash(fig, fit):
 
 
 def top(cut, sleeve):
-    def build(fig, hem, ease):
+    def build(fig, hem, ease, border=BORDER):
         # A robe's top stops just past the skirt's waist and its braid moves to the skirt's hem: hung to the ankle as
         # NpcMeshes does (hem 0.9 over a skirt of fall 0.93 and wider flare) the two would cross and show through.
-        parts, hem_ring = _trunk(fig, hem, ease, "cloth" if cut == "Robe" else "braid")
+        parts, hem_ring = _trunk(fig, hem, ease, border, "cloth" if cut == "Robe" else "braid")
         if sleeve != "Bare":
             role = "cloth2" if cut == "Vest" else "cloth"
             cuff = 1.9 / 1.15 if cut == "Robe" and sleeve == "Long" else 1.0
@@ -344,16 +347,22 @@ def top(cut, sleeve):
 def skirt(cut):
     role = {"Robe": "cloth", "Wrap": "accent"}.get(cut, "cloth2")
 
-    def build(fig, fall, flare):
+    def build(fig, fall, flare, border=None):
         """NpcMeshes Dress skirt: from just over the hip to legLen x (1 - fall), widening by the flare (x 0.3 across,
-        x 0.5 front to back at the hem)."""
+        x 0.5 front to back at the hem). The robe's skirt carries the braid its top would (`border`)."""
         h = fig.h
         hip_c, n = O._flat(fig, fig.hip)
         _, _, u, v, env = _flat_profile(fig, hip_c, fig.hip, _below_arms(fig))
         top_z = fig.hip + 0.03 * h
         rings = [_torso_ring(fig, top_z, 1.0, O.CLEAR_M)]
         bins = TRUNK_BINS
-        for f in (0.2, 0.45, 0.72, 0.93, 1.0):
+        stations = (0.2, 0.45, 0.72, 0.93, 1.0)
+        if border is not None:
+            # NpcMeshes hangs the robe's band from a hem 0.9 of the leg below the hip; this skirt falls `fall` of it.
+            # The ring above the band moves up with it, so a wide band never folds over it.
+            start = 1.0 - border * 0.9 / fall
+            stations = (0.2, 0.45, min(0.72, start - 0.06), start, 1.0)
+        for f in stations:
             z = fig.hip - fig.hip * fall * f
             here = _hanging(fig, hip_c, z)
             # The flare grows as f^1.5 rather than f: the procedural skirt starts inside the top's hem (x 0.95), and a
@@ -481,12 +490,19 @@ def _right_sleeve(fig):
 
 def _slots():
     slots = {}
+    border = tuple(TABLE["border"])
     for cut, spec in TABLE["top"].items():
         params = {p: tuple(spec[p]) for p in ("hem", "ease")}
+        # The robe's top band is plain cloth; its skirt's hem carries the braid.
+        if cut != "Robe":
+            params["border"] = border
         for sleeve in spec["sleeves"]:
             slots["top_%s_%s" % (cut, sleeve)] = (top(cut, sleeve), params)
     for cut, spec in TABLE["skirt"].items():
-        slots["skirt_" + cut] = (skirt(cut), {p: tuple(spec[p]) for p in ("fall", "flare")})
+        params = {p: tuple(spec[p]) for p in ("fall", "flare")}
+        if cut == "Robe":
+            params["border"] = border
+        slots["skirt_" + cut] = (skirt(cut), params)
     for name, fit in TABLE["legs"].items():
         slots["legs_" + name] = (legs(fit), {})
     for era, height in TABLE["boots"].items():

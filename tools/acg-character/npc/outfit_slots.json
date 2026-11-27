@@ -26,7 +26,11 @@
  ],
  "races_comment": "Every race the game assembles on UMA (NpcMeshes.UmaCarries): skeletons, automata and crabfolk stay procedural and, the first two, unclothed.",
  "cuts": {
-  "comment": "Q-A26 = A. Mirrored by NpcMeshes.GarmentFitOf (cosmos_chimera): change both. top: one slot per cut and the sleeve lengths it can be drawn with (NpcMeshes Dress: robes and coats force long sleeves, labourers go bare, wraps reach short at most); hem (share of the leg below the hip) and ease (procedural fit) are the shape keys npc_hem / npc_ease, 0 at the low end and 1 at the high end. Era hems 0.06-0.8 x lerp(0.78, 1.14, Textile01); dress, vest and coat clamp them; wrap fixes it; the robe top stops at 0.12 over its ankle-long skirt, which carries the braid (NpcMeshes hangs both, hem 0.9 and fall 0.93, which would cross). skirt: fall (share of the leg) and flare, keys npc_fall / npc_flare. legs: trouser ease. boots: height as the share of ankle to knee / 1.6, per lower era (ancient wears the industrial pair; primal goes barefoot).",
+  "comment": "Q-A26 = A. Mirrored by NpcMeshes.GarmentFitOf (cosmos_chimera): change both. top: one slot per cut and the sleeve lengths it can be drawn with (NpcMeshes Dress: robes and coats force long sleeves, labourers go bare, wraps reach short at most); hem (share of the leg below the hip) and ease (procedural fit) are the shape keys npc_hem / npc_ease, 0 at the low end and 1 at the high end. Era hems 0.06-0.8 x lerp(0.78, 1.14, Textile01); dress, vest and coat clamp them; wrap fixes it; the robe top stops at 0.12 over its ankle-long skirt, which carries the braid (NpcMeshes hangs both, hem 0.9 and fall 0.93, which would cross). skirt: fall (share of the leg) and flare, keys npc_fall / npc_flare. border: the braid band as a share of the hem's drop below the hip, NpcMeshes Dress lerp(0.07, 0.32, Textile01), key npc_border on every top but the robe's and on the robe's skirt. legs: trouser ease. boots: height as the share of ankle to knee / 1.6, per lower era (ancient wears the industrial pair; primal goes barefoot).",
+  "border": [
+   0.07,
+   0.32
+  ],
   "top": {
    "Tunic": {
     "sleeves": [
