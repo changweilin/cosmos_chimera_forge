@@ -63,6 +63,37 @@ test('encyclopedia prompt routes three categories to isolated Markdown paths', (
   assert.match(wiki,/moves\/fx_fire_burst\/fx_fire_burst_05_wiki\.md/);
   assert.match(wiki,/fire|burst/);
   assert.doesNotMatch(wiki,/DO_NOT_LEAK/);
+  ctx.task.id='passive-vfx';ctx.subjectId='trait_fire_edge';ctx.opts={element:'fire',impact_moment:'on_attack',cue_style:'crest_flash',intensity:'star2_clear'};
+  const passiveWiki=c.COSMI_PIPELINE.build(ctx);
+  assert.match(passiveWiki,/moves\/trait_fire_edge\/trait_fire_edge_05_wiki\.md/);
+});
+
+test('passive-vfx task template enforces impact-moment trigger, visual-only, and non-overlapping rules', () => {
+  const ctx = { window: {}, document: { getElementById: () => null, addEventListener() {} } };
+  ctx.window = ctx;
+  vm.runInNewContext(fs.readFileSync(path.join(root, 'catalog.js'), 'utf8'), ctx);
+  vm.runInNewContext(fs.readFileSync(path.join(root, 'tasks.js'), 'utf8'), ctx);
+  const task = ctx.COSMI_TASKS.find(t => t.id === 'passive-vfx');
+  assert.ok(task, 'passive-vfx task must exist');
+  assert.equal(task.prefix, 'pfx');
+  const prompt = task.nativeBuild({
+    header: '[COSMIMERA-TASK spec=1 tool=2.10.0 catalog=2.14.0 template=passive-vfx@1.0.0 task_id=pfx-20261126-abcd-2030 seed=abcd]',
+    taskId: 'pfx-20261126-abcd-2030',
+    subjectId: 'trait_fire_edge',
+    task,
+    opts: { use_creature: 'no', element: 'fire', impact_moment: 'on_attack', cue_style: 'crest_flash', intensity: 'star2_clear', trait_name: '熾刃', trait_id: 'trait_fire_edge' },
+    concept: null,
+    notes: '',
+    platform: 'chatgpt',
+    platformName: 'ChatGPT（對話版）'
+  });
+  assert.match(prompt, /發揮影響力時/);
+  assert.match(prompt, /"visual_only": true/);
+  assert.match(prompt, /"affects_combat_rules": false/);
+  assert.match(prompt, /"non_overlapping": true/);
+  assert.match(prompt, /"retrigger_policy": "ignore_while_active"/);
+  assert.match(prompt, /"hit_stop_ms": 0/);
+  assert.match(prompt, /pfx_fire_on_attack_crest_flash_spec\.json/);
 });
 
 test('appearance prompt includes visual traits and encyclopedia generation while excluding pipeline and format content', () => {

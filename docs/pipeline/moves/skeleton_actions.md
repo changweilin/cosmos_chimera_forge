@@ -1,6 +1,6 @@
 # 招式施放動作與特效骨架掛點規格（`moves`）
 
-> 對應資料來源：`Data/schemas/move.schema.json`、`catalog.js`（v2.12.0 `VFX`、`ACTIONS.character`、`ACTIONS.creature`、`GRIP_MODES`）、`tasks.js`（`move-vfx`）。  
+> 對應資料來源：`Data/schemas/move.schema.json`、`catalog.js`（v2.15.0 `VFX`、`ACTIONS.character`、`ACTIONS.creature`、`GRIP_MODES`）、`tasks.js`（`move-vfx`）。  
 > 更新日期：2026-11-26（對齊「玩家主控＋宙獸追隨／供招＋BOSS 宙獸主控」雙端施放機制與換手／車輪戰通用特效）。
 
 ---
@@ -47,3 +47,4 @@
 - **BOSS 主控切換與號召（`boss_moveset_switch` / `boss_summon_follower` / `boss_enrage`）**：26f `ev_spawn_fx@10`／36f `ev_spawn_fx@16`（喚出第二隻或車輪戰替補）／48f `ev_spawn_fx@18`（全周威嚇衝擊波）。
 - **完美格擋彈反（`perfect_block`）／格擋受擊（`block_hit`）**：22f `ev_spawn_fx@4, ev_hit@6`／16f `ev_spawn_fx@2`（防禦盾波與震退粒子）。
 - **生活能力／生態／超載**：`field_utility`（42f `ev_spawn_fx@20`）、`wild_alert`（36f `ev_spawn_fx@12`）、`eat_feed`（48f `ev_spawn_fx@24`）、`command_overload`（30f `ev_spawn_fx@14`）對應 `overload_enter`（60f `ev_spawn_fx@20`）。
+- **蹲下起身施放銜接**：角色或宙獸處於蹲下狀態發動主動技、輔助／場地、使用道具、投擲或捕獲等動作時，須先站立回歸站姿再觸發上述標準站立 `atk_*`／`sup_*`／`field_deploy` clip，不另製作獨立蹲下施放動作。

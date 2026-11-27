@@ -21,6 +21,7 @@
     "pose_rules": {
       "idle_stance": "重心微沉、雙肩穩健展開的蓄勢站姿，身體兩側預留足夠空間給獨立運作的雙手武器與虛擬大手動畫，本體不繪製武器。",
       "locomotion_rule": "移動與奔跑維持沉穩流暢的軀幹律動，預留雙側掛點安全間距避免穿插獨立武器模型。",
+      "crouch_rule": "蹲下狀態提供 crouch_move（38f 循環）、crouch_roll（18f，RM）、crouch_jump（30f）、crouch_block（28f，低伏防禦架勢），維持無武器本體與 Socket_Weapon_R／L 空掛點安全間距；蹲下期間發動攻擊、輔助／場地／生活能力、或與道具／投擲／捕獲等互動動作銜接時，必須先回歸站立姿態再接續標準站立 clip，不另製作獨立蹲下攻擊或互動動畫。",
       "guard_rule": "雙前肢／軀幹微收後傾形成穩固防禦架勢（基礎 35% 格擋值），受擊時整體後仰緩衝。",
       "attack_rule": "技能由宙獸本體發出；本體做出明顯蓄力、重壓與收招動作（體現 +35% 雙手型節奏），與獨立雙手武器動畫同步。",
       "ranged_rule": "遠程技能由宙獸本體（口器／核心／前方發射點）發出；本體前傾瞄準、蓄能並隨發射出現沉穩後座力，不繪製弓杖。",
@@ -120,6 +121,74 @@
         "weapon_distance": "any"
       },
       {
+        "action_id": "crouch_move",
+        "description": "蹲下移動（低伏潛行移動）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 38,
+        "duration_ms": 1267,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 10,
+            "time_ms": 333
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 29,
+            "time_ms": 967
+          }
+        ],
+        "motion_notes": "in-place 低伏蹲行循環；貼近地面壓低重心推進，保持雙側空掛點安全間距（不繪製武器）。"
+      },
+      {
+        "action_id": "crouch_roll",
+        "description": "蹲下翻滾（低姿翻滾閃避，無敵幀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [
+          {
+            "name": "ev_end_lock",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "root motion 自低伏姿態緊貼地面翻滾閃避，第 14 幀解除硬直（不繪製武器）。"
+      },
+      {
+        "action_id": "crouch_jump",
+        "description": "蹲下跳躍（低伏蓄力起跳／滯空／落地）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [],
+        "motion_notes": "自低伏蹲姿壓低蓄力後蹬地躍起、滯空並收腿緩衝落地（不繪製武器）。"
+      },
+      {
         "action_id": "block",
         "description": "雙手武器格擋",
         "category": "guard",
@@ -135,6 +204,23 @@
         "events": [],
         "motion_notes": "雙肩內收、重心下沉做出橫架防禦身姿（舉起→維持→放下，不繪製武器）。",
         "weapon_distance": "any"
+      },
+      {
+        "action_id": "crouch_block",
+        "description": "蹲下格擋（低伏防禦架勢）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [],
+        "motion_notes": "低伏壓低重心做出護前防禦身姿（舉起／壓低護身→維持→微放，不繪製武器與盾牌）。"
       },
       {
         "action_id": "block_hit",
@@ -609,6 +695,7 @@
     "pose_rules": {
       "idle_stance": "低重心微側身戒備姿態，左右肩部一前一後蓄勢，預留雙側獨立單手武器動畫空間，本體不繪製武器。",
       "locomotion_rule": "敏捷輕盈的步伐與低俯疾跑姿態，身體兩側隨步頻自然擺動並保持掛點淨空。",
+      "crouch_rule": "蹲下狀態提供 crouch_move（38f 循環）、crouch_roll（18f，RM）、crouch_jump（30f）、crouch_block（28f，低伏防禦架勢），維持無武器本體與 Socket_Weapon_R／L 空掛點安全間距；蹲下期間發動攻擊、輔助／場地／生活能力、或與道具／投擲／捕獲等互動動作銜接時，必須先回歸站立姿態再接續標準站立 clip，不另製作獨立蹲下攻擊或互動動畫。",
       "guard_rule": "前軀微縮、雙前肢或雙翼交叉護於身前形成架勢（基礎 35% 格擋值），完美格擋時做出向外彈開的身形動作。",
       "attack_rule": "技能由宙獸本體發出；配合雙持 +25% 攻速與左右輪流規則（從右手側開始），近戰與突進依 _r / _l 提供左右交替身形扭轉與前探節奏。",
       "ranged_rule": "遠程技能由宙獸本體發出；依 _r / _l 交替進行左右側身甩動、前探與後座回彈，與獨立雙持遠程武器動畫同步，不繪製武器。",
@@ -708,6 +795,74 @@
         "weapon_distance": "any"
       },
       {
+        "action_id": "crouch_move",
+        "description": "蹲下移動（低伏潛行移動）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 38,
+        "duration_ms": 1267,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 10,
+            "time_ms": 333
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 29,
+            "time_ms": 967
+          }
+        ],
+        "motion_notes": "in-place 低伏蹲行循環；貼近地面壓低重心推進，保持雙側空掛點安全間距（不繪製武器）。"
+      },
+      {
+        "action_id": "crouch_roll",
+        "description": "蹲下翻滾（低姿翻滾閃避，無敵幀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [
+          {
+            "name": "ev_end_lock",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "root motion 自低伏姿態緊貼地面翻滾閃避，第 14 幀解除硬直（不繪製武器）。"
+      },
+      {
+        "action_id": "crouch_jump",
+        "description": "蹲下跳躍（低伏蓄力起跳／滯空／落地）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [],
+        "motion_notes": "自低伏蹲姿壓低蓄力後蹬地躍起、滯空並收腿緩衝落地（不繪製武器）。"
+      },
+      {
         "action_id": "block",
         "description": "雙持交叉格擋",
         "category": "guard",
@@ -723,6 +878,23 @@
         "events": [],
         "motion_notes": "雙前肢／雙翼於胸前交叉做出防禦架勢（不繪製武器）。",
         "weapon_distance": "any"
+      },
+      {
+        "action_id": "crouch_block",
+        "description": "蹲下格擋（低伏防禦架勢）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [],
+        "motion_notes": "低伏壓低重心做出護前防禦身姿（舉起／壓低護身→維持→微放，不繪製武器與盾牌）。"
       },
       {
         "action_id": "block_hit",
@@ -1353,6 +1525,7 @@
     "pose_rules": {
       "idle_stance": "左側微前傾護衛、右側收於身後蓄勢的穩健對峙姿態，預留左盾與右單手武器之獨立動畫空間，本體不繪製武器與盾牌。",
       "locomotion_rule": "移動與奔跑時左側肩胸維持穩定向前、右側自然隨步頻擺動，保持雙側掛點淨空。",
+      "crouch_rule": "蹲下狀態提供 crouch_move（38f 循環）、crouch_roll（18f，RM）、crouch_jump（30f）、crouch_block（28f，低伏防禦架勢），維持無武器本體與 Socket_Weapon_R／L 空掛點安全間距；蹲下期間發動攻擊、輔助／場地／生活能力、或與道具／投擲／捕獲等互動動作銜接時，必須先回歸站立姿態再接續標準站立 clip，不另製作獨立蹲下攻擊或互動動畫。",
       "guard_rule": "以左側身形與前肢／肩部前頂形成堅實防線（配合獨立盾牌 75% 格擋值），完美格擋時做出前衝頂撞的反制身姿。",
       "attack_rule": "技能由宙獸本體發出；本體向右前側俐落扭轉發力，同時左側維持穩固防禦重心，與獨立武器盾牌動畫協調。",
       "ranged_rule": "遠程技能由宙獸本體發出；左側維持穩健防禦重心、右側微探發力並帶出射擊後座回彈，不繪製武器與盾牌。",
@@ -1452,6 +1625,74 @@
         "weapon_distance": "any"
       },
       {
+        "action_id": "crouch_move",
+        "description": "蹲下移動（低伏潛行移動）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 38,
+        "duration_ms": 1267,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 10,
+            "time_ms": 333
+          },
+          {
+            "name": "ev_footstep",
+            "frame": 29,
+            "time_ms": 967
+          }
+        ],
+        "motion_notes": "in-place 低伏蹲行循環；貼近地面壓低重心推進，保持雙側空掛點安全間距（不繪製武器）。"
+      },
+      {
+        "action_id": "crouch_roll",
+        "description": "蹲下翻滾（低姿翻滾閃避，無敵幀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 18,
+        "duration_ms": 600,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [
+          {
+            "name": "ev_end_lock",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "root motion 自低伏姿態緊貼地面翻滾閃避，第 14 幀解除硬直（不繪製武器）。"
+      },
+      {
+        "action_id": "crouch_jump",
+        "description": "蹲下跳躍（低伏蓄力起跳／滯空／落地）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_R",
+          "Socket_Weapon_L"
+        ],
+        "events": [],
+        "motion_notes": "自低伏蹲姿壓低蓄力後蹬地躍起、滯空並收腿緩衝落地（不繪製武器）。"
+      },
+      {
         "action_id": "block",
         "description": "舉盾格擋",
         "category": "guard",
@@ -1467,6 +1708,23 @@
         "events": [],
         "motion_notes": "左側完全推至正面中心防禦，右側後撤蓄力（不繪製盾牌）。",
         "weapon_distance": "any"
+      },
+      {
+        "action_id": "crouch_block",
+        "description": "蹲下格擋（低伏防禦架勢）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "off_shield",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Weapon_L",
+          "Socket_Weapon_R"
+        ],
+        "events": [],
+        "motion_notes": "低伏壓低重心做出護前防禦身姿（舉起／壓低護身→維持→微放，不繪製武器與盾牌）。"
       },
       {
         "action_id": "block_hit",

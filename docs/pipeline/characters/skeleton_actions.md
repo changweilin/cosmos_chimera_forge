@@ -1,7 +1,7 @@
 # 角色骨架與動作規格（`characters`）
 
-> 對應資料來源：`catalog.js`（v2.12.0 `ACTIONS.character`）、`tasks.js`（`character-model-rig` v5.1.0）、`Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。  
-> 更新日期：2026-11-26（共 **81** 支動作：主控戰鬥七槽裝備／格擋彈反／拔收武器／招式組切換與 22 支主控攻擊輔助共 **31** 支新增動作＋既有 **50** 支完整相容）。
+> 對應資料來源：`catalog.js`（v2.15.0 `ACTIONS.character`）、`tasks.js`（`character-model-rig` v5.2.0）、`Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。  
+> 更新日期：2026-11-26（共 **85** 支動作：含新增蹲下移動／蹲下翻滾／蹲下跳躍／蹲下格擋 **4** 支＋主控戰鬥七槽裝備／格擋彈反／拔收武器／招式組切換與 22 支主控攻擊輔助 **31** 支＋既有 **50** 支完整相容）。
 
 ---
 
@@ -25,11 +25,12 @@
 
 ---
 
-## 2. 動作清單（30 fps · 共 81 支）
+## 2. 動作清單（30 fps · 共 85 支）
 
-> 標記 `[主控新增]` 為本次因應「玩家主控作戰＋兩隻宙獸追隨／供招」機制擴充的 31 支動作；既有 50 支 clip ID 全數保留相容。
+> 標記 `[主控新增]` 為「玩家主控作戰＋兩隻宙獸追隨／供招」機制擴充的 31 支動作；`[蹲下新增]` 為 v2.15 新增的 4 支蹲下動作；既有 50 支 clip ID 全數保留相容。  
+> **蹲下與起身銜接規範**：蹲下狀態僅額外製作 `chr_crouch_move`、`chr_crouch_roll`、`chr_crouch_jump`、`chr_crouch_block` 四支低姿動作；蹲下時發動攻擊（`chr_atk_*`／`chr_sup_*`）、使用道具（`chr_item_use_*`）、投擲或捕獲（`chr_throw_*`）、佈署場地或召喚／指令等動作，**須先站立回歸站姿後再接續對應標準站立 clip**，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。
 
-### 2.1 基礎移動與穿越（13 支）
+### 2.1 基礎移動與穿越（16 支）
 
 | clip | 說明 | 幀數 | loop | RM | 事件@幀 | 備註 |
 |---|---|---:|:---:|:---:|---|---|
@@ -39,6 +40,9 @@
 | `chr_run` | 奔跑 | 22 | ✓ | | `ev_footstep@5, ev_footstep@16` | 既有 |
 | `chr_sneak_idle` | 潛行待機 | 60 | ✓ | | | 既有 |
 | `chr_sneak_move` | 潛行移動 | 40 | ✓ | | | 既有 |
+| `chr_crouch_move` | 蹲下移動（壓低重心緩行） | 38 | ✓ | | `ev_footstep@10, ev_footstep@29` | `[蹲下新增]` |
+| `chr_crouch_roll` | 蹲下翻滾（低姿翻滾閃避，無敵幀） | 20 | | ✓ | `ev_end_lock@16` | `[蹲下新增]` |
+| `chr_crouch_jump` | 蹲下跳躍（低姿蓄力起跳／滯空／落地） | 30 | | | | `[蹲下新增]` |
 | `chr_roll_dodge` | 翻滾閃避（無敵幀） | 20 | | ✓ | `ev_end_lock@16` | 既有 |
 | `chr_jump` | 跳躍（起跳／滯空／落地） | 30 | | | | 既有 |
 | `chr_swim_idle` | 水面漂浮待機 | 60 | ✓ | | | 既有 |
@@ -47,11 +51,12 @@
 | `chr_mount_idle` | 騎乘待機（坐姿握鞍） | 60 | ✓ | | | 既有 |
 | `chr_mount_run` | 騎乘奔跑（騎乘衝刺） | 24 | ✓ | | | 既有 |
 
-### 2.2 主控戰鬥狀態、格擋與受擊（11 支）
+### 2.2 主控戰鬥狀態、格擋與受擊（12 支）
 
 | clip | 說明 | 幀數 | loop | RM | 事件@幀 | 備註 |
 |---|---|---:|:---:|:---:|---|---|
 | `chr_block` | 格擋（舉起→維持→放下） | 30 | | | | 既有 |
+| `chr_crouch_block` | 蹲下格擋（低重心舉武／舉盾防禦） | 28 | | | | `[蹲下新增]` |
 | `chr_block_hit` | 格擋受擊（防禦震退回饋） | 16 | | | `ev_spawn_fx@2` | `[主控新增]` |
 | `chr_perfect_block` | 完美格擋（150ms 彈反震擊） | 22 | | | `ev_spawn_fx@4, ev_hit@6, ev_end_lock@16` | `[主控新增]` |
 | `chr_guard_break` | 破防硬直（架勢條滿崩解 1.5s） | 45 | | | | `[主控新增]` |

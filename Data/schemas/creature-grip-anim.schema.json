@@ -50,6 +50,7 @@
         "required": [
           "idle_stance",
           "locomotion_rule",
+          "crouch_rule",
           "guard_rule",
           "attack_rule",
           "ranged_rule",
@@ -60,6 +61,7 @@
         "properties": {
           "idle_stance": { "type": "string", "minLength": 1 },
           "locomotion_rule": { "type": "string", "minLength": 1 },
+          "crouch_rule": { "type": "string", "minLength": 1 },
           "guard_rule": { "type": "string", "minLength": 1 },
           "attack_rule": { "type": "string", "minLength": 1 },
           "ranged_rule": { "type": "string", "minLength": 1 },

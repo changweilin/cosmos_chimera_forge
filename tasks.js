@@ -9,7 +9,7 @@
 
   // All paths below are relative to project/cosmos_chimera_forge on Google Drive.
   function driveRoot(taskId) {
-    if (taskId === "move-vfx") return "moves";
+    if (taskId === "move-vfx" || taskId === "passive-vfx") return "moves";
     if (String(taskId || "").startsWith("character")) return "characters";
     return "creatures";
   }
@@ -431,7 +431,7 @@
 
     {
       // REQ: 使用者 2026-11-09 — 宙獸 img-to-3D 極致精簡與立繪規格對齊；2026-11-19 — 追蹤允許的武器/持有組合、虛擬大手動作規範。
-      id: "creature-model-rig", version: "5.1.0", zh: "宙獸 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
+      id: "creature-model-rig", version: "5.2.0", zh: "宙獸 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
       needs: "creature", drop: "Art/_incoming", drive: true,
       options: [
         { key: "scope", type: "select", label: "模式", items: () => [{ v: "single", zh: "指定處理（單一立繪包）" }, { v: "batch", zh: "批量處理（01_portraits 內宙獸目錄）" }], def: "single" },
@@ -512,6 +512,7 @@
           "- **虛擬大手與追隨者／BOSS 主控規範**：",
           `  - ${C.GRIP_MODES?.virtual_hand_rule || "裝備已全部改為角色專屬，宙獸不再穿戴裝備；技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX），宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。"}`,
           "  - 追隨者與 BOSS 主控動作：含 `follow_idle`（護衛待機）、`follow_dash`（跟進補位）、`link_channel`（共鳴供招）、`relay_enter`（車輪戰輪替上場）、`boss_moveset_switch`（BOSS 主控切換招式組）、`boss_summon_follower`（BOSS 號召追隨者），完整規格見 `Data/creature-grip-anims/creature-grip-anims.json`（`cosmimera-creature-grip-anim/1`）。",
+          "  - **蹲下與起身銜接規範**：蹲下狀態提供 `crouch_move`、`crouch_roll`、`crouch_jump`、`crouch_block`（維持無武器本體與 `Socket_Weapon_R`/`L` 空掛點安全間距）；蹲下時發動攻擊、輔助／場地／生活能力、或與道具／投擲／捕獲等互動動作銜接時，必須先站立回歸站姿再執行標準站立 clip，不另製作獨立蹲下攻擊或互動動畫。",
           batch
             ? "- **持有組合追蹤（批量）**：依各宙獸已定案之 `grip_mode`（`two_handed`／`dual_wield`／`one_hand_shield`）過濾對應 clip（僅 `dual_wield` 需拆 `_r`/`_l` 交替動作），勿為不支援的持握方式製作無用動作。"
             : `- **允許持握組合**：\`${gripMode}\`（${gripInfo?.zh || gripMode}）· 掛點：${gripInfo?.sockets || "Socket_Weapon_R + Socket_Weapon_L"} · 對應動作節奏參考（勿於宙獸內繪製武器）：${weaponAllowLines.join(" ｜ ")}。${gripInfo?.pose || ""}`
@@ -592,14 +593,14 @@
 
     {
       // REQ: 使用者 2026-11-09 — 角色 img-to-3D 極致精簡與立繪規格對齊；2026-11-26 — 主控戰鬥與 7 槽角色裝備動作擴充。
-      id: "character-model-rig", version: "5.1.0", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
+      id: "character-model-rig", version: "5.2.0", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
       needs: "character", drop: "Art/_incoming", drive: true,
       options: [
         { key: "scope", type: "select", label: "模式", items: () => [{ v: "single", zh: "指定處理（單一立繪包）" }, { v: "batch", zh: "批量處理（01_portraits 內角色目錄）" }], def: "single" },
         { key: "source_pack", type: "text", label: "參照角色立繪包 ID (source_pack)", def: "", placeholder: "例：chr-20261106-7f3a-2105", when: o => o.scope !== "batch" },
         { key: "input_img", type: "text", label: "指定輸入 img", def: "", placeholder: "選填，留空預設使用正面正交 + turnaround 三視圖", when: o => o.scope !== "batch" },
         { key: "grip_mode", type: "select", label: "武器持握模式", items: () => [
-          { v: "all", zh: "全持握模式（輸出全部 81 支角色動作，預設）" },
+          { v: "all", zh: "全持握模式（輸出全部 85 支角色動作，預設）" },
           { v: "two_handed", zh: "雙手武器（two_handed）" },
           { v: "dual_wield", zh: "雙持單手（dual_wield）" },
           { v: "one_hand_shield", zh: "單手＋盾（one_hand_shield）" }
@@ -642,7 +643,8 @@
         const masterCombatBlock = [
           "- **角色專屬 7 槽與主控戰鬥規範**：",
           "  - **7 槽裝備間距**：裝備全歸角色穿戴（右手 `main_hand`、左手 `off_hand`、頭盔 `head`→`Socket_Head_Armor`、上身 `upper`、手套 `hands`→`Socket_Hands_Armor`、下身 `lower`、飾品 `accessory`）；手臂揮砍與舉盾須避開頭盔、手套與背包穿模。",
-          "  - **主控戰鬥與招式切換**：角色親自以手中武器／盾牌施放當前追隨宙獸的招式組，含拔收武器（`weapon_draw`/`weapon_sheathe`）、格擋彈反與破防（`block_hit`/`perfect_block`/`guard_break`/`stagger`）、切換宙獸招式（`moveset_switch` 2 秒冷卻 / `moveset_forced_switch` 死亡強制輪替），完整格式見 `Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。"
+          "  - **主控戰鬥與招式切換**：角色親自以手中武器／盾牌施放當前追隨宙獸的招式組，含拔收武器（`weapon_draw`/`weapon_sheathe`）、格擋彈反與破防（`block_hit`/`perfect_block`/`guard_break`/`stagger`）、切換宙獸招式（`moveset_switch` 2 秒冷卻 / `moveset_forced_switch` 死亡強制輪替），完整格式見 `Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。",
+          "  - **蹲下與起身銜接規範**：蹲下狀態提供 `crouch_move`、`crouch_roll`、`crouch_jump`、`crouch_block` 四支低姿動作（保留 7 槽裝備安全間距）；蹲下時發動攻擊、使用道具（`item_use_self`/`item_use_other`）、投擲或捕獲（`throw_card`/`throw_bead`/`throw_cube`）等動作，必須先站立回歸站姿再接續標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。"
         ].join("\n");
 
         const manifestObj = {
@@ -774,6 +776,89 @@
             "強度越高：預備時間越長、畫面占比越大；超載必殺可加短暫的全螢幕色調變化（≤ 400 ms）。",
             "同屬性的特效共用配色語言：" + el.palette + "。",
             "特效支援雙發射來源：玩家主控施放時自角色手部／正前掛點（`Socket_HandR_Prop`/`Socket_HandL_Prop`/`Socket_Front`）發出；宙獸追隨者或 BOSS 主控施放時自宙獸插槽骨（`Socket_Front`/`Socket_Mouth`/`Socket_Core_FX`/`Socket_Ground_FX`）發出，尺寸隨施放者體型（S/M/L/XL）縮放並寫於 `geometry.note`。"
+          ])
+        ].join("\n");
+        return common(ctx, body) + "\n\n" + deliverySection(ctx, "├── images/\n└── vfx/");
+      }
+    },
+
+    {
+      id: "passive-vfx", version: "1.0.0", zh: "被動技效果動畫（觸發提示特效）", prefix: "pfx", platform: "chatgpt",
+      needs: null, drop: "Art/_incoming",
+      options: [
+        { key: "use_creature", type: "select", label: "示範持有者", items: () => [{ v: "yes", zh: "以目前宙獸概念示範" }, { v: "no", zh: "不指定（通用示範）" }], def: "yes" },
+        { key: "element", type: "select", label: "屬性", items: (o, env) => C.ELEMENTS.filter(e => e.v !== "未知" && (o.use_creature !== "yes" || (env.creature.elements || []).includes(e.v))).map(e => ({ v: e.v, zh: e.zh + " " + e.v })), def: "rand" },
+        { key: "impact_moment", type: "select", label: "觸發時機（發揮影響力時）", items: () => C.PASSIVE_VFX.impact_moments, def: "rand" },
+        { key: "cue_style", type: "select", label: "提示樣式", items: () => C.PASSIVE_VFX.cue_styles, def: "rand" },
+        { key: "intensity", type: "select", label: "星級提示強度", items: () => C.PASSIVE_VFX.intensities, def: "star2_clear" },
+        { key: "trait_name", type: "text", label: "被動技名稱（可留空讓 AI 命名）", def: "" },
+        { key: "trait_id", type: "text", label: "被動技圖鑑 id（snake_case，可留空讓 AI 命名）", def: "" }
+      ],
+      build(ctx) {
+        const o = ctx.opts;
+        const el = C.ELEMENTS.find(e => e.v === o.element) || C.ELEMENTS[0];
+        const moment = C.PASSIVE_VFX.impact_moments.find(m => m.v === o.impact_moment) || C.PASSIVE_VFX.impact_moments[0];
+        const style = C.PASSIVE_VFX.cue_styles.find(s => s.v === o.cue_style) || C.PASSIVE_VFX.cue_styles[0];
+        const intensity = C.PASSIVE_VFX.intensities.find(i => i.v === o.intensity) || C.PASSIVE_VFX.intensities[1];
+        const base = "pfx_" + el.v + "_" + moment.v + "_" + style.v;
+        const body = [
+          "## 被動技效果提示",
+          json({
+            trait_name: o.trait_name || "（請命名，中英各一）",
+            trait_id: o.trait_id || "（請取 snake_case 通用名稱，以 trait_ 開頭，不含宙獸名）",
+            element: el.v + "（" + el.zh + "）",
+            palette: el.palette,
+            impact_moment: moment.v + "（" + moment.zh + "）",
+            cue_style: style.v + "（" + style.zh + "）",
+            intensity: intensity.v + "（" + intensity.zh + "）",
+            demo_holder: o.use_creature === "yes" ? ctx.concept : "不指定，用中性角色／宙獸體型示範"
+          }),
+          "被動技是**獨立圖鑑條目**，可由多隻宙獸或副手提供；demo_holder 僅供分鏡比例示範，特效不得依賴特定身體部位。",
+          "",
+          "## 核心設計規則（必須遵守）",
+          list([
+            "**觸發時間＝被動效果發揮影響力時**：不在常駐或待機時循環播放；僅在該被動效果實際介入結算的瞬間出現（例：攻擊強化於發動攻擊時出現、防禦強化於被攻擊時出現、異常強化於成功造成對手異常狀態時出現）。",
+            "**純視覺提示、不影響戰鬥系統**：本動畫屬表現層回饋，嚴禁改動或延遲戰鬥判定，不得伴隨頓幀（`hit_stop_ms: 0`）、震屏（`camera_shake.amplitude: 0`）、位移或硬直。",
+            "**不連續重疊出現（去重與節流）**：單次播放短促俐落（總時長 350–800 ms，非無窮循環）；同一單位的同一被動技播放期間不重複疊加，結束後套用最小間隔冷卻（`min_interval_ms: 1500`–`2000`），且同單位同時最多 1 個主被動提示光效（`max_concurrent_per_unit: 1`），高速連段或場地每跳僅提示首下。",
+            "**低遮擋辨識**：不可遮蔽角色／宙獸本體、主動技判定體與敵方前搖預警圈；嚴禁全螢幕閃白或畫面濾鏡。"
+          ]),
+          "",
+          "## 產出清單",
+          "| 檔案 | 內容 | 層級 |",
+          "|---|---|---|",
+          "| `vfx/" + base + "_spec.json` | 被動提示特效規格（欄位見下） | L1 |",
+          "| `images/" + base + "_storyboard.png` | 分鏡 4 格：觸發瞬間（發揮影響力）→ 提示浮現 → 峰值辨識 → 俐落消散，標註毫秒（總長 350–800 ms） | L1 |",
+          "| `images/" + base + "_layers.png` | 圖層拆解：主紋章／邊緣光／微粒／貼地環分層示意，標明低遮擋留白區 | L1 |",
+          "| `vfx/" + base + "_flipbook.png` | 序列圖 4×4 格、1024²（每格 256²），純黑底（additive 用），單次播畢不循環 | L2 |",
+          "",
+          "### spec.json 欄位",
+          json({
+            id: base,
+            trait_id: o.trait_id || "<trait_snake_case>",
+            impact_moment: moment.v,
+            cue_style: style.v,
+            intensity: intensity.v,
+            visual_only: true,
+            affects_combat_rules: false,
+            non_overlapping: true,
+            retrigger_policy: "ignore_while_active",
+            min_interval_ms: 1500,
+            max_concurrent_per_unit: 1,
+            phases: [{ name: "cue_in|peak_read|fade_out", start_ms: 0, end_ms: 0, description_zh: "" }],
+            colors_hex: { core: "#", glow: "#", accent: "#" },
+            layers: [{ name: "", type: "crest|rim|ring|particles", count: 0, lifetime_ms: 0, size_m: 0, texture: "", blend: "additive|alpha" }],
+            sockets: ["Socket_Core_FX", "Socket_Ground_FX"],
+            hit_stop_ms: 0,
+            camera_shake: { amplitude: 0, duration_ms: 0 },
+            sound_cues_zh: ["輕量提示音（不蓋過打擊音）"],
+            deck_budget: { max_particles: 16, note: "Steam Deck 版粒子數約為 PC 的 50%，單次輕量不搶主招效能" },
+            unity_notes: "URP VFX Graph / 輕量 Shader 提示；卡通硬邊 2–3 色階；不凍結 Animator 或 Time.timeScale"
+          }),
+          "",
+          "## 規格",
+          list([
+            "同屬性共用配色語言：" + el.palette + "；造型須一眼區分「攻擊強化／防禦強化／異常觸發／回復機動」等觸發情境。",
+            "支援雙載體掛點：玩家角色主控觸發時對齊 `Socket_Head_FX`／`Socket_HandR_Prop`／`Socket_HandL_Prop` 或腳底原點；宙獸追隨者與 BOSS 觸發時對齊 `Socket_Core_FX`／`Socket_Ground_FX`（異常觸發可於目標 `Socket_Core_FX` 短閃），並依體型（XS–XL）縮放。"
           ])
         ].join("\n");
         return common(ctx, body) + "\n\n" + deliverySection(ctx, "├── images/\n└── vfx/");

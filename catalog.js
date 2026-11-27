@@ -2,7 +2,7 @@
 // 改動規則見 README.md：新增選項 → minor；改既有 ID / 刪除 / 改動作事件 → major。
 // 權重 w 為相對值，不必加總為 100。
 window.COSMI_CATALOG = {
-  version: "2.13.0",
+  version: "2.15.0",
 
   ELEMENTS: [
     { v: "metal",   zh: "金", palette: "銀白、淡金、鋼藍高光" },
@@ -1942,6 +1942,9 @@ window.COSMI_CATALOG = {
       { id: "run", zh: "奔跑", f: 22, loop: true, ev: ["ev_footstep@5", "ev_footstep@16"] },
       { id: "sneak_idle", zh: "潛行待機", f: 60, loop: true },
       { id: "sneak_move", zh: "潛行移動", f: 40, loop: true },
+      { id: "crouch_move", zh: "蹲下移動（壓低重心緩行）", f: 38, loop: true, ev: ["ev_footstep@10", "ev_footstep@29"] },
+      { id: "crouch_roll", zh: "蹲下翻滾（低姿翻滾閃避，無敵幀）", f: 20, rm: true, ev: ["ev_end_lock@16"] },
+      { id: "crouch_jump", zh: "蹲下跳躍（低姿蓄力起跳／滯空／落地）", f: 30 },
       { id: "roll_dodge", zh: "翻滾閃避（無敵幀）", f: 20, rm: true, ev: ["ev_end_lock@16"] },
       { id: "jump", zh: "跳躍（起跳/滯空/落地）", f: 30 },
       { id: "swim_idle", zh: "水面漂浮待機", f: 60, loop: true },
@@ -1950,6 +1953,7 @@ window.COSMI_CATALOG = {
       { id: "mount_idle", zh: "騎乘待機（坐姿握鞍）", f: 60, loop: true },
       { id: "mount_run", zh: "騎乘奔跑（騎乘衝刺）", f: 24, loop: true },
       { id: "block", zh: "格擋（舉起→維持→放下）", f: 30 },
+      { id: "crouch_block", zh: "蹲下格擋（低重心舉武／舉盾防禦）", f: 28 },
       { id: "block_hit", zh: "格擋受擊（防禦震退回饋）", f: 16, ev: ["ev_spawn_fx@2"] },
       { id: "perfect_block", zh: "完美格擋（150ms 彈反震擊）", f: 22, ev: ["ev_spawn_fx@4", "ev_hit@6", "ev_end_lock@16"] },
       { id: "guard_break", zh: "破防硬直（架勢條滿崩解 1.5s）", f: 45 },
@@ -2024,6 +2028,9 @@ window.COSMI_CATALOG = {
       { id: "walk", zh: "移動", f: 32, loop: true, ev: ["ev_footstep@8"] },
       { id: "run", zh: "奔跑", f: 20, loop: true, ev: ["ev_footstep@5"] },
       { id: "sneak", zh: "潛行", f: 40, loop: true },
+      { id: "crouch_move", zh: "蹲下移動（低伏潛行移動）", f: 38, loop: true, ev: ["ev_footstep@10", "ev_footstep@29"] },
+      { id: "crouch_roll", zh: "蹲下翻滾（低姿翻滾閃避，無敵幀）", f: 18, rm: true, ev: ["ev_end_lock@14"] },
+      { id: "crouch_jump", zh: "蹲下跳躍（低伏蓄力起跳／滯空／落地）", f: 30 },
       { id: "jump", zh: "跳躍（起跳/滯空/落地）", f: 30 },
       { id: "roll_dodge", zh: "翻滾閃避（主控無敵幀）", f: 18, rm: true, ev: ["ev_end_lock@14"] },
       { id: "swim", zh: "游泳／水面移動", f: 36, loop: true },
@@ -2033,6 +2040,7 @@ window.COSMI_CATALOG = {
       { id: "mount_idle", zh: "被騎乘待機（穩定承載姿態）", f: 60, loop: true },
       { id: "mount_run", zh: "被騎乘奔跑（高速載騎衝刺）", f: 22, loop: true, ev: ["ev_footstep@5"] },
       { id: "block", zh: "格擋", f: 30 },
+      { id: "crouch_block", zh: "蹲下格擋（低伏防禦架勢）", f: 28 },
       { id: "block_hit", zh: "格擋受擊（防禦震退回饋）", f: 16, ev: ["ev_spawn_fx@2"] },
       { id: "perfect_block", zh: "完美格擋（150ms 彈反震擊）", f: 22, ev: ["ev_spawn_fx@4", "ev_hit@6", "ev_end_lock@16"] },
       { id: "guard_break", zh: "破防硬直（架勢條滿崩解 1.5s）", f: 45 },
@@ -2088,6 +2096,7 @@ window.COSMI_CATALOG = {
 
   GRIP_MODES: {
     virtual_hand_rule: "裝備全部改為角色裝備：玩家角色直接於 Socket_HandR_Prop／Socket_HandL_Prop 持握武器與盾牌，宙獸無個人裝備改為純粹本體＋追隨作戰。保留虛擬大手與獨立掛點規格供遺留／BOSS 演出參考，技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX）；宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。",
+    crouch_rule: "蹲下狀態提供 crouch_move、crouch_roll、crouch_jump、crouch_block 四支低姿動作；蹲下時發動攻擊、使用道具、投擲或捕獲等動作，須先站立回歸站姿再執行標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。",
     two_handed: {
       zh: "雙手武器（two_handed）",
       sockets: "Socket_Weapon_R（主手）＋ Socket_Weapon_L（雙手輔助）空掛點",
@@ -2125,6 +2134,28 @@ window.COSMI_CATALOG = {
       { v: "summon", zh: "召喚光陣" }, { v: "recall", zh: "收回光流" }, { v: "overload_aura", zh: "超載氣場" },
       { v: "miss_afterimage", zh: "MISS 殘影" }, { v: "hit_spark", zh: "屬性命中火花" }, { v: "pet_hearts", zh: "撫摸回饋" },
       { v: "capture_talisman_card", zh: "符籙卡片收服" }, { v: "capture_glass_bead", zh: "琉璃珠收服" }, { v: "capture_magic_cube", zh: "魔術方塊收服" }
+    ]
+  },
+
+  PASSIVE_VFX: {
+    impact_moments: [
+      { v: "on_attack", zh: "發動攻擊時（攻擊／暴擊／射程／冷卻強化）" },
+      { v: "on_defend", zh: "被攻擊時（防禦／抗性／格擋／閃避／失衡抗性強化）" },
+      { v: "on_ailment_inflict", zh: "成功造成對手異常狀態時（異常累積／觸發）" },
+      { v: "on_ailment_resist", zh: "抵抗異常狀態時（異常抗性強化）" },
+      { v: "on_heal_or_threshold", zh: "回復或血線／進場啟動瞬間（治療／背水／換手增益）" },
+      { v: "on_mobility", zh: "移動／衝刺加速生效時（移速強化）" }
+    ],
+    cue_styles: [
+      { v: "crest_flash", zh: "紋章閃現（短促符紋浮現即散）" },
+      { v: "rim_pulse", zh: "輪廓脈衝（身體邊緣光脈動）" },
+      { v: "aura_ring", zh: "貼地光環（低調腳底／核心環波）" },
+      { v: "spark_burst", zh: "微粒迸散（定向輕量粒子提示）" }
+    ],
+    intensities: [
+      { v: "star1_subtle", zh: "★ 輕提示（極簡微光）" },
+      { v: "star2_clear", zh: "★★ 清晰提示（雙層紋樣／邊光）" },
+      { v: "star3_signature", zh: "★★★ 獨有提示（專屬圖騰微爆，仍低遮擋）" }
     ]
   },
 

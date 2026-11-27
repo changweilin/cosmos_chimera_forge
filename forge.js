@@ -664,7 +664,7 @@
     if (t.needs === "creature") return "creature";
     if (t.needs === "either" && o.scope === "batch") return null;
     if (t.needs === "either") return o.subject === "creature" ? "creature" : "character";
-    if (t.id === "move-vfx" && o.use_creature === "yes") return "creature";
+    if ((t.id === "move-vfx" || t.id === "passive-vfx") && o.use_creature === "yes") return "creature";
     return null;
   }
 
@@ -696,7 +696,7 @@
     const is3dTask = is3dType(t.id);
     const chosenPkg = (is3dTask && o.source_pack) ? reviewState.packages.find(p => p.id === o.source_pack) : null;
     let concept = chosenPkg?.concept || (subj === "character" ? characterConcept() : subj === "creature" ? creatureConcept() : null);
-    let subjId = chosenPkg?.subjectId || (subj ? subjectId(subj) : is3dTask ? "batch" : t.id === "capture-vessel" ? "vessels" : t.id === "culture-research" ? "region_" + o.region : t.id === "craft-item-design" ? "itm_" + o.slot : t.id === "world-object-design" ? "wld_" + o.category : "fx_" + o.element + "_" + o.shape);
+    let subjId = chosenPkg?.subjectId || (subj ? subjectId(subj) : is3dTask ? "batch" : t.id === "capture-vessel" ? "vessels" : t.id === "culture-research" ? "region_" + o.region : t.id === "craft-item-design" ? "itm_" + o.slot : t.id === "world-object-design" ? "wld_" + o.category : t.id === "passive-vfx" ? (o.trait_id || "pfx_" + o.element + "_" + o.impact_moment) : "fx_" + o.element + "_" + o.shape);
 
     if (["character-concept", "creature-concept", "character-model-rig", "creature-model-rig", "model-rig"].includes(t.id)) {
       const key = [subjId, t.id, o.stage || "", state.seed, o.source_pack || ""].join(":");
@@ -3705,7 +3705,7 @@
     $("#copy").disabled = $("#download").disabled = b.errors.length > 0;
     $("#header").textContent = b.ctx.header;
     $("#chars").textContent = displayedText.length.toLocaleString() + " 字元";
-    const encyclopediaKind = t.id === "move-vfx" ? "moves" : t.id.startsWith("character") ? "characters" : "creatures";
+    const encyclopediaKind = (t.id === "move-vfx" || t.id === "passive-vfx") ? "moves" : t.id.startsWith("character") ? "characters" : "creatures";
     const wikiDesc = window.COSMI_WIKI.describe(b.ctx);
     const wikiPath = wikiDesc.path;
     const stageVal = document.getElementById("pipelineStage")?.value || "task";
@@ -3957,6 +3957,7 @@
     if (taskId.startsWith("chr")) return "character-concept";
     if (taskId.startsWith("cr") || taskId.startsWith("ch_")) return "creature-concept";
     if (taskId.startsWith("mv_")) return "move-vfx";
+    if (taskId.startsWith("pfx")) return "passive-vfx";
     if (taskId.startsWith("mdl") || taskId.startsWith("anim")) {
       if (manifestData?.source_pack?.startsWith("chr") || manifestData?.subject_id?.startsWith("chr")) return "character-model-rig";
       return "creature-model-rig";
@@ -6969,7 +6970,7 @@
       recordPipelineJob(b.ctx, stage);
       const portrait = stage === "portrait" && window.COSMI_PIPELINE?.supports(b.ctx);
       const root = window.COSMI_DRIVE?.pipelineRoot?.(b.ctx)
-        || (b.ctx.task?.id === "move-vfx" ? "moves" : b.ctx.task?.id?.startsWith("character") ? "characters" : "creatures");
+        || ((b.ctx.task?.id === "move-vfx" || b.ctx.task?.id === "passive-vfx") ? "moves" : b.ctx.task?.id?.startsWith("character") ? "characters" : "creatures");
       const subject = window.COSMI_DRIVE?.cleanSubjectId?.(root, b.ctx.subjectId || b.ctx.taskId) || b.ctx.subjectId || b.ctx.taskId;
       const stem = window.COSMI_DRIVE?.assetStem?.({
         kind: root,

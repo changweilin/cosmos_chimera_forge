@@ -63,7 +63,7 @@ test('both routes are visible in one horizontal diagram with shared endpoints', 
     assert.deepEqual(Array.from(lanes[1].segments,s=>s.steps[0].id),
       ['prompt_3d']);
   }
-  assert.deepEqual(Array.from(flow.diagram('move'),r=>r.steps[0].id),['encyclopedia','move_vfx']);
+  assert.deepEqual(Array.from(flow.diagram('move'),r=>r.steps[0].id),['encyclopedia','move_vfx','passive_vfx']);
 });
 test('task graph is horizontally scrollable and category selection needs no route switch', () => {
   assert.match(html, /<h2>任務流程圖<\/h2>/);

@@ -18,7 +18,7 @@
 3. **獨立外觀評估（先於綁骨）**：從正背側及 45° 比對輪廓、臉部、服裝、細節、材質（各 0–1）；由真正執行的人工或外部視覺評估器寫 `qa/appearance_review.json`，帶模型 SHA-256、參考圖集合 SHA-256、評估方法和身份。未評估**不等於**及格。
 4. **決策式修復**：缺角度／遮擋才提案使用 MV-Adapter 補指定角度，先確認新圖與原角色一致性且有相機參數；幾何缺陷優先 Blender 定位修補；單純貼圖問題優先 Texture Refinement（UV、接縫、色彩與紋理）；身份、臉部／服裝錯誤則有針對性修改 Prompt、遮罩／參考圖或比較另一模型。**不能只換 seed 無限重跑**。首次＋最多兩次重建、MV-Adapter 最多一次；超限提交人工選模。
 5. **二次閘門**：修復結果需使用**新 asset_id** 保存新模型、參考圖與評估報告，再跑同樣門檻；所有問題需保留缺陷類型、分數與修正證據。只有獨立審核達門檻時才能繼續 rigging。
-6. **後段處理（CPU／Blender）**：SkinTokens（僅支援型態且已安裝才用）、骨架與蒙皮檢查、Blender 拓撲／UV／材質、動作關鍵幀（依 `skeleton_actions.md`：81 動作與角色七槽裝備掛點 `Socket_HandR_Prop`/`L_Prop`、`Socket_Head_Armor`、`Socket_Hands_Armor` 等）及重新匯出。確認 `.blend`、`.glb`、`rig/`、`animations/`、`previews/`、`qa/`、`manifest.json` 真實存在。
+6. **後段處理（CPU／Blender）**：SkinTokens（僅支援型態且已安裝才用）、骨架與蒙皮檢查、Blender 拓撲／UV／材質、動作關鍵幀（依 `skeleton_actions.md`：85 動作含蹲下 4 支與角色七槽裝備掛點 `Socket_HandR_Prop`/`L_Prop`、`Socket_Head_Armor`、`Socket_Hands_Armor` 等；蹲下攻擊／道具／投擲／捕獲須先站立再播站立 clip）及重新匯出。確認 `.blend`、`.glb`、`rig/`、`animations/`、`previews/`、`qa/`、`manifest.json` 真實存在。
 7. **人工驗收與回寫**：從各視角及動作逐一核對臉、服裝、配件、材質與穿插。僅人工可核准並歸檔；未完成者標記 `REVIEW_REQUIRED` 或 `QA_PENDING`，不自動移至 completed。
 
 GPU 任務可拆 pre_gpu／gpu／post_gpu。GPU 結束後依 Colab guard 關閉 GPU runtime；流程、模板維護及程式版本只回 GitHub，個別產物與日誌只回 Drive，不交 ZIP。

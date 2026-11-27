@@ -15,7 +15,8 @@ test('three entry categories are character, creature, move', () => {
   const flow = loadFlow();
   assert.deepEqual(Array.from(flow.categories,c=>c.id),['character','creature','move']);
   assert.equal(flow.resolve('move','move','move_vfx').taskId,'move-vfx');
-  assert.equal(flow.steps('move','move').length,2);
+  assert.equal(flow.resolve('move','move','passive_vfx').taskId,'passive-vfx');
+  assert.equal(flow.steps('move','move').length,3);
   assert.equal(flow.steps('move','move')[0].id,'encyclopedia');
 });
 test('image route has two exclusive Blender routes after portrait approval', () => {
@@ -51,6 +52,7 @@ test('encyclopedia is integrated into appearance for character/creature and stan
 test('legacy task and stage can be mapped to new flow', () => {
   const flow=loadFlow();
   assert.equal(flow.infer('move-vfx','portrait').step,'move_vfx');
+  assert.equal(flow.infer('passive-vfx','passive_vfx').step,'passive_vfx');
   assert.equal(flow.infer('character-concept','portrait').step,'portrait');
   assert.equal(flow.infer('creature-model-rig','blender',{source_pack:'cr-existing'}).step,'image_blender');
   assert.equal(flow.infer('creature-model-rig','blender',{source_pack:'',input_img:''}).step,'prompt_3d');

@@ -5,6 +5,7 @@
 先選定資產與參數，再擇一交給可讀取 Drive 的 AI；外觀、參數及圖片以指定檔案為準。
 
 - 主動技 VFX：讀取 cosmos_chimera_forge/moves/prompts/01b_move_vfx.prompt.md，使用指定主動技資產設定與輸出路徑。
+- 被動技提示 VFX：讀取 cosmos_chimera_forge/moves/prompts/01c_passive_vfx.prompt.md，使用指定被動技資產設定與輸出路徑（僅於被動效果發揮影響力時短暫提示，不影響戰鬥系統、不連續重疊）。
 - 外觀：讀取 cosmos_chimera_forge/<kind>/prompts/00_appearance.prompt.md，依附上的素材執行。
 - 立繪：讀取 cosmos_chimera_forge/<kind>/prompts/01_portrait.prompt.md，使用指定資產的 appearance.md 和 parameters.json 執行。
 - 立繪審查：讀取 cosmos_chimera_forge/<kind>/prompts/02_review_portrait.prompt.md，檢查我指定的立繪目錄。

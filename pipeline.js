@@ -52,11 +52,11 @@
   function pipelineRootFor(ctx) {
     if (window.COSMI_DRIVE?.pipelineRoot) return window.COSMI_DRIVE.pipelineRoot(ctx);
     const id = String(ctx?.task?.id || "");
-    if (id === "move-vfx") return "moves";
+    if (id === "move-vfx" || id === "passive-vfx") return "moves";
     if (id.startsWith("character")) return "characters";
     if (id.startsWith("creature")) return "creatures";
     return /^chr[-_]/i.test(ctx?.subjectId || ctx?.taskId || "") ? "characters"
-      : /^(?:fx|vsl)[-_]/i.test(ctx?.subjectId || ctx?.taskId || "") ? "moves"
+      : /^(?:fx|pfx|vsl)[-_]/i.test(ctx?.subjectId || ctx?.taskId || "") ? "moves"
       : "creatures";
   }
   function isCreature(ctx) {
@@ -64,14 +64,14 @@
     return id.startsWith("creature-") || ctx.task?.needs === "creature" ||
       (id === "model-rig" && /^cr[-_]/.test(ctx.subjectId || ctx.opts?.source_pack || ""));
   }
-  function supports(ctx) { return ["character-concept", "creature-concept", "character-model-rig", "creature-model-rig", "model-rig", "move-vfx"].includes(ctx.task.id); }
+  function supports(ctx) { return ["character-concept", "creature-concept", "character-model-rig", "creature-model-rig", "model-rig", "move-vfx", "passive-vfx"].includes(ctx.task.id); }
   function build(ctx) {
     const stage = $("pipelineStage")?.value || "portrait";
-    if (stage === "portrait" || stage === "move_vfx") {
+    if (stage === "portrait" || stage === "move_vfx" || stage === "passive_vfx") {
       const content=ctx.task.nativeBuild ? ctx.task.nativeBuild(ctx) : ctx.task.build(ctx);
       if (!window.COSMI_WIKI || !supports(ctx))return content;
       const wiki=window.COSMI_WIKI.describe(ctx);
-      const sourceNote = stage === "move_vfx" ? "僅引用，未建立時先執行獨立圖鑑步驟；不可重複生成" : "於外觀設定階段建立，此處僅引用；不可重複生成";
+      const sourceNote = (stage === "move_vfx" || stage === "passive_vfx") ? "僅引用，未建立時先執行獨立圖鑑步驟；不可重複生成" : "於外觀設定階段建立，此處僅引用；不可重複生成";
       return content + "\n\n圖鑑：" + wiki.path + "（" + sourceNote + "）。";
     }
     if (stage === "encyclopedia") {
