@@ -371,6 +371,60 @@ def _twilight(fig):
     return [sash, cord, lamp]
 
 
+def _ocean(fig):
+    """Ocean: a sarong tied between Hip and Waist, its knot and two short tails at the front left (NpcMeshes Signature;
+    procedural -x is the figure's left, +x here). The head cloth stays a procedural part."""
+    h = fig.h
+    z = fig.hip + 0.4 * (fig.waist - fig.hip)
+    sarong = _band(fig, z, 0.014 * h, OUTER_FIT, "accent", out=0.002)
+    knot, _ = _front_point(fig, 0.35 * fig.hip_x, z, OUTER_FIT, CLEAR_M + 0.012 * h)
+    parts = [sarong, _sphere(knot, (0.022 * h, 0.016 * h, 0.02 * h), "accentdark", 8, 6)]
+    for s in (-1, 1):
+        parts.append(_tube(knot, knot + Vector((s * 0.012 * h, -0.006 * h, -0.11 * h)), 0.012 * h, 0.008 * h, "accent", n=8))
+    return parts
+
+
+def _gale(fig):
+    """Gale: a wide beaded collar lying on the shoulders, three rings stepping out and down (NpcMeshes Signature)."""
+    h, parts = fig.h, []
+    for k, role in enumerate(("accent", "cloth2", "accentdark")):
+        z = fig.neck - (0.012 + 0.014 * k) * h
+        parts.append(_band(fig, z, 0.0055 * h, 1.0, role, out=0.004 * h * k + 0.004 * h, folds=0.002 * h, freq=24.0))
+    return parts
+
+
+def _radiant(fig):
+    """Radiant: a long shawl from the left shoulder across the chest to the right hip and round the back (like the lava
+    sash, about 1.1 x as wide), and its end hanging down the back from the left shoulder (NpcMeshes Signature). The turban
+    stays a procedural part."""
+    h = fig.h
+    a = fig.head_of["upperarm_l"] + Vector((-0.02 * h, 0.0, 0.03 * h))
+    b = Vector((-fig.hip_x, fig.axis_y(fig.hip), fig.hip + 0.03 * h))
+    d = (b - a).normalized()
+    t = -a.x / (b.x - a.x)
+    z = a.z + (b.z - a.z) * t
+    c = Vector((0.0, fig.axis_y(z), z))
+    n = d.cross(Vector((0.0, 1.0, 0.0))).normalized()
+    shawl = _hoop(fig, c, n, 0.034 * h, OUTER_FIT, CLEAR_M + 0.003 * h, "accent")
+    sh = fig.head_of["upperarm_l"]
+    x = 0.6 * sh.x
+    band = fig.torso & (np.abs(fig.co[:, 2] - (sh.z - 0.02 * h)) < 0.02) & (np.abs(fig.co[:, 0] - x) < 0.03)
+    back = Vector((x, fig.co[band, 1].max() + CLEAR_M + 0.012 * h, sh.z - 0.01 * h))
+    tail = _tube(back, back + Vector((-0.01 * h, 0.02 * h, -0.24 * h)), 0.04 * h, 0.03 * h, "accentdark", n=8)
+    return [shawl, tail]
+
+
+def _metropolis(fig):
+    """Metropolis: a short stand collar at the neck's root and a strap on each shoulder (NpcMeshes Signature). The
+    earpiece stays a procedural part."""
+    h = fig.h
+    collar = _band(fig, fig.neck - 0.004 * h, 0.016 * h, 1.0, "clothdark", out=0.006 * h)
+    parts = [collar]
+    for side in ("l", "r"):
+        parts.append(_pad(fig, side, "accent", 0.004 * h, 0.01 * h))
+    return parts
+
+
 def _front_point(fig, x, z, fit, out):
     p, n = fig.front(x, z)
     c = Vector((0.0, fig.axis_y(z), z))
@@ -455,6 +509,10 @@ SLOTS = {
     "piece_Ice": _ice,
     "piece_Crystal": _crystal,
     "piece_Twilight": _twilight,
+    "piece_Ocean": _ocean,
+    "piece_Gale": _gale,
+    "piece_Radiant": _radiant,
+    "piece_Metropolis": _metropolis,
     "trim_Primal": _primal,
     "trim_Industrial": _industrial,
     "trim_Steampunk": _steampunk,
