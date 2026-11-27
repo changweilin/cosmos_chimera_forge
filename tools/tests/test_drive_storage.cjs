@@ -235,13 +235,14 @@ test('production build excludes asset and prompt directories and requires OAuth 
 
 function reviewHarness({failSource=false, failRecord=false}={}) {
   const assets = [
-    {id:'cr_fox_adult_03a_colab',subjectId:'cr_fox',type:'creature-model-rig',driveFolderId:'cr_fox-folder',drivePath:'creatures/cr_fox',sourcePack:'cr_fox_adult_01_portrait',stage:'adult',glbFile:{},driveFiles:[{id:'glb-1',path:'cr_fox_adult_03a_colab.glb'},{id:'blend-1',path:'cr_fox_adult_03a_colab.blend'}],status:'pending'},
-    {id:'cr_fox_adult_01_portrait',subjectId:'cr_fox',type:'creature-concept',driveFolderId:'cr_fox-folder',drivePath:'creatures/cr_fox',stage:'adult',images:[{path:'cr_fox_adult_01_portrait_front.png'}],status:'ok'}
+    {id:'cr_fox_adult_03b_blender',subjectId:'cr_fox',type:'creature-model-rig',driveFolderId:'cr_fox-folder',drivePath:'creatures/cr_fox',sourcePack:'',stage:'adult',glbFile:{},driveFiles:[{id:'glb-1',path:'cr_fox_adult_03b_blender.glb'},{id:'blend-1',path:'cr_fox_adult_03b_blender.blend'}],status:'pending'},
+    {id:'chr_hero_03b_blender',subjectId:'chr_hero',type:'character-model-rig',driveFolderId:'chr_hero-folder',drivePath:'characters/chr_hero',sourcePack:'chr_hero_01_portrait',glbFile:{},driveFiles:[{id:'glb-2',path:'chr_hero_03b_blender.glb'},{id:'blend-2',path:'chr_hero_03b_blender.blend'}],status:'pending'},
+    {id:'chr_hero_01_portrait',subjectId:'chr_hero',type:'character-concept',driveFolderId:'chr_hero-folder',drivePath:'characters/chr_hero',images:[{path:'chr_hero_01_portrait_front.png'}],status:'ok'}
   ];
-  const parents={'cr_fox-folder':'creatures-id','glb-1':'cr_fox-folder','blend-1':'cr_fox-folder'};
+  const parents={'cr_fox-folder':'creatures-id','glb-1':'cr_fox-folder','blend-1':'cr_fox-folder','chr_hero-folder':'characters-id','glb-2':'chr_hero-folder','blend-2':'chr_hero-folder'};
   const h=harness({handle:(u,o)=>{
     const q=u.searchParams.get('q')||'';
-    if(q.includes("name = 'cr_fox_adult_02_review_portrait.json'")||q.includes("name = 'cr_fox_adult_04_review_3d.json'"))return Response.json({files:[]});
+    if(q.includes("_02_review_portrait.json'")||q.includes("_04_review_3d.json'"))return Response.json({files:[]});
     const id=u.pathname.split('/').pop();
     if(id in parents) {
       if(o.method==='PATCH') {
@@ -260,32 +261,32 @@ function reviewHarness({failSource=false, failRecord=false}={}) {
 
 test('portrait approval persists review without moving the portrait',async()=>{
  const {h,assets,parents}=reviewHarness();await h.login();
- await h.context.COSMI_DRIVE.review(assets[1],'ok','passed');
- assert.equal(parents['cr_fox-folder'],'creatures-id');
+ await h.context.COSMI_DRIVE.review(assets[2],'ok','passed');
+ assert.equal(parents['chr_hero-folder'],'characters-id');
  assert.equal(h.calls.filter(c=>c.options.method==='PATCH'&&!c.url.pathname.includes('/upload/')).length,0);
  assert.ok(h.calls.some(c=>c.url.pathname.includes('/upload/')));
 });
 
 test('final approval keeps files in subject folder and marks model and source completed',async()=>{
  const {h,assets,parents}=reviewHarness();await h.login();
- await h.context.COSMI_DRIVE.review(assets[0],'ok');
- assert.equal(parents['cr_fox-folder'],'creatures-id');
- assert.equal(assets[0].drivePath,'creatures/cr_fox');assert.equal(assets[0].completed,true);assert.equal(assets[1].completed,true);
+ await h.context.COSMI_DRIVE.review(assets[1],'ok');
+ assert.equal(parents['chr_hero-folder'],'characters-id');
+ assert.equal(assets[1].drivePath,'characters/chr_hero');assert.equal(assets[1].completed,true);assert.equal(assets[2].completed,true);
 });
 
-test('prompt-only model can complete without a bound portrait, while image-to-3d still requires one',async()=>{
- const {h,assets,parents}=reviewHarness();await h.login();assets[0].sourcePack='';assets[0].id='cr_fox_adult_03b_blender';
+test('prompt-only creature model can complete without a bound portrait, while character image-to-3d still requires one',async()=>{
+ const {h,assets,parents}=reviewHarness();await h.login();
  await h.context.COSMI_DRIVE.review(assets[0],'ok');
  assert.equal(parents['cr_fox-folder'],'creatures-id');
  assert.equal(assets[0].status,'ok');
 
- const {h:h2,assets:a2,parents:p2}=reviewHarness();await h2.login();a2[0].sourcePack='';
- await assert.rejects(h2.context.COSMI_DRIVE.review(a2[0],'ok'),/綁定已核准/);
- assert.equal(p2['cr_fox-folder'],'creatures-id');assert.equal(a2[0].status,'pending');
+ const {h:h2,assets:a2,parents:p2}=reviewHarness();await h2.login();a2[1].sourcePack='';
+ await assert.rejects(h2.context.COSMI_DRIVE.review(a2[1],'ok'),/綁定已核准/);
+ assert.equal(p2['chr_hero-folder'],'characters-id');assert.equal(a2[1].status,'pending');
 });
 
 test('missing blend prevents completion',async()=>{
- const {h,assets}=reviewHarness();await h.login();assets[0].driveFiles=[{path:'cr_fox_adult_03a_colab.glb'}];
+ const {h,assets}=reviewHarness();await h.login();assets[0].driveFiles=[{path:'cr_fox_adult_03b_blender.glb'}];
  await assert.rejects(h.context.COSMI_DRIVE.review(assets[0],'ok'),/blend/);
 });
 
@@ -302,10 +303,10 @@ test('review record failure rolls back rejected file moves',async()=>{
 });
 
 test('rejection moves only the rejected package files to backup without moving subject folder',async()=>{
- const {h,assets,parents}=reviewHarness();await h.login();const p=assets[0];
+ const {h,assets,parents}=reviewHarness();await h.login();const before=assets.length;const p=assets[0];
  await h.context.COSMI_DRIVE.review(p,'reject','bad anatomy');
  assert.match(p.drivePath,/^creatures\/backup\/rejected_3d\//);assert.equal(parents['cr_fox-folder'],'creatures-id');
- assert.equal(assets.length,1);assert.equal(p.status,'reject');
+ assert.equal(assets.length,before-1);assert.equal(p.status,'reject');
 });
 
 
@@ -407,7 +408,7 @@ test('pipelineRoot and packageDir route character, creature, and move pipelines 
   assert.equal(d.pipelineRoot('cr-20261114-abcd-0001'), 'creatures');
   assert.equal(d.pipelineRoot('fx-20261114-abcd-0001'), 'moves');
   assert.equal(d.packageDir('character-concept', 'chr_hero'), 'characters/chr_hero');
-  assert.equal(d.packageDir('character-model-rig', 'chr_hero', 'colab'), 'characters/chr_hero');
+  assert.equal(d.packageDir('character-model-rig', 'chr_hero', 'blender'), 'characters/chr_hero');
   assert.equal(d.packageDir('creature-model-rig', 'cr_fox_adult', 'blender'), 'creatures/cr_fox');
   assert.equal(d.packageDir('move-vfx', 'fx_burst'), 'moves/fx_burst');
 });
@@ -703,7 +704,7 @@ test('assetSubpath keeps main portrait, GLB, and wiki at Level 3 and routes inte
   const h = harness();
   const { assetSubpath, isLevel3Deliverable, parseAssetFilename } = h.context.COSMI_DRIVE;
   assert.equal(assetSubpath('chr_1286_01_portrait_main.png', 'characters'), 'chr_1286_01_portrait_main.png');
-  assert.equal(assetSubpath('chr_1286_03a_colab.glb', 'characters'), 'chr_1286_03a_colab.glb');
+  assert.equal(assetSubpath('chr_1286_03b_blender.glb', 'characters'), 'chr_1286_03b_blender.glb');
   assert.equal(assetSubpath('cr_aqua_slime_adult_03b_blender_v2.glb', 'creatures'), 'cr_aqua_slime_adult_03b_blender_v2.glb');
   assert.equal(assetSubpath('cr_aqua_slime_adult_05_wiki.md', 'creatures'), 'cr_aqua_slime_adult_05_wiki.md');
 
@@ -711,12 +712,12 @@ test('assetSubpath keeps main portrait, GLB, and wiki at Level 3 and routes inte
   assert.equal(assetSubpath('chr_1286_00_parameters_v2.json', 'characters'), '00_settings/v2/chr_1286_00_parameters_v2.json');
   assert.equal(assetSubpath('chr_1286_01_portrait_front.png', 'characters'), '01_portrait/chr_1286_01_portrait_front.png');
   assert.equal(assetSubpath('chr_1286_02_review_portrait.json', 'characters'), '02_review_portrait/chr_1286_02_review_portrait.json');
-  assert.equal(assetSubpath('chr_1286_03a_colab.blend', 'characters'), '03a_colab/chr_1286_03a_colab.blend');
+  assert.equal(assetSubpath('chr_1286_03b_blender.blend', 'characters'), '03b_blender/chr_1286_03b_blender.blend');
   assert.equal(assetSubpath('cr_aqua_slime_adult_03b_blender_v2_manifest.json', 'creatures'), '03b_blender/v2/cr_aqua_slime_adult_03b_blender_v2_manifest.json');
   assert.equal(assetSubpath('cr_aqua_slime_adult_04_review_3d.json', 'creatures'), '04_review_3d/cr_aqua_slime_adult_04_review_3d.json');
 
   assert.equal(isLevel3Deliverable(parseAssetFilename('01_portrait/chr_1286_01_portrait_main.png', 'characters')), true);
-  assert.equal(isLevel3Deliverable(parseAssetFilename('03a_colab/chr_1286_03a_colab_manifest.json', 'characters')), false);
+  assert.equal(isLevel3Deliverable(parseAssetFilename('03b_blender/chr_1286_03b_blender_manifest.json', 'characters')), false);
 });
 
 test('syncPackages and syncPipelineIndex read files from step/version subdirectories and review writes into step subdir', async () => {

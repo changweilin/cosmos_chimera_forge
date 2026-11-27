@@ -101,7 +101,7 @@ function createHarness() {
     COSMI_DRIVE: {
       pipelineIndex: () => ({
         settings: [{ name: 'cr_sun_01.appearance.md' }],
-        jobs: [{ name: 'cr-20261113-1111-0001-adult.colab.prompt.md' }],
+        jobs: [{ name: 'cr-20261113-1111-0001-adult.blender.prompt.md' }],
         wikiCharacters: [{ name: 'yeh_chengxi_wiki.md' }],
         wikiCreatures: [{ name: 'cr_sun_01_juvenile_wiki.md' }],
         syncedAt: Date.now()
@@ -163,14 +163,14 @@ test('unprocessed parts of designed items track pipeline generation progress inc
   const encode = x => new TextEncoder().encode(JSON.stringify(x));
   const creature = c.DESIGNED[0];
 
-  // Record a local job for adult stage colab prompt
+  // Record a local job for adult stage blender prompt
   store.set('cosmimera.pipeline-jobs.v1', JSON.stringify({
     'cr-20261113-1111-0001-adult': {
       taskId: 'cr-20261113-1111-0001-adult',
       subjectId: creature.line_id,
       stage: 'adult',
       taskType: 'creature-model-rig',
-      pipelineStage: 'colab',
+      pipelineStage: 'blender',
       updatedAt: Date.now()
     }
   }));
@@ -178,9 +178,9 @@ test('unprocessed parts of designed items track pipeline generation progress inc
   // Load a running 3D package for juvenile stage with typed_state.json
   const runPkg = await f.loadAssetFiles({
     'mdl-juv/manifest.json': encode({ task_id: 'mdl-juv', task_type: 'creature-model-rig', subject_id: creature.line_id, stage: 'juvenile', files: [], missing: ['models/x.glb'] }),
-    'mdl-juv/typed_state.json': encode({ status: 'RUNNING', pipeline: 'colab', steps: { generation: { status: 'generated' }, rigging: { status: 'running' } } })
+    'mdl-juv/typed_state.json': encode({ status: 'RUNNING', pipeline: 'ai_blender', steps: { generation: { status: 'generated' }, rigging: { status: 'running' } } })
   }, { name: 'mdl-juv' }, { silent: true });
-  runPkg.drivePath = '02_3d/colab/mdl-juv';
+  runPkg.drivePath = '02_3d/ai_blender/mdl-juv';
 
   await f.setViewMode('review');
   const creatureBtn = nodes.railList.children.find(ch => ch.listeners?.click?.length && collectText(ch).includes(creature.line_id));
@@ -188,7 +188,7 @@ test('unprocessed parts of designed items track pipeline generation progress inc
   creatureBtn.listeners.click[0]();
   const detailText = collectText(nodes.designedDetailView);
   assert.match(detailText, /未處理項目與管線生成進度追蹤/);
-  assert.match(detailText, /Colab 生成中/);
+  assert.match(detailText, /AI\+Blender 生成中/);
   assert.match(detailText, /已送出 3D Prompt/);
-  assert.match(detailText, /cr-20261113-1111-0001-adult\.colab\.prompt\.md/);
+  assert.match(detailText, /cr-20261113-1111-0001-adult\.blender\.prompt\.md/);
 });

@@ -35,35 +35,24 @@ test('category must be selected before route; route must be selected before node
   assert.equal(chosen.route, null);
   assert.equal(chosen.step, null);
   assert.equal(flow.selectStep(chosen, 'appearance'), null);
-  assert.equal(flow.selectRoute(chosen, 'invalid'), null);
+  assert.equal(flow.selectRoute(chosen, 'image'), null);
   const routed = flow.selectRoute(chosen, 'text');
   assert.equal(routed.route, 'text');
   assert.equal(routed.step, 'appearance');
   assert.equal(flow.selectStep(routed, 'image_colab'), null);
   assert.equal(flow.selectStep(routed, 'prompt_3d').step, 'prompt_3d');
+  const chr = flow.selectCategory('character');
+  assert.equal(flow.selectRoute(chr, 'text'), null);
+  assert.equal(flow.selectRoute(chr, 'image').step, 'appearance');
   const move = flow.selectRoute(flow.selectCategory('move'), 'move');
   assert.equal(move.step, 'encyclopedia');
   assert.equal(flow.selectRoute(flow.selectCategory('move'), 'image'), null);
 });
-test('both routes are visible in one horizontal diagram with shared endpoints', () => {
+test('each category renders its single linear pipeline diagram', () => {
   const flow = flowModule();
-  for (const kind of ['character','creature']) {
-    const rows = Array.from(flow.diagram(kind));
-    assert.equal(rows.length,3);
-    assert.equal(rows[0].type,'step');
-    assert.equal(rows[0].shared,true);
-    assert.equal(rows[0].steps[0].id,'appearance');
-    assert.equal(rows[1].type,'fork');
-    assert.equal(rows[2].shared,true);
-    assert.equal(rows[2].steps[0].id,'review_3d');
-    const lanes=Array.from(rows[1].lanes);
-    assert.deepEqual(lanes.map(l=>l.id),['image','text']);
-    assert.deepEqual(Array.from(lanes[0].segments,s=>s.type),['step','step','parallel']);
-    assert.deepEqual(Array.from(lanes[0].segments[2].tracks,s=>s[0].id),['image_colab','image_blender']);
-    assert.deepEqual(Array.from(lanes[1].segments,s=>s.steps[0].id),
-      ['prompt_3d']);
-  }
-  assert.deepEqual(Array.from(flow.diagram('move'),r=>r.steps[0].id),['encyclopedia','move_vfx','passive_vfx']);
+  assert.deepEqual(Array.from(flow.diagram('character'), r => r.steps[0].id), ['appearance', 'portrait', 'review_portrait', 'image_blender', 'review_3d']);
+  assert.deepEqual(Array.from(flow.diagram('creature'), r => r.steps[0].id), ['appearance', 'prompt_3d', 'review_3d']);
+  assert.deepEqual(Array.from(flow.diagram('move'), r => r.steps[0].id), ['encyclopedia', 'move_vfx', 'passive_vfx']);
 });
 test('task graph is horizontally scrollable and category selection needs no route switch', () => {
   assert.match(html, /<h2>任務流程圖<\/h2>/);

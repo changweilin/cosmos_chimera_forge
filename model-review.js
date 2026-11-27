@@ -58,9 +58,6 @@
     /^chr_/i.test(String(pkg?.subjectId || pkg?.manifest?.subject_id || ""))
   );
   const isHighComplexityCharacterModel = pkg => isCharacterModelPkg(pkg) && (
-    pkg?.manifest?.pipeline === "colab" ||
-    String(pkg?.drivePath || "").includes("/02_3d/colab/") ||
-    String(pkg?.id || "").includes("_03a_colab") ||
     /Anime3D/i.test(String(pkg?.manifest?.produced_by || "")) ||
     /^mdl-2026111[34]-/i.test(String(pkg?.id || ""))
   );
@@ -312,7 +309,7 @@
   }
 
   function selectRootManifest(paths) {
-    return paths.filter(p => /(?:^|\/)(?:manifest|.+_(?:01_portrait|01b_vfx|03a_colab|03b_blender)(?:_(?:v\d+|\d{8}(?:[-_]\d{4})?))?_manifest)\.json$/.test(p))
+    return paths.filter(p => /(?:^|\/)(?:manifest|.+_(?:01_portrait|01b_vfx|03b_blender)(?:_(?:v\d+|\d{8}(?:[-_]\d{4})?))?_manifest)\.json$/.test(p))
       .sort((a, b) => a.split("/").length - b.split("/").length || a.localeCompare(b))[0] || "";
   }
 

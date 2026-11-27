@@ -3,7 +3,7 @@
   "use strict";
   const stages = {
     appearance: "00_appearance", portrait: "01_portrait", review_portrait: "02_review_portrait",
-    colab: "03a_colab", blender: "03b_blender", review_3d: "04_review_3d",
+    blender: "03b_blender", review_3d: "04_review_3d",
     encyclopedia: "05_encyclopedia"
   };
   const templates = {};
@@ -44,9 +44,8 @@
   const localTemplates = {
     "appearance": "# 外觀設定\n依本次素材撰寫繁體中文原創外觀，只描述輪廓、體型比例、臉／感知器官、肢體、配色材質、服裝／表面構造與辨識特徵；保留已定特徵，不加入遊戲數值或後續製圖、建模指示。\n素材：\n{{appearance}}",
     "review_portrait": "# 立繪審查\n待審：{{input_path}}/\n依該包外觀與參數檢查圖檔完整性、全身構造、視角與配色一致性、遮擋、瑕疵及水印。\n輸出逐檔缺陷、位置與建議通過／退件；只供人工決策，不修圖、不移動資產或代為核准。",
-    "colab": "# Colab GPU Image-to-3D\n{{model_input}}\n參數：`{{parameters_path}}`；輸出：`{{output_path}}/`\n先確認 Colab GPU 與生成模型可用，產生初始網格後交 Blender 修整、綁骨與匯出；無法執行則說明阻塞。\n1. 判定原型（人形、怪物、生物、奇幻生物或超自然物件），搜尋並查閱相關外形、解剖、材質、骨架與運動資料；無法搜尋則註明。\n2. 依本次輸入全新設計並建模，不套用或抄襲舊 3D 檔；依生物或機械構造配置蒙皮、關節與動作。\n3. 由 Blender 直接儲存 `models/{{asset_id}}.blend`、匯出 `models/{{asset_id}}.glb`，保留拓撲、UV、材質與骨架。\n4. 每次修改後檢查正、背、左、右、上、下視角及動作關鍵幀：臉／感知器官不被遮擋，軀幹與肢體完整連接；無破面、孔洞、透視露空、錯誤法線／貼圖、部件互穿、離體或關節錯位及各部位獨立亂移。\n5. 重開 `.blend` 並重新匯入 `.glb` 驗證；交付 `models/`、`rig/`、`animations/`、`previews/`、`manifest.json`，記錄未完成項；不交 ZIP。",
-    "blender": "# Blender Image-to-3D／Prompt-to-3D\n{{model_input}}\n參數：`{{parameters_path}}`；輸出：`{{output_path}}/`\n直接以 Blender 製作完整模型，不以粗糙幾何堆疊充當成品。\n1. 判定原型（人形、怪物、生物、奇幻生物或超自然物件），搜尋並查閱相關外形、解剖、材質、骨架與運動資料；無法搜尋則註明。\n2. 依本次輸入全新設計並建模，不套用或抄襲舊 3D 檔；依生物或機械構造配置蒙皮、關節與動作。\n3. 由 Blender 直接儲存 `models/{{asset_id}}.blend`、匯出 `models/{{asset_id}}.glb`，保留拓撲、UV、材質與骨架。\n4. 每次修改後檢查正、背、左、右、上、下視角及動作關鍵幀：臉／感知器官不被遮擋，軀幹與肢體完整連接；無破面、孔洞、透視露空、錯誤法線／貼圖、部件互穿、離體或關節錯位及各部位獨立亂移。\n5. 重開 `.blend` 並重新匯入 `.glb` 驗證；交付 `models/`、`rig/`、`animations/`、`previews/`、`manifest.json`，記錄未完成項；不交 ZIP。\n{{bestiary}}",
-    "review_3d": "# 3D 模型審查\n模型：{{input_path}}/；來源立繪：{{source_path}}/\n依立繪（若有）、參數與 manifest 檢查 GLB／Blend 可用性、拓撲、材質、骨架及動畫變形、穿插與來源追溯。\nImage-to-3D 須有已核准來源立繪；Prompt-to-3D 無需補繪立繪。缺 `.glb`／`.blend` 不得通過。列明問題檔案及建議通過／退件；不補檔、不移動資產或代為核准。"
+    "blender": "# AI + Blender 建模\n{{model_input}}\n參數：`{{parameters_path}}`；輸出：`{{output_path}}/`\n直接以 Blender 製作完整模型，不以粗糙幾何堆疊充當成品。\n1. 判定原型（人形、怪物、生物、奇幻生物或超自然物件），搜尋並查閱相關外形、解剖、材質、骨架與運動資料；無法搜尋則註明。\n2. 依本次輸入全新設計並建模，不套用或抄襲舊 3D 檔；依生物或機械構造配置蒙皮、關節與動作。\n3. 由 Blender 直接儲存 `models/{{asset_id}}.blend`、匯出 `models/{{asset_id}}.glb`，保留拓撲、UV、材質與骨架。\n4. 每次修改後檢查正、背、左、右、上、下視角及動作關鍵幀：臉／感知器官不被遮擋，軀幹與肢體完整連接；無破面、孔洞、透視露空、錯誤法線／貼圖、部件互穿、離體或關節錯位及各部位獨立亂移。\n5. 重開 `.blend` 並重新匯入 `.glb` 驗證；交付 `models/`、`rig/`、`animations/`、`previews/`、`manifest.json`，記錄未完成項；不交 ZIP。",
+    "review_3d": "# 3D 模型審查\n模型：{{input_path}}/；來源立繪：{{source_path}}/\n依立繪（角色 Image-to-3D 必填）、參數與 manifest 檢查 GLB／Blend 可用性、拓撲、材質、骨架及動畫變形、穿插與來源追溯。\n角色 Image-to-3D 須有已核准來源立繪；宙獸 Prompt-to-3D 無需補繪立繪。缺 `.glb`／`.blend` 不得通過。列明問題檔案及建議通過／退件；不補檔、不移動資產或代為核准。"
   };
   const templateMarker = stage => "<!-- COSMI-PIPELINE/2:" + stage + " -->";
   function pipelineRootFor(ctx) {
@@ -102,7 +101,7 @@
     const prefix = templateMarker(stage);
     const template = normalized.startsWith(prefix + "\n") ? normalized.slice(prefix.length).trim() : localTemplates[stage];
     if (!template) return "此步驟沒有可用的 Prompt 模板。";
-    const is3D = stage === "colab" || stage === "blender";
+    const is3D = stage === "blender";
     const active = window.COSMI_FORGE?.activePackage();
     const sourceId = String((stage === "review_3d" ? active?.sourcePack || active?.manifest?.source_pack : ctx.opts?.source_pack) || "").trim();
     const source = sourceId || "未指定";
@@ -111,7 +110,7 @@
     const subjectFolder = root + "/" + subjectBase;
     const sourcePath = window.COSMI_FORGE?.packages()?.find(p => p.id === sourceId)?.drivePath || (sourceId ? root + "/" + (window.COSMI_DRIVE?.cleanSubjectId?.(root, sourceId) || sourceId) : "未指定");
     const imageHint = String(ctx.opts?.input_img || "").trim();
-    const hasImage = stage === "blender" && graphMode === "prompt" ? false : Boolean(sourceId || imageHint || stage === "colab");
+    const hasImage = root === "characters";
     const visual = stage === "appearance" ? appearance(ctx) : (stage === "blender" && !hasImage) ? appearance(ctx, { pureVisual: true }) : "";
     let modelInput = "";
     if (is3D) {
@@ -123,9 +122,7 @@
         modelInput = "純文字外觀：\n" + visual;
       }
     }
-    const bestiary = stage === "blender" && !hasImage && isCreature(ctx)
-      ? "宙獸圖鑑：另建 `bestiary.md` 並列入 manifest.files；命名本種，分述幼年（juvenile）、少年（adolescent）、成年（adult）、超載（overload）的外觀、生態田野觀察與演化過程。未建模的形態註明概念推演。"
-      : "";
+    const bestiary = "";
     const activePath = String(active?.drivePath || "");
     const activeIsPortrait = active && !/model|rig|anim/.test(active.type || "");
     const activeIsModel = active && /model|rig|anim/.test(active.type || "");
@@ -143,7 +140,7 @@
       appearance: visual, model_input: modelInput, bestiary,
       asset_id: ctx.taskId, subject_id: ctx.subjectId, source_pack: source, source_path: sourcePath,
       input_path: stage === "review_portrait" ? portraitPath : modelPath,
-      output_path: window.COSMI_DRIVE?.pipelineDirectory?.(root, stage === "colab" || stage === "blender" ? stage : root === "moves" ? "vfx" : "portrait", subjectBase) || subjectFolder,
+      output_path: window.COSMI_DRIVE?.pipelineDirectory?.(root, stage === "blender" ? stage : root === "moves" ? "vfx" : "portrait", subjectBase) || subjectFolder,
       parameters_path: subjectFolder + "/" + paramStem + ".json"
     };
     const filled = template.replace(/\{\{([a-z_]+)\}\}/g, (_, k) => values[k] ?? "未指定").replace(/\n{3,}/g, "\n\n").trim();
@@ -162,27 +159,25 @@
         "先檢查此精確路徑是否已存在：存在則使用現有圖鑑，不重新生成；輸出 Markdown：" + wiki.path
       ].join("\n");
     }
-    if (!["colab", "blender"].includes(stage)) return filled;
+    if (stage !== "blender") return filled;
     const kind = ctx.task.id.startsWith("character") ? "character" : "creature";
     const route = hasImage ? "image" : "text";
     const anatomy = window.COSMI_ANATOMY?.plan(kind, ctx.concept, route);
-    // Character Colab v2 uses GitHub-maintained instructions; a stale Drive
-    // mirror cannot silently replace the quality gate or reference requirements.
-    const characterColab = stage === "colab" && root === "characters";
-    const scoped = characterColab ? filled +
-      "\n角色專用：先使用 Drive 已核准的正面＋三視圖（或三視合圖）＋獨立45°圖。個別 asset_spec 設 character_colab_workflow=character-colab/2、reference_views（front, turnaround 或 side+back, three_quarter_45）。三視若無校準相機，不得冒充 Pixal3D multiview_dir。" +
-      "\n初次 Pixal3D 建模後先由獨立人工／視覺評估器寫入 qa/appearance_review.json，評估輪廓／臉／服裝／細節／材質，綁定模型與參考圖 SHA-256。未評估或未達門檻不得綁骨。" +
-      "\n缺角度才建議 MV-Adapter（最多一次且須另配置外部模型）；幾何問題先局部修復；材質問題 Texture Refinement；身份或服裝不符才改 Prompt／參考圖或比較模型。最多初次＋兩次重建，換版本必須新 asset_id，禁止盲目重跑。品質通過後才 SkinTokens、Blender、動作與人工驗收。GitHub 模板為維護正本，Drive 通用模板只供閱讀。" : filled;
-    const typed = anatomy ? scoped + "\n解剖分類：" + anatomy.anatomy +
+    const typed = anatomy ? filled + "\n解剖分類：" + anatomy.anatomy +
       "；骨架／機構策略：" + anatomy.rig +
-      "。依指定原型與實際肢體建立專用動作，混合／不明拓撲先審查，不可擅套人形 Rig。" : scoped;
+      "。依指定原型與實際肢體建立專用動作，混合／不明拓撲先審查，不可擅套人形 Rig。" : filled;
     const wiki = window.COSMI_WIKI.describe(ctx);
     return typed + "\n共用圖鑑：" + wiki.path + "。此管線只引用既有圖鑑，不重新生成；若尚無該圖鑑，先於「外觀設定」步驟建立。manifest.encyclopedia_path 記錄同一路徑。";
   }
   async function loadTemplates() {
     const root = pipelineRootFor(window.COSMI_FORGE?.currentContext?.() || {});
     const kindTemplates = templatesByKind.get(root) || {};
-    const entries = Object.entries(stages).filter(([key]) => !["portrait", "encyclopedia"].includes(key));
+    const skip = root === "creatures"
+      ? new Set(["portrait", "review_portrait", "encyclopedia"])
+      : root === "moves"
+        ? new Set(Object.keys(stages))
+        : new Set(["portrait", "encyclopedia"]);
+    const entries = Object.entries(stages).filter(([key]) => !skip.has(key));
     const jobs = entries.map(async ([key, name]) => {
       try {
         const canonical = root + "/_prompts/" + name + ".prompt.md";

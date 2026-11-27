@@ -6,15 +6,13 @@ const path = require('node:path');
 const workflow = fs.readFileSync(path.resolve(__dirname, '../../.github/workflows/deploy.yml'), 'utf8').replace(/\r\n/g, '\n');
 const [verification, afterBuild, deployment] = workflow.split(/^  (?:pages-build|deploy):\s*$/m);
 
-test('pull requests verify all regressions and Blender before building Pages', () => {
+test('pull requests verify all regressions before building Pages', () => {
   assert.match(workflow, /^  pull_request:\s*\n    branches: \[main\]$/m);
   assert.match(verification, /^  verify:\s*$/m);
   assert.match(verification, /node --test tools\/tests\/\*\.cjs/);
-  assert.match(verification, /^  blender-smoke:$/m);
-  assert.match(verification, /Install Blender/);
-  assert.match(verification, /test_anime3d_blender_smoke\.py/);
+  assert.doesNotMatch(workflow, /blender-smoke|test_anime3d_blender_smoke\.py/);
   assert.ok(afterBuild, 'pages-build job must be separate from PR verification');
-  assert.match(afterBuild, /^    needs: \[verify, blender-smoke\]$/m);
+  assert.match(afterBuild, /^    needs: \[verify\]$/m);
   assert.match(afterBuild, /^    if: github\.ref == 'refs\/heads\/main' && github\.event_name != 'pull_request'$/m);
   assert.ok(deployment, 'deploy job must be separate from build and upload');
   assert.match(deployment, /^    needs: \[pages-build\]$/m);

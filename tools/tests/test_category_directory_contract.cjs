@@ -44,17 +44,16 @@ test("category-first pipeline directory resolver handles aliases and rejects inv
   const drive = context.window.COSMI_DRIVE;
   for (const [kind, stage, id, expected] of [
     ["characters", "portrait", "chr_hero", "characters/chr_hero"],
-    ["creatures", "03a_colab", "cr_fox", "creatures/cr_fox"],
-    ["characters", "colab_ai_blender", "chr_hero", "characters/chr_hero"],
+    ["characters", "03b_blender", "chr_hero", "characters/chr_hero"],
     ["creatures", "ai_blender", "cr_fox_adult", "creatures/cr_fox"],
     ["moves", "vfx", "fx_burst", "moves/fx_burst"],
   ]) {
     assert.equal(drive.pipelineDirectory(kind, stage, id), expected);
   }
   assert.equal(drive.assetStem({ kind: "characters", id: "chr_hero", step: "01_portrait" }), "chr_hero_01_portrait");
-  assert.equal(drive.assetStem({ kind: "creatures", id: "cr_fox", stage: "juvenile", step: "03a_colab", version: "v2" }), "cr_fox_juvenile_03a_colab_v2");
+  assert.equal(drive.assetStem({ kind: "creatures", id: "cr_fox", stage: "juvenile", step: "03b_blender", version: "v2" }), "cr_fox_juvenile_03b_blender_v2");
   assert.equal(drive.assetStem({ kind: "moves", id: "fx_burst", stage: "adult", step: "01b_vfx" }), "fx_burst_01b_vfx");
-  assert.throws(() => drive.pipelineDirectory("moves", "colab"), /VFX/);
+  assert.throws(() => drive.pipelineDirectory("moves", "blender"), /VFX/);
   assert.throws(() => drive.pipelineDirectory("creatures", "unrecognized"), /未知管線/);
 });
 
@@ -63,31 +62,33 @@ test("pipeline templates stay isolated across category switches", async () => {
   let current = { task: { id: "character-model-rig" }, subjectId: "chr_hero", taskId: "chr_hero" };
   const context = {
     window: {
+      COSMI_WIKI: { describe: ctx => ({ kind: ctx.task.id.startsWith("character") ? "characters" : "creatures", subject: ctx.subjectId, path: (ctx.task.id.startsWith("character") ? "characters/" : "creatures/") + ctx.subjectId + "_05_wiki.md" }) },
       COSMI_FORGE: { currentContext: () => current, activePackage: () => null, packages: () => [] },
       COSMI_DRIVE: {
         pipelineRoot: ctx => ctx.task.id.startsWith("character") ? "characters" : "creatures",
         read: async name => {
           requested.push(name);
           if (name === "00_settings/default.parameters.json") return { text: async () => "{}" };
-          return { text: async () => "<!-- COSMI-PIPELINE/2:review_portrait -->\n" + name };
+          return { text: async () => "<!-- COSMI-PIPELINE/2:blender -->\n" + name };
         }
       }
     },
-    document: { addEventListener() {}, getElementById: id => id === "pipelineStage" ? { value: "review_portrait" } : null },
+    document: { addEventListener() {}, getElementById: id => id === "pipelineStage" ? { value: "blender" } : null },
     console
   };
   vm.runInNewContext(source("pipeline.js"), context, { filename: "pipeline.js" });
   const pipeline = context.window.COSMI_PIPELINE;
   await pipeline.loadTemplates();
-  assert.equal(pipeline.templates.review_portrait.includes("characters/_prompts/"), true);
+  assert.equal(pipeline.templates.blender.includes("characters/_prompts/"), true);
   current = { task: { id: "creature-model-rig" }, subjectId: "cr_fox", taskId: "cr_fox" };
   await pipeline.loadTemplates();
-  assert.equal(pipeline.templates.review_portrait.includes("creatures/_prompts/"), true);
-  assert.equal(requested.some(x => x === "creatures/_prompts/02_review_portrait.prompt.md"), true);
+  assert.equal(pipeline.templates.blender.includes("creatures/_prompts/"), true);
+  assert.equal(requested.some(x => x === "creatures/_prompts/03b_blender.prompt.md"), true);
+  assert.equal(requested.some(x => x === "creatures/_prompts/02_review_portrait.prompt.md"), false);
   current = { task: { id: "character-model-rig" }, subjectId: "chr_hero", taskId: "chr_hero" };
   const characterPrompt = pipeline.build(current);
-  assert.match(characterPrompt, /characters\/_prompts\/02_review_portrait\.prompt\.md/);
+  assert.match(characterPrompt, /characters\/_prompts\/03b_blender\.prompt\.md/);
   current = { task: { id: "creature-model-rig" }, subjectId: "cr_fox", taskId: "cr_fox" };
   const creaturePrompt = pipeline.build(current);
-  assert.match(creaturePrompt, /creatures\/_prompts\/02_review_portrait\.prompt\.md/);
+  assert.match(creaturePrompt, /creatures\/_prompts\/03b_blender\.prompt\.md/);
 });

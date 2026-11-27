@@ -225,9 +225,9 @@ test('high-complexity Colab character models replace simple legacy/ai_blender mo
       id: 'mdl-20261113-1286-0000',
       type: 'character-model-rig',
       subjectId: 'chr_1286',
-      drivePath: 'characters/02_3d/colab/mdl-20261113-1286-0000',
+      drivePath: 'characters/02_3d/ai_blender/mdl-20261113-1286-0000',
       status: 'ok',
-      manifest: { subject_id: 'chr_1286', source_pack: 'chr-20261106-1286-2039', pipeline: 'colab', produced_by: 'Anime3D typed runner' }
+      manifest: { subject_id: 'chr_1286', source_pack: 'chr-20261106-1286-2039', produced_by: 'Anime3D typed runner' }
     },
     {
       id: 'mdl-20261109-f048-1847-chr_1286_1855',
@@ -241,9 +241,9 @@ test('high-complexity Colab character models replace simple legacy/ai_blender mo
       id: 'mdl-20261114-1855-0000',
       type: 'character-model-rig',
       subjectId: 'chr_1855',
-      drivePath: 'characters/02_3d/colab/mdl-20261114-1855-0000',
+      drivePath: 'characters/02_3d/ai_blender/mdl-20261114-1855-0000',
       status: 'provisional',
-      manifest: { subject_id: 'chr_1855', source_pack: 'chr-20261106-1855-1855', pipeline: 'colab', produced_by: 'Anime3D typed runner' }
+      manifest: { subject_id: 'chr_1855', source_pack: 'chr-20261106-1855-1855', produced_by: 'Anime3D typed runner' }
     },
     {
       id: 'mdl-20261109-f048-1847-chr_3d04',
@@ -257,9 +257,9 @@ test('high-complexity Colab character models replace simple legacy/ai_blender mo
       id: 'mdl-20261114-3d04-0000',
       type: 'character-model-rig',
       subjectId: 'chr_3d04',
-      drivePath: 'characters/02_3d/colab/mdl-20261114-3d04-0000',
+      drivePath: 'characters/02_3d/ai_blender/mdl-20261114-3d04-0000',
       status: 'provisional',
-      manifest: { subject_id: 'chr_3d04', source_pack: 'chr-20261106-3d04-2100', pipeline: 'colab', produced_by: 'Anime3D typed runner' }
+      manifest: { subject_id: 'chr_3d04', source_pack: 'chr-20261106-3d04-2100', produced_by: 'Anime3D typed runner' }
     }
   ];
   const entries = review.unifiedEntries(packages, [], characters, 'chr');
@@ -271,17 +271,17 @@ test('high-complexity Colab character models replace simple legacy/ai_blender mo
 
 test('selectModelFile resolves flattened Level 3 Drive GLBs even when migrated manifest lists models/<old>.glb', () => {
   const flatFiles = [
-    { path: 'chr_1286_03a_colab.glb' },
-    { path: 'chr_1286_03a_colab_anime.glb' },
-    { path: 'chr_1286_03a_colab_manifest.json' }
+    { path: 'chr_1286_03b_blender.glb' },
+    { path: 'chr_1286_03b_blender_anime.glb' },
+    { path: 'chr_1286_03b_blender_manifest.json' }
   ];
   const migratedManifest = {
     files: [{ path: 'models/mdl-20261113-1286-0000.glb', kind: 'model', level: 'L1' }]
   };
-  assert.equal(review.selectModelFile(flatFiles, migratedManifest).path, 'chr_1286_03a_colab.glb');
+  assert.equal(review.selectModelFile(flatFiles, migratedManifest).path, 'chr_1286_03b_blender.glb');
   assert.equal(
     review.selectModelFile(flatFiles, {}, { model: { path: 'models/mdl-20261113-1286-0000.glb' } }).path,
-    'chr_1286_03a_colab.glb'
+    'chr_1286_03b_blender.glb'
   );
   assert.throws(() => review.selectModelFile([], migratedManifest), /不存在/);
 });

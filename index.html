@@ -864,7 +864,7 @@
   <button class="btn ghost mini icon-only" id="driveSync" type="button" aria-label="重新載入 Drive 資產" data-tip="重新載入 Drive 資產">⟳</button>
   <button class="btn ghost mini icon-only" id="driveUploadPackage" type="button" aria-label="儲存資產目錄至 Drive" data-tip="儲存資產目錄至 Drive">⤴</button>
   <button class="btn ghost mini icon-only" id="driveSavePrompt" type="button" aria-label="儲存本步驟 Prompt" data-tip="儲存本步驟 Prompt">💾</button>
-  <input id="drivePromptPath" aria-label="Prompt 相對路徑" placeholder="prompts/jobs/task.colab.prompt.md">
+  <input id="drivePromptPath" aria-label="Prompt 相對路徑" placeholder="characters/_prompts/_jobs/task.blender.prompt.md">
   <button class="btn ghost mini icon-only" id="driveLoadPrompt" type="button" aria-label="讀取 Prompt" data-tip="讀取 Prompt">📖</button>
   <span id="driveStatus" role="status" aria-live="polite"></span>
 </div>
@@ -942,11 +942,10 @@
           <option value="encyclopedia">圖鑑 · 主動技 Markdown（獨立步驟）</option>
           <option value="move_vfx">主動技與特效設計</option>
           <option value="passive_vfx">被動技效果提示設計</option>
-          <option value="portrait" selected>1 · 立繪（ChatGPT／Codex；Gemini／Antigravity 輔助）</option>
+          <option value="portrait" selected>1 · 立繪（Prompt-to-Image）</option>
           <option value="review_portrait">2 · 立繪審查</option>
-          <option value="colab">3-a · Colab GPU + Blender</option>
-          <option value="blender">3-b · AI Blender 獨立管線（Argon／Codex）</option>
-          <option value="review_3d">4 · 立繪與 3D 最終審查</option>
+          <option value="blender">3 · AI + Blender 建模（角色 Image-to-3D／宙獸 Prompt-to-3D）</option>
+          <option value="review_3d">4 · 3D 最終審查</option>
         </select></label>
         <div class="settings-actions">
           <label class="settings-field" style="flex:1">來源立繪資產 ID <input id="pipelineSource" placeholder="cr-… 或 chr-…"></label>

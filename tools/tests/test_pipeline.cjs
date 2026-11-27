@@ -50,7 +50,7 @@ test('Drive template loading skips the native portrait stage', async () => {
   }};
   await c.COSMI_PIPELINE.loadTemplates();
   assert.ok(!requests.some(file => file.endsWith('/01_portrait.prompt.md')));
-  assert.equal(requests.filter(file => file.startsWith('creatures/_prompts/')).length, Object.keys(c.COSMI_PIPELINE.stages).length-2);
+  assert.equal(requests.filter(file => file.startsWith('creatures/_prompts/')).length, Object.keys(c.COSMI_PIPELINE.stages).length-3);
 });
 
 test('encyclopedia prompt routes three categories to isolated Markdown paths', () => {
@@ -113,7 +113,7 @@ test('appearance prompt includes visual traits and encyclopedia generation while
   assert.doesNotMatch(pureText,/母系氏族部落|卵生·硬殼築巢/);
 });
 test('source paths resolve completed portraits by exact asset identity', () => {
-  const {c,nodes,ctx}=harness();nodes.pipelineStage.value='colab';
+  const {c,nodes,ctx}=harness();nodes.pipelineStage.value='blender';
   assert.match(c.COSMI_PIPELINE.build(ctx),/03_completed\/portraits\/source/);
 });
 test('appearance comes only from concept parameters and cannot inherit another subject', () => {
@@ -135,54 +135,41 @@ test('final review uses the active model source instead of another forge task so
 });
 
 
-test('a previous review binding does not become an image source for prompt-only modeling', () => {
- const {c,nodes,ctx}=harness();nodes.pipelineStage.value='blender';nodes.pipelineSource.value='unrelated-old-source';ctx.opts.source_pack='';
+test('a previous review binding does not become an image source for creature prompt-only modeling', () => {
+ const {c,nodes,ctx}=harness();ctx.task.id='creature-model-rig';ctx.subjectId='cr_one';nodes.pipelineStage.value='blender';nodes.pipelineSource.value='unrelated-old-source';ctx.opts.source_pack='';
  const text=c.COSMI_PIPELINE.build(ctx);assert.doesNotMatch(text,/unrelated-old-source/);assert.match(text,/純文字外觀/);
 });
 
 
-test('3D image routes never produce bestiary; only creature prompt-to-3D does', () => {
+test('character is image-to-3D and creature is prompt-to-3D without bestiary duplication', () => {
   const {c,nodes,ctx}=harness();
-  ctx.task.id='creature-model-rig';ctx.task.needs='creature';ctx.subjectId='cr_one';
-  for(const stage of ['colab','blender']){
-    nodes.pipelineStage.value=stage;
-    const text=c.COSMI_PIPELINE.build(ctx);
-    for(const term of ['原型','搜尋','每次修改後','正、背、左、右、上、下','拓撲','models/chr-example.blend','models/chr-example.glb']){
-      assert.ok(text.includes(term),stage+' missing '+term);
-    }
-    assert.doesNotMatch(text,/bestiary\.md|宙獸圖鑑|DO_NOT_LEAK|combat_damage|\{\{[a-z_]+\}\}/);
-    assert.ok(text.length<1800);
-  }
   nodes.pipelineStage.value='blender';
+  ctx.task.id='character-model-rig';ctx.subjectId='chr_one';
+  const chrText=c.COSMI_PIPELINE.build(ctx);
+  for(const term of ['原型','搜尋','每次修改後','正、背、左、右、上、下','拓撲','models/chr-example.blend','models/chr-example.glb','輸入圖片']){
+    assert.ok(chrText.includes(term),'character blender missing '+term);
+  }
+  assert.doesNotMatch(chrText,/bestiary\.md|DO_NOT_LEAK|combat_damage|\{\{[a-z_]+\}\}/);
+
+  ctx.task.id='creature-model-rig';ctx.task.needs='creature';ctx.subjectId='cr_one';
   ctx.opts.source_pack='';
   ctx.opts.input_img='';
   const prompt=c.COSMI_PIPELINE.build(ctx);
-  assert.match(prompt,/純文字外觀|bestiary\.md|juvenile|adolescent|adult|overload|manifest\.files/);
-  assert.equal((prompt.match(/宙獸圖鑑/g)||[]).length,1);
-  assert.doesNotMatch(prompt,/03_completed\/portraits\/source|DO_NOT_LEAK|combat_damage/);
-});
-
-test('manual image path is image-to-3D even without source pack',()=>{
-  const {c,nodes,ctx}=harness();
-  ctx.task.id='creature-model-rig';ctx.task.needs='creature';ctx.subjectId='cr_one';
-  nodes.pipelineStage.value='blender';
-  ctx.opts.source_pack='';ctx.opts.input_img='images/custom_view.png';
-  ctx.notes='STALE_MANUAL_TEXT';
-  const text=c.COSMI_PIPELINE.build(ctx);
-  assert.match(text,/images\/custom_view\.png/);
-  assert.doesNotMatch(text,/bestiary\.md|宙獸圖鑑|STALE_MANUAL_TEXT|long coat/);
+  assert.match(prompt,/純文字外觀/);
+  assert.match(prompt,/creatures\/cr_one\/cr_one_adult_05_wiki\.md/);
+  assert.doesNotMatch(prompt,/03_completed\/portraits\/source|bestiary\.md|DO_NOT_LEAK|combat_damage/);
 });
 
 test('other stages ignore stale Drive templates and unrelated project context',()=>{
   const {c,nodes,ctx}=harness();
-  const cases={appearance:'外觀設定',review_portrait:'立繪審查',review_3d:'3D 模型審查',colab:'Colab GPU',blender:'Blender'};
+  const cases={appearance:'外觀設定',review_portrait:'立繪審查',review_3d:'3D 模型審查',blender:'Blender'};
   for(const [stage,label] of Object.entries(cases)){
     nodes.pipelineStage.value=stage;
     c.COSMI_PIPELINE.templates[stage]='LEAKED_PRIOR_PROMPT';
     const text=c.COSMI_PIPELINE.build(ctx);
     assert.match(text,new RegExp(label));
     assert.doesNotMatch(text,/LEAKED_PRIOR_PROMPT|image_in\/|3D_out\/|PR #|DO_NOT_LEAK|\{\{[a-z_]+\}\}/);
-    assert.ok(text.length < (stage === 'colab' ? 3200 : 1800));
+    assert.ok(text.length < 1800);
   }
   nodes.pipelineStage.value='appearance';
   const appearance=c.COSMI_PIPELINE.build(ctx);
@@ -240,10 +227,10 @@ test('native portrait full and 3-round prompts do not recurse or inherit legacy 
   }
 });
 
-test('all five source templates carry matching stage IDs and avoid cross-step leakage',()=>{
+test('all four source templates carry matching stage IDs and avoid cross-step leakage',()=>{
   const stageFiles={
     appearance:'00_appearance',review_portrait:'02_review_portrait',
-    colab:'03a_colab',blender:'03b_blender',review_3d:'04_review_3d'
+    blender:'03b_blender',review_3d:'04_review_3d'
   };
   for(const [stage,file] of Object.entries(stageFiles)){
     const md=fs.readFileSync(path.join(root,'docs/pipeline',file+'.prompt.md'),'utf8');
@@ -251,20 +238,4 @@ test('all five source templates carry matching stage IDs and avoid cross-step le
     assert.ok(md.length<1300,stage+' template too long');
     if(stage!=='blender')assert.doesNotMatch(md,/bestiary\.md|\{\{bestiary\}\}/);
   }
-});
-
-test('character Colab renders quality gate and keeps creature branch isolated', () => {
-  const {c,nodes,ctx}=harness();
-  nodes.pipelineStage.value='colab';
-  ctx.task.id='character-model-rig';
-  const output=c.COSMI_PIPELINE.build(ctx);
-  assert.match(output,/character_colab_workflow=character-colab\/2/);
-  assert.match(output,/three_quarter_45|45°/);
-  assert.match(output,/MV-Adapter/);
-  assert.match(output,/Texture Refinement/);
-  assert.match(output,/appearance_review\.json/);
-  assert.doesNotMatch(output,/DO_NOT_LEAK|\{\{[a-z_]+\}\}/);
-  ctx.task.id='creature-model-rig';
-  const creature=c.COSMI_PIPELINE.build(ctx);
-  assert.doesNotMatch(creature,/character_colab_workflow=character-colab\/2|MV-Adapter/);
 });

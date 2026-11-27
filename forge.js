@@ -152,7 +152,7 @@
   const STAGE_FORM_MAP = { form1: "juvenile", form2: "adolescent", form3: "adult", form4: "overload" };
 
   function parsePackageStage(pkgId, manifest, concept) {
-    const stageRegex = /[-_](juvenile|adolescent|adult|overload|form[1-4])(?:_(?:00_appearance|00_parameters|01_portrait|01b_vfx|02_review_portrait|03a_colab|03b_blender|04_review_3d|05_wiki)(?:_(?:v\d+|legacy|draft(?:_review)?|\d{8}(?:[-_]\d{4})?))?)?(?:\.zip)?$/i;
+    const stageRegex = /[-_](juvenile|adolescent|adult|overload|form[1-4])(?:_(?:00_appearance|00_parameters|01_portrait|01b_vfx|02_review_portrait|03b_blender|04_review_3d|05_wiki)(?:_(?:v\d+|legacy|draft(?:_review)?|\d{8}(?:[-_]\d{4})?))?)?(?:\.zip)?$/i;
     const m = (pkgId || "").match(stageRegex);
     if (m) {
       const rawStage = m[1].toLowerCase();
@@ -229,8 +229,8 @@
     }
     const pipelineStage = document.getElementById("pipelineStage");
     if (pipelineStage) {
-      if (!["colab", "blender"].includes(pipelineStage.value)) pipelineStage.value = "blender";
-      flowSelection.step = pipelineStage.value === "colab" ? "image_colab" : "image_blender";
+      pipelineStage.value = "blender";
+      flowSelection.step = "image_blender";
     }
     setViewMode("forge");
     renderAll();
@@ -715,8 +715,7 @@
     };
     const pipeline = window.COSMI_PIPELINE?.supports(ctx);
     const pipelineStage = document.getElementById("pipelineStage")?.value;
-    if (pipeline && pipelineStage === "colab" && (!chosenPkg || chosenPkg.status !== "ok")) errors.push("Colab 需先選取已通過審查的來源立繪");
-    if (pipeline && pipelineStage === "blender" && (o.source_pack || o.input_img) && (!chosenPkg || chosenPkg.status !== "ok")) errors.push("指定的來源立繪尚未通過審查；純文字建模請取消圖片來源");
+    if (pipeline && pipelineStage === "blender" && subj === "character" && (o.source_pack || o.input_img) && (!chosenPkg || chosenPkg.status !== "ok")) errors.push("指定的來源立繪尚未通過審查");
     // Portrait uses the original multi-round prompts directly; no Drive template is needed.
     const useNativePortrait = pipeline && pipelineStage === "portrait" &&
       (t.id === "character-concept" || t.id === "creature-concept");
@@ -1004,14 +1003,13 @@
     state.currentRound = selected.stage === "portrait" ? 1 : 0;
     const stage = $("#pipelineStage");
     if (stage) stage.value = selected.stage;
-    if (selected.stage === "colab" || selected.stage === "blender") {
+    if (selected.stage === "blender") {
       const o = taskOpts(task());
       o.scope = "single";
       if (route === "text") { o.source_pack = ""; o.input_img = ""; }
       else {
         const pkg = getActivePkg();
-        if (pkg && !is3dType(pkg.type) && pkg.status === "ok" &&
-          (category === "character" ? pkg.type === "character-concept" : pkg.type === "creature-concept")) {
+        if (pkg && !is3dType(pkg.type) && pkg.status === "ok" && pkg.type === "character-concept") {
           o.source_pack = pkg.id;
         }
       }
@@ -1051,8 +1049,8 @@
     }
     const rows = taskFlow.diagram(kind);
     function node(step, laneRoute = null) {
-      // Shared start/end keep the last chosen lane, while branch nodes choose it directly.
-      const route = laneRoute || (kind === "move" ? "move" : choice?.route === "text" ? "text" : "image");
+      // Shared start/end keep the category's single active lane.
+      const route = laneRoute || (kind === "move" ? "move" : kind === "creature" ? "text" : "image");
       const isActive = active?.step === step.id && active?.route === route;
       const tip = step.detail + (step.output ? "\n產出：" + step.output : "");
       return el("button", {
@@ -1503,7 +1501,6 @@
       "01_portrait": "portrait",
       "01b_vfx": "move_vfx",
       "02_review_portrait": "review_portrait",
-      "03a_colab": "colab",
       "03b_blender": "blender",
       "04_review_3d": "review_3d",
       "05_wiki": "encyclopedia"
@@ -1512,7 +1509,7 @@
     return (idx.jobs || []).filter(f => {
       const name = String(f.name || "").toLowerCase();
       if (!name.endsWith(".prompt.md")) return false;
-      const stemMatch = /_(00_appearance|01_portrait|01b_vfx|02_review_portrait|03a_colab|03b_blender|04_review_3d|05_wiki)(?:_(?:v\d+|\d{8}(?:[-_]\d{4})?))?\.prompt\.md$/i.exec(name);
+      const stemMatch = /_(00_appearance|01_portrait|01b_vfx|02_review_portrait|03b_blender|04_review_3d|05_wiki)(?:_(?:v\d+|\d{8}(?:[-_]\d{4})?))?\.prompt\.md$/i.exec(name);
       const parts = name.replace(/\.prompt\.md$/, "").split(".");
       const fileStage = stemMatch ? (stepToStage[stemMatch[1]] || "") : (parts.length > 1 ? parts[parts.length - 1] : "");
       const fileTaskId = parts.slice(0, -1).join(".") || name;
@@ -1579,7 +1576,7 @@
     }
 
     // 4. 3D Model status
-    const modelJobs = findPipelineJobFiles(subjectId, stage, ["colab", "blender", "review_3d"]);
+    const modelJobs = findPipelineJobFiles(subjectId, stage, ["blender", "review_3d"]);
     let model3d;
     if (best3d && isApprovedStatus(best3d.status)) {
       model3d = { state: "ok", label: "✅ 已通過", cls: "ok", pkg: best3d };
@@ -1589,9 +1586,8 @@
       model3d = { state: "rejected", label: "❌ 退回待重製", cls: "reject", pkg: best3d };
     } else if (best3d) {
       const ts = parsePkgTypedState(best3d);
-      const isColab = best3d.drivePath?.includes("/colab/") || best3d.manifest?.pipeline === "colab" || /_03a_colab\b/i.test(best3d.id || "") || (best3d.driveFiles || []).some(f => /_03a_colab\b/i.test(f.path || ""));
       const isBlender = best3d.drivePath?.includes("/ai_blender/") || best3d.manifest?.pipeline === "ai_blender" || /_03b_blender\b/i.test(best3d.id || "") || (best3d.driveFiles || []).some(f => /_03b_blender\b/i.test(f.path || ""));
-      const route = isColab ? "Colab" : isBlender ? "AI+Blender" : "3D";
+      const route = isBlender ? "AI+Blender" : "3D";
       const missing3d = isMissingSuperseded(best3d, matches) ? [] : getEffectiveMissing(best3d);
       if (ts?.status === "RUNNING") {
         model3d = { state: "running", label: `⚙️ ${route} 生成中`, cls: "active", pkg: best3d, typedState: ts };
@@ -3328,7 +3324,7 @@
       if (category === "creature" && !isCreature) return false;
       if (category === "move") return false;
       const stage = flow.stage;
-      if (["colab", "blender", "prompt_3d", "review_3d", "final_review"].includes(stage))
+      if (["blender", "prompt_3d", "review_3d", "final_review"].includes(stage))
         return is3dType(type) || is3dType(id);
       return !is3dType(type) && !is3dType(id);
     });
@@ -3958,7 +3954,7 @@
     if (manifestData?.task_type) return manifestData.task_type;
     const verOpt = "(?:_(?:v\\d+|legacy|draft(?:_review)?|\\d{8}(?:[-_]\\d{4})?))?";
     if (new RegExp(`_01b_vfx${verOpt}$`, "i").test(taskId)) return "move-vfx";
-    if (new RegExp(`_(?:03a_colab|03b_blender)${verOpt}$`, "i").test(taskId)) {
+    if (new RegExp(`_03b_blender${verOpt}$`, "i").test(taskId)) {
       if (taskId.startsWith("chr") || manifestData?.source_pack?.startsWith("chr") || manifestData?.subject_id?.startsWith("chr")) return "character-model-rig";
       return "creature-model-rig";
     }
@@ -7490,12 +7486,12 @@
       const flow = currentFlow();
       if (flow && flow.category === "move" && stage !== "encyclopedia") { renderAll(); return; }
       const kind = flow?.category || (task().id.startsWith("character") ? "character" : "creature");
-      const route = flow?.route || "image";
+      const route = flow?.route || (kind === "creature" ? "text" : "image");
       const matching = taskFlow?.steps(kind,route).find(s=>s.stage===stage);
       if (matching) { chooseFlow(kind,route,matching.id); return; }
       const isCharacter = task().id.startsWith("character");
       if (["appearance", "portrait", "review_portrait"].includes(stage)) state.taskId = isCharacter ? "character-concept" : "creature-concept";
-      if (["colab", "blender"].includes(stage)) {
+      if (stage === "blender") {
         const pkg = getActivePkg();
         const chr = pkg && !is3dType(pkg.type) ? pkg.type === "character-concept" : isCharacter;
         state.taskId = chr ? "character-model-rig" : "creature-model-rig";

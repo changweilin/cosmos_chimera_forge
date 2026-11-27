@@ -130,9 +130,6 @@
     "01b_passive_vfx": "01b_vfx",
     review_portrait: "02_review_portrait",
     "02_review_portrait": "02_review_portrait",
-    colab: "03a_colab",
-    "03a_colab": "03a_colab",
-    colab_ai_blender: "03a_colab",
     blender: "03b_blender",
     "03b_blender": "03b_blender",
     ai_blender: "03b_blender",
@@ -143,7 +140,7 @@
     "05_wiki": "05_wiki",
     "05_encyclopedia": "05_wiki",
   });
-  const ASSET_STEPS = new Set(["01_portrait", "01b_vfx", "03a_colab", "03b_blender"]);
+  const ASSET_STEPS = new Set(["01_portrait", "01b_vfx", "03b_blender"]);
   const RESERVED_CATEGORY_FOLDERS = new Set([
     "prompts",
     "00_settings",
@@ -204,7 +201,7 @@
   }
   function parseAssetFilename(name, kind, subjectFolder = "") {
     const base = String(name || "").split("/").pop();
-    const m = /^(.+?)(?:_(juvenile|adolescent|adult|overload|form[1-4]))?_(00_appearance|00_parameters|01_portrait|01b_vfx|02_review_portrait|03a_colab|03b_blender|04_review_3d|05_wiki)(?:_(v\d+|legacy|draft(?:_review)?|\d{8}(?:[-_]\d{4})?))?(?:_([^.]+))?\.([^.]+)$/i.exec(
+    const m = /^(.+?)(?:_(juvenile|adolescent|adult|overload|form[1-4]))?_(00_appearance|00_parameters|01_portrait|01b_vfx|02_review_portrait|03b_blender|04_review_3d|05_wiki)(?:_(v\d+|legacy|draft(?:_review)?|\d{8}(?:[-_]\d{4})?))?(?:_([^.]+))?\.([^.]+)$/i.exec(
       base,
     );
     if (!m) return null;
@@ -230,7 +227,7 @@
     if (parsed.step === "05_wiki") return true;
     if (parsed.step === "01_portrait" && /^main$/i.test(parsed.role)) return true;
     if (
-      (parsed.step === "03a_colab" || parsed.step === "03b_blender") &&
+      parsed.step === "03b_blender" &&
       (!parsed.role || /^model$/i.test(parsed.role)) &&
       /^glb$/i.test(parsed.ext)
     )
@@ -814,7 +811,7 @@
                 if (targetStep) {
                   inlineReviews.set([keyPrefix, targetStep, parsed.version].filter(Boolean).join("_"), parsedReview);
                 } else {
-                  for (const s3d of ["03a_colab", "03b_blender", "01b_vfx"]) {
+                  for (const s3d of ["03b_blender", "01b_vfx"]) {
                     inlineReviews.set([keyPrefix, s3d, parsed.version].filter(Boolean).join("_"), parsedReview);
                   }
                 }
@@ -1217,10 +1214,8 @@
       } else if (status === "ok" && isModel) {
         src = window.COSMI_FORGE.packages().find((p) => p.id === sourceId) || null;
         const isImage3d =
+          root === "characters" ||
           Boolean(sourceId) ||
-          pkg.drivePath?.includes("/02_3d/colab/") ||
-          pkg.id?.includes("_03a_colab") ||
-          pkg.manifest?.pipeline === "colab" ||
           pkg.manifest?.input_mode === "image" ||
           Boolean(pkg.manifest?.input_img);
         if (
@@ -1327,7 +1322,7 @@
       root === "moves"
         ? "01b_vfx"
         : /model|rig|anim/.test(type)
-          ? stepCode($("pipelineStage")?.value === "colab" || pkg.manifest?.pipeline === "colab" ? "03a_colab" : "03b_blender")
+          ? stepCode("03b_blender")
           : "01_portrait";
     const version = pkg.manifest?.version || "";
     const stem = assetStem({ kind: root, id: subjectId, stage, step, version });
@@ -2158,7 +2153,6 @@
             "appearance",
             "portrait",
             "review_portrait",
-            "colab",
             "blender",
             "review_3d",
             "move_vfx",

@@ -19,42 +19,40 @@ test('three entry categories are character, creature, move', () => {
   assert.equal(flow.steps('move','move').length,3);
   assert.equal(flow.steps('move','move')[0].id,'encyclopedia');
 });
-test('image route has two exclusive Blender routes after portrait approval', () => {
+test('character route keeps prompt-to-image and AI+Blender image-to-3D only', () => {
   const flow=loadFlow();
   const steps=Array.from(flow.steps('character','image'),s=>s.id);
-  assert.deepEqual(steps,['appearance','portrait','review_portrait','image_colab','image_blender','review_3d']);
-  assert.equal(flow.resolve('character','image','image_colab').taskId,'character-model-rig');
-  assert.equal(flow.resolve('creature','image','image_blender').taskId,'creature-model-rig');
+  assert.deepEqual(steps,['appearance','portrait','review_portrait','image_blender','review_3d']);
+  assert.equal(flow.resolve('character','image','image_blender').taskId,'character-model-rig');
+  assert.equal(flow.resolve('character','image','image_colab'),null);
+  assert.deepEqual(Array.from(flow.steps('character','text')),[]);
 });
-test('prompt to 3D branches before portraits and goes directly to final review without post-model portrait', () => {
+test('creature route keeps prompt-to-3D only without portraits or colab', () => {
   const flow=loadFlow();
   const steps=Array.from(flow.steps('creature','text'),s=>s.id);
   assert.deepEqual(steps,['appearance','prompt_3d','review_3d']);
   assert.equal(flow.resolve('creature','text','prompt_3d').stage,'blender');
+  assert.deepEqual(Array.from(flow.steps('creature','image')),[]);
   assert.equal(flow.resolve('character','text','portrait_3d'),null);
   assert.equal(flow.resolve('character','text','image_colab'),null);
 });
 test('encyclopedia is integrated into appearance for character/creature and standalone for move', () => {
   const flow=loadFlow();
-  for(const kind of ['character','creature']) for(const route of ['image','text']) {
-    assert.equal(flow.resolve(kind,route,'encyclopedia'),null);
-    assert.match(flow.resolve(kind,route,'appearance').output,/05_wiki\.md/);
-  }
+  assert.equal(flow.resolve('character','image','encyclopedia'),null);
+  assert.match(flow.resolve('character','image','appearance').output,/05_wiki\.md/);
+  assert.equal(flow.resolve('creature','text','encyclopedia'),null);
+  assert.match(flow.resolve('creature','text','appearance').output,/05_wiki\.md/);
   assert.equal(flow.resolve('move','move','encyclopedia').stage,'encyclopedia');
-  const rows=flow.diagram('creature');
-  const fork=rows.find(r=>r.type==='fork');
-  assert.deepEqual(Array.from(fork.lanes,l=>l.id),['image','text']);
-  assert.deepEqual(Array.from(fork.lanes[0].segments[2].tracks,s=>s[0].id),['image_colab','image_blender']);
-  assert.equal(rows[0].steps[0].id,'appearance');
-  assert.equal(rows.at(-1).steps[0].id,'review_3d');
+  assert.deepEqual(Array.from(flow.diagram('character'),r=>r.steps[0].id),['appearance','portrait','review_portrait','image_blender','review_3d']);
+  assert.deepEqual(Array.from(flow.diagram('creature'),r=>r.steps[0].id),['appearance','prompt_3d','review_3d']);
   assert.equal(flow.selectRoute(flow.selectCategory('move'),'move').step,'encyclopedia');
 });
-test('legacy task and stage can be mapped to new flow', () => {
+test('legacy task and stage can be mapped to simplified flow', () => {
   const flow=loadFlow();
   assert.equal(flow.infer('move-vfx','portrait').step,'move_vfx');
   assert.equal(flow.infer('passive-vfx','passive_vfx').step,'passive_vfx');
   assert.equal(flow.infer('character-concept','portrait').step,'portrait');
-  assert.equal(flow.infer('creature-model-rig','blender',{source_pack:'cr-existing'}).step,'image_blender');
+  assert.equal(flow.infer('character-model-rig','blender',{source_pack:'chr-existing'}).step,'image_blender');
   assert.equal(flow.infer('creature-model-rig','blender',{source_pack:'',input_img:''}).step,'prompt_3d');
 });
 test('page loads flow before forge and includes category, route, step and detail containers', () => {
@@ -139,15 +137,12 @@ test('browser anatomy planner respects mixed origins and explicit wings', () => 
   assert.equal(mixed.review_required,true);
 });
 
-test('minimal rail diagram exposes both image backends without text route headers', () => {
+test('minimal rail diagram exposes simplified linear tracks per category', () => {
   const flow=loadFlow();
-  const rows=flow.diagram('character');
-  const lanes=rows[1].lanes;
-  assert.deepEqual(Array.from(lanes[0].segments[2].tracks,t=>t[0].name),
-    ['Colab + AI + Blender','AI + Blender']);
-  assert.equal(lanes[1].segments[0].steps[0].name,'AI + Blender（文字建模）');
-  assert.equal(lanes[0].label,undefined);
-  assert.equal(lanes[1].label,undefined);
+  assert.deepEqual(Array.from(flow.diagram('character'),r=>r.steps[0].id),
+    ['appearance','portrait','review_portrait','image_blender','review_3d']);
+  assert.deepEqual(Array.from(flow.diagram('creature'),r=>r.steps[0].id),
+    ['appearance','prompt_3d','review_3d']);
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
   const forge=fs.readFileSync(path.join(root,'forge.js'),'utf8');
   assert.match(html,/\.task-flow-list \.flow-parallel-tracks/);

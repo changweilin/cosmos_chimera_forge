@@ -13,9 +13,10 @@
 
 目前 `Data/_incoming/`、`designed.js` 等舊內容仍有網頁依賴，僅視為待遷移歷史存量，不是新增資料的範本。完成 Drive 動態讀取與測試後才能安全移除。詳見 [資料儲存邊界、概念目錄圖、流程圖與遷移守則](docs/STORAGE_BOUNDARY.md)。
 
-## 六類 Anime3D 分流實作（2026-11-12）
+## 現行簡化管線（2026-11-27）
 
-2026-11-13：[逐管線查核與葉澄汐測試](docs/ANIME3D_PIPELINE_AUDIT_20261113.md) 已記錄真實 Colab Pixal3D → [SkinTokens 綁骨](docs/ANIME3D_SKINTOKENS.md) → Blender 產物與驗收證據。葉澄汐已產生含三段動畫的 GLB／Blend，技術檢查通過、人工造型與變形驗收待審；Colab GPU 已釋放。此結果不代表六類管線皆完成端到端驗證。
+- **角色管線（不含 UMA 創造的 NPC）**：僅保留 **Prompt-to-Image**（外觀設定 → 生成立繪 → 立繪審查）與 **Image-to-3D**（看圖 AI 畫：`AI + Blender` 建模、綁骨與動作 → 3D 最終驗收）。已移除 Colab／MV-Adapter／文字直出 3D 路線。UMA 創造的 NPC 屬獨立工具鏈（`tools/acg-character/`、`Logs/npc/`），不納入角色繪圖／AI 管線。
+- **宙獸與招式管線**：僅保留 **Prompt-to-3D**（AI 直接畫：宙獸為外觀設定 → `AI + Blender` 文字建模 → 3D 最終驗收；招式為主動技／被動技 3D 特效設計）。已移除宙獸立繪與 Colab 路線。
 
 ## Drive 互動 3D 驗收（Tool 2.9.0）
 
@@ -26,11 +27,6 @@
 在資產目錄放 `review_viewer.json`，指定 `spec: "cosmimera-model-review/1"`、`title`、`model: {path, sha256}`、`camera_orbit`、`animations`，以及 `previews`／`videos` 的 `{path,label}` 陣列。所有 `path` 都是包內相對路徑；不支援外部媒體 URL。模型 SHA256 不符時停止顯示，不以原始網格或替代模型冒充。無此檔的歷史包仍可依 manifest 的 L1 GLB 或 `models/` 優先載入。
 
 新增角色、怪物、動物、奇幻生物、機械與機甲的**解剖型態分類器**，依實際肢體、翅膀、尾巴、表面材質及可動部件產出後端優先順序、骨架／機構策略、動作與 QA 項目；混合或不明拓撲不會強制當成人形。網頁的 3D Prompt 自動帶入分類摘要。
-
-- 執行入口：`scripts/anime3d_universal.py` 與 `notebooks/07_batch_runner.ipynb`。
-- Blender 專用模型後處理：`scripts/anime3d_typed_blender.py`，處理實際 GLB、剛性零件與多角度預覽，產出待審 QA。
-- 依賴外部研究模型的 AniGen／Pixal3D／PartCrafter／文字建模後端需另外安裝相容模型與 adapter；未安裝會明確標記 REVIEW_REQUIRED，**目前不等同所有類型均已完成實機端到端自動量產**。
-- 詳細規格、實際命令、輸入格式、付費授權及限制見 [Typed Pipeline 使用說明](docs/ANIME3D_TYPED_RUNNER.md)。
 
 ## Prompt-to-3D 歷史模型與獨立圖鑑（PR #11）
 
@@ -47,8 +43,8 @@ Google Drive 已建立 `{characters,creatures,moves}/wiki/` 及 `creatures/wiki/
 1. HTML 隨機／圖鑑設定或 AI 生成基礎外觀；外觀 Markdown 與格式參數 JSON 分開保存於 `<category>/00_settings/`。
 2. 立繪輸出至 `<category>/01_portraits/<asset_id>/`。主用 ChatGPT／Codex，Gemini／Antigravity 輔助。
 3. 審查台核准立繪時原位保存；退件時整個目錄搬到 `<category>/backup/rejected_portraits/<revision>/`。
-4. Colab GPU 路線輸出至 `<category>/02_3d/colab/<asset_id>/`；AI Blender（Argon／Codex）輸出至 `<category>/02_3d/ai_blender/<asset_id>/`。歷史待審模型在 `<category>/02_3d/legacy/`。Colab 模型與修復細節尚待實機決定。
-5. 最終人工核准前須有已核准的來源立繪及 .glb／.blend。核准後模型與立繪分別移至 `<category>/03_completed/models/`、`<category>/03_completed/portraits/`；模型退件搬到 `<category>/backup/rejected_3d/`，保留立繪原位。純 prompt 建模須補立繪後綁定 source_pack。
+4. **AI Blender 3D 輸出**：角色（Image-to-3D）與宙獸（Prompt-to-3D）均輸出至 `<category>/<subject_id>/`。
+5. **最終人工核准**：角色須有已核准的來源立繪及 `.glb`／`.blend`；宙獸／招式為 Prompt-to-3D，無需補立繪。
 
 審查結果存 `<category>/reviews/<asset_id>.json`。目錄移動保留 Drive ID，搬移或寫入失敗時嘗試回復；回復失敗會明示需重新載入核對。不同資產版本不得同名。歷史 ZIP 僅留在 `<category>/backup/legacy_archives/`，不再用於正式交付。
 
