@@ -459,7 +459,8 @@ def _steampunk(fig):
 
 
 def _future(fig):
-    """Future: a light plate on the chest (NpcMeshes Dress, ArchEra.Future), on a coat's ease like the industrial buttons."""
+    """Future: a metal plate on the chest (NpcMeshes Dress, ArchEra.Future; future clothes do not glow), on a coat's ease
+    like the industrial buttons."""
     h = fig.h
     z = fig.chest - 0.07 * h
     pts = []
@@ -467,7 +468,7 @@ def _future(fig):
         p, n = _front_point(fig, x, z + dz, 1.17, CLEAR_M + 0.002)
         pts.append((p, n))
     n = sum((q for _, q in pts), Vector()).normalized()
-    return [_panel(pts[0][0], pts[1][0], pts[2][0], n, 0.003, "glow")]
+    return [_panel(pts[0][0], pts[1][0], pts[2][0], n, 0.003, "metal")]
 
 
 def _wasteland(fig):

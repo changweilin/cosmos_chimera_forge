@@ -8,8 +8,8 @@ What each slot is follows the procedural NpcMeshes.Dress and Overgarment, refitt
   "npc_hem" and "npc_ease" (0 = the cut's shortest and closest, 1 its longest and loosest).
 - "skirt_<Cut>": the robe, dress and wrap skirts; "npc_fall" (length) and "npc_flare" are shape keys.
 - "legs_Tight" / "legs_Loose": trousers at the procedural ease 1.08 (mercantile, future) and 1.3 (the rest).
-- "boots_<era>": boots of the lower era's height; the future pair carries the shin light band.
-- "puff_Mercantile" (puffed shoulders), "cuff_Twilight" (wide cuffs), "band_Future" (the sleeve light bands) and
+- "boots_<era>": boots of the lower era's height; the future pair in the trousers' tone.
+- "puff_Mercantile" (puffed shoulders), "cuff_Twilight" (wide cuffs) and
   "sleeve_Wasteland" (the one long right sleeve): small slots worn over a top, so the tops need no era copies.
 
 Rings are measured cross-sections of the base's skin (npc_outfit._profile), so every slot fits its race and sex. A slot's
@@ -433,18 +433,11 @@ def _boot(fig, side, height, role):
 def boots(era, height):
     def build(fig):
         """NpcMeshes Dress boots: the foot and the shin up to lerp(ankle, knee, height x 1.6); the future pair in the
-        trousers' tone with a light band at mid shin."""
-        h = fig.h
-        future = era == "Future"
+        trousers' tone (future clothes do not glow)."""
+        role = "cloth2shade" if era == "Future" else "leather"
         parts = []
         for s in ("l", "r"):
-            knee, ankle = fig.head_of["calf_" + s], fig.head_of["foot_" + s]
-            parts += _boot(fig, s, height, "cloth2shade" if future else "leather")
-            if future:
-                at, d = ankle + (knee - ankle) * 0.5, (knee - ankle).normalized()
-                mask = _mask(fig, ("calf",), s)
-                rings = [_limb_ring(fig, at + d * off, d, mask, 1.05, O.CLEAR_M + 0.006) for off in (-0.004 * h, 0.004 * h)]
-                parts.append(_tube_part(rings, "glow", at, d))
+            parts += _boot(fig, s, height, role)
         return parts
     return build
 
@@ -480,19 +473,6 @@ def _cuffs(fig):
     return parts
 
 
-def _bands(fig):
-    """Future: a light band round each long sleeve at 0.8 of the forearm (NpcMeshes Dress)."""
-    h, parts = fig.h, []
-    for s in ("l", "r"):
-        _, e, w = _arm(fig, s)
-        mask = _mask(fig, ("lowerarm",), s)
-        d = (w - e).normalized()
-        at = e + (w - e) * 0.8
-        rings = [_limb_ring(fig, at + d * off, d, mask, 1.17 + 0.04, O.CLEAR_M + 0.002) for off in (-0.0035 * h, 0.0035 * h)]
-        parts.append(_tube_part(rings, "glow", at, d))
-    return parts
-
-
 def _right_sleeve(fig):
     """Wasteland: the right arm always in a long sleeve, whatever the left wears (NpcMeshes Dress `cover`); worn over a
     short or bare top, a little looser than its sleeve."""
@@ -513,7 +493,6 @@ def _slots():
         slots["boots_" + era] = (boots(era, height), {})
     slots["puff_Mercantile"] = (_puff, {})
     slots["cuff_Twilight"] = (_cuffs, {})
-    slots["band_Future"] = (_bands, {})
     slots["sleeve_Wasteland"] = (_right_sleeve, {})
     return slots
 
