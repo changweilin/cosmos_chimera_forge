@@ -43,6 +43,30 @@
     multi_leg_mecha:"rigid multi-leg kinematics",
     hybrid:"custom anatomy landmarks and per-part rigging"
   });
+  const bodyPlans = {
+    humanoid: "biped",
+    beast: "quadruped",
+    avian: "avian",
+    saurian: "quadruped",
+    serpent: "serpentine",
+    amphibian: "quadruped",
+    fish: "aquatic",
+    insect: "hexapod",
+    crustacean: "octopod",
+    mollusk: "amorphous",
+    cephalopod: "tentacled",
+    radial: "tentacled",
+    plant: "plant",
+    fungus: "plant",
+    machine: "mechanism",
+    artifact: "object",
+    matter: "object",
+    fluid: "amorphous",
+    spirit: "amorphous",
+    amorphous: "amorphous",
+    swarm: "amorphous"
+  };
+
   function plan(kind, concept, route) {
     if (kind === "move") return null;
     const parents = concept?.base_parents || concept?.base_parents_locked || [];
@@ -53,11 +77,14 @@
     }).filter(Boolean);
     const unique = [...new Set(matched)];
     let anatomy = kind === "character" ? "biped" : unique.length === 1 ? unique[0] : "hybrid";
-    // Explicit model topology is authoritative over visual catalog origins.
+    const bodyPlan = typeof concept?.body_plan === "string" && Object.prototype.hasOwnProperty.call(bodyPlans, concept.body_plan)
+      ? concept.body_plan : null;
+    if (kind !== "character" && bodyPlan) anatomy = bodyPlans[bodyPlan];
+    // Explicit model topology is authoritative over visual catalog origins and body_plan.
     const declared = concept?.anatomy || concept?.topology;
     if (declared && Object.prototype.hasOwnProperty.call(labels, declared)) anatomy = declared;
     const limbs = concept?.limbs || {};
-    if (!declared && (anatomy === "humanoid_mecha" || anatomy === "quadruped_mecha" || anatomy === "multi_leg_mecha")) {
+    if (!declared && (anatomy === "humanoid_mecha" || anatomy === "quadruped_mecha" || anatomy === "multi_leg_mecha" || (bodyPlan === "machine" && Number.isInteger(limbs.legs)))) {
       if (Number.isInteger(limbs.legs) && limbs.legs >= 5) anatomy = "multi_leg_mecha";
       else if (limbs.legs === 4) anatomy = "quadruped_mecha";
       else if (limbs.legs === 2) anatomy = "humanoid_mecha";
@@ -68,9 +95,9 @@
       else if (limbs.legs === 8) anatomy = "octopod";
       else if (limbs.legs === 6) anatomy = "hexapod";
     }
-    return {anatomy, label:labels[anatomy], rig:rigs[anatomy],
+    return {anatomy, body_plan:bodyPlan, label:labels[anatomy], rig:rigs[anatomy],
       input_mode:route === "text" ? "text" : "image",
       review_required:anatomy === "hybrid"};
   }
-  window.COSMI_ANATOMY = Object.freeze({plan,labels,rigs,exact});
+  window.COSMI_ANATOMY = Object.freeze({plan,labels,rigs,exact,bodyPlans});
 })();

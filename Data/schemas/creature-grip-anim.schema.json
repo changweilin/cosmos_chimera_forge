@@ -24,12 +24,28 @@
     "properties": {
       "id": { "$ref": "common.schema.json#/$defs/id" },
       "spec": { "const": "cosmimera-creature-grip-anim/1" },
+      "rig_type": { "const": "unity_generic" },
+      "max_bones": { "const": 120 },
+      "egg_alignment_socket": { "const": "Socket_EggCore" },
       "grip_mode": {
         "enum": ["two_handed", "dual_wield", "one_hand_shield"]
       },
       "fps": { "const": 30 },
       "clip_prefix_pattern": { "const": "cr_<stage>_" },
       "alternates_hands": { "type": "boolean" },
+      "body_plans": {
+        "type": "array",
+        "minItems": 21,
+        "maxItems": 21,
+        "uniqueItems": true,
+        "items": {
+          "enum": [
+            "humanoid", "beast", "avian", "saurian", "serpent", "amphibian", "fish",
+            "insect", "crustacean", "mollusk", "cephalopod", "radial",
+            "plant", "fungus", "machine", "artifact", "matter", "fluid", "spirit", "amorphous", "swarm"
+          ]
+        }
+      },
       "sockets": {
         "type": "array",
         "minItems": 2,
@@ -67,7 +83,8 @@
           "ranged_rule": { "type": "string", "minLength": 1 },
           "virtual_hand_rule": { "type": "string", "minLength": 1 },
           "follower_rule": { "type": "string", "minLength": 1 },
-          "boss_master_rule": { "type": "string", "minLength": 1 }
+          "boss_master_rule": { "type": "string", "minLength": 1 },
+          "hatch_rule": { "type": "string", "minLength": 1 }
         }
       },
       "weapon_types": {
@@ -117,7 +134,7 @@
           "properties": {
             "action_id": { "$ref": "common.schema.json#/$defs/id" },
             "description": { "type": "string", "minLength": 1 },
-            "category": { "enum": ["stance", "locomotion", "guard", "melee", "dash", "ranged", "follower", "boss_master"] },
+            "category": { "enum": ["stance", "locomotion", "guard", "melee", "dash", "ranged", "follower", "boss_master", "hatch"] },
             "weapon_distance": { "enum": ["any", "melee", "ranged"] },
             "hand": { "enum": ["both", "right", "left", "off_shield", "none"] },
             "frames": { "$ref": "common.schema.json#/$defs/positiveInt" },
@@ -133,7 +150,10 @@
                   "Socket_Front",
                   "Socket_Mouth",
                   "Socket_Core_FX",
-                  "Socket_Ground_FX"
+                  "Socket_Ground_FX",
+                  "Socket_EggCore",
+                  "Socket_Head",
+                  "Socket_PetTouch"
                 ]
               },
               "uniqueItems": true

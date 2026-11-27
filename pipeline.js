@@ -33,7 +33,7 @@
     const base = ctx.concept || {};
     const selected = base.locked?.stages?.find(s => s.stage === ctx.opts?.stage) || {};
     const concept = {...base, ...selected, stage: ctx.opts?.stage || base.stage};
-    const visualFields = ["name_zh", "name_en", "stage", "gender", "age", "body_type", "outfit_palette", "hair_palette", "eye_palette", "silhouette_keywords", "style", "pose", "element_palettes", "elements", "design_prototypes", "base_entity", "morphology_primary", "morphology_secondary", "size_profile", "height", "height_length", "appearance", "look", "size_class", "appearance_palette", "hair", "eyes", "outfit", "accessories", "base_parents", "bases", "motifs"];
+    const visualFields = ["name_zh", "name_en", "stage", "gender", "age", "body_type", "outfit_palette", "hair_palette", "eye_palette", "silhouette_keywords", "style", "pose", "element_palettes", "elements", "design_prototypes", "base_entity", "body_plan", "morphology_primary", "morphology_secondary", "size_profile", "height", "height_length", "appearance", "look", "size_class", "appearance_palette", "hair", "eyes", "outfit", "accessories", "base_parents", "bases", "motifs"];
     const wikiFields = pureVisual ? [] : ["archetype", "disposition", "social_structure", "reproduction", "formula"];
     const fields = [...visualFields, ...wikiFields];
     const lines = fields.filter(k => concept[k] != null).map(k => k + ": " + (typeof concept[k] === "object" ? JSON.stringify(concept[k]) : concept[k]));
@@ -164,6 +164,7 @@
     const route = hasImage ? "image" : "text";
     const anatomy = window.COSMI_ANATOMY?.plan(kind, ctx.concept, route);
     const typed = anatomy ? filled + "\n解剖分類：" + anatomy.anatomy +
+      (anatomy.body_plan ? "（body_plan=" + anatomy.body_plan + "）" : "") +
       "；骨架／機構策略：" + anatomy.rig +
       "。依指定原型與實際肢體建立專用動作，混合／不明拓撲先審查，不可擅套人形 Rig。" : filled;
     const wiki = window.COSMI_WIKI.describe(ctx);

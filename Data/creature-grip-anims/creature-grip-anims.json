@@ -2,10 +2,36 @@
   {
     "id": "grip_anim_two_handed",
     "spec": "cosmimera-creature-grip-anim/1",
+    "rig_type": "unity_generic",
+    "max_bones": 120,
+    "egg_alignment_socket": "Socket_EggCore",
     "grip_mode": "two_handed",
     "fps": 30,
     "clip_prefix_pattern": "cr_<stage>_",
     "alternates_hands": false,
+    "body_plans": [
+      "humanoid",
+      "beast",
+      "avian",
+      "saurian",
+      "serpent",
+      "amphibian",
+      "fish",
+      "insect",
+      "crustacean",
+      "mollusk",
+      "cephalopod",
+      "radial",
+      "plant",
+      "fungus",
+      "machine",
+      "artifact",
+      "matter",
+      "fluid",
+      "spirit",
+      "amorphous",
+      "swarm"
+    ],
     "sockets": [
       {
         "name": "Socket_Weapon_R",
@@ -27,7 +53,8 @@
       "ranged_rule": "遠程技能由宙獸本體（口器／核心／前方發射點）發出；本體前傾瞄準、蓄能並隨發射出現沉穩後座力，不繪製弓杖。",
       "virtual_hand_rule": "裝備已全數改為角色專屬，宙獸不再穿戴個人裝備；本體專注於本體攻擊與追隨者／BOSS主控協同作戰。武器與盾牌的虛擬大手規格僅保留為遺留與特定 BOSS 演出參考，技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX）；因此宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。Socket_Weapon_R／Socket_Weapon_L 僅作為空掛點預留於身體兩側適當安全間距，宙獸本體仍依持有模式節奏做出相應的軀幹、頭頸與四肢／羽翼動作。",
       "follower_rule": "在場宙獸擔任玩家角色的獨立 AI 追隨者（最多 2 隻同場）；非戰鬥或切換補位時保持貼身護衛姿態（follow_idle／follow_dash），被玩家選用招式組與特性時以 link_channel 與玩家共鳴，車輪戰／後備上場時播 relay_enter 衝入戰場；全程維持無武器本體演出。",
-      "boss_master_rule": "BOSS 擔任主控角色並統御追隨者（第二隻同場或車輪戰後備）；切換本體與追隨者招式組時播放 boss_moveset_switch，號召或喚出追隨者上場時播放 boss_summon_follower（含 2 秒切換冷卻與冷卻凍結規則）。"
+      "boss_master_rule": "BOSS 擔任主控角色並統御追隨者（第二隻同場或車輪戰後備）；切換本體與追隨者招式組時播放 boss_moveset_switch，號召或喚出追隨者上場時播放 boss_summon_follower（含 2 秒切換冷卻與冷卻凍結規則）。",
+      "hatch_rule": "孵化破殼專屬演出 hatch_emerge（210f，7 秒）對齊蛋核心掛點 Socket_EggCore 並由蜷曲縮態展開；保留既有 hatch（45f）相容鍵，破殼過程不持握任何武器。"
     },
     "clips": [
       {
@@ -118,6 +145,26 @@
           }
         ],
         "motion_notes": "in-place 衝刺；軀幹前傾破風，保持掛點淨空。",
+        "weapon_distance": "any"
+      },
+      {
+        "action_id": "climb",
+        "description": "攀爬／岩壁移動（依解剖構造附著攀登）",
+        "category": "locomotion",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 5,
+            "time_ms": 167
+          }
+        ],
+        "motion_notes": "Generic Rig 30 fps（two_handed）：依對應 body_plan 解剖構造附著攀登（足爪／吸盤／觸手），預留雙側空掛點安全間距。",
         "weapon_distance": "any"
       },
       {
@@ -656,6 +703,30 @@
           }
         ],
         "motion_notes": "36 幀；BOSS 號召第二隻追隨者或車輪戰後備登場，第 16 幀釋放召喚衝擊波（無武器）。"
+      },
+      {
+        "action_id": "hatch_emerge",
+        "description": "孵化破殼登場（7秒從縮在蛋內的蜷曲姿勢破殼展開）",
+        "category": "hatch",
+        "hand": "none",
+        "frames": 210,
+        "duration_ms": 7000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_EggCore",
+          "Socket_Core_FX",
+          "Socket_Ground_FX"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 120,
+            "time_ms": 4000
+          }
+        ],
+        "motion_notes": "Generic Rig 30 fps（two_handed）：對齊 Socket_EggCore 由蜷曲蛋內姿態破殼展開為待機站姿，全程 210f（7 秒）且不持握武器。",
+        "weapon_distance": "any"
       }
     ],
     "weapon_types": {
@@ -676,10 +747,36 @@
   {
     "id": "grip_anim_dual_wield",
     "spec": "cosmimera-creature-grip-anim/1",
+    "rig_type": "unity_generic",
+    "max_bones": 120,
+    "egg_alignment_socket": "Socket_EggCore",
     "grip_mode": "dual_wield",
     "fps": 30,
     "clip_prefix_pattern": "cr_<stage>_",
     "alternates_hands": true,
+    "body_plans": [
+      "humanoid",
+      "beast",
+      "avian",
+      "saurian",
+      "serpent",
+      "amphibian",
+      "fish",
+      "insect",
+      "crustacean",
+      "mollusk",
+      "cephalopod",
+      "radial",
+      "plant",
+      "fungus",
+      "machine",
+      "artifact",
+      "matter",
+      "fluid",
+      "spirit",
+      "amorphous",
+      "swarm"
+    ],
     "sockets": [
       {
         "name": "Socket_Weapon_R",
@@ -701,7 +798,8 @@
       "ranged_rule": "遠程技能由宙獸本體發出；依 _r / _l 交替進行左右側身甩動、前探與後座回彈，與獨立雙持遠程武器動畫同步，不繪製武器。",
       "virtual_hand_rule": "裝備已全數改為角色專屬，宙獸不再穿戴個人裝備；本體專注於本體攻擊與追隨者／BOSS主控協同作戰。武器與盾牌的虛擬大手規格僅保留為遺留與特定 BOSS 演出參考，技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX）；因此宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。Socket_Weapon_R／Socket_Weapon_L 僅作為空掛點預留於身體兩側適當安全間距，宙獸本體仍依持有模式節奏做出相應的軀幹、頭頸與四肢／羽翼動作。",
       "follower_rule": "在場宙獸擔任玩家角色的獨立 AI 追隨者（最多 2 隻同場）；非戰鬥或切換補位時保持貼身護衛姿態（follow_idle／follow_dash），被玩家選用招式組與特性時以 link_channel 與玩家共鳴，車輪戰／後備上場時播 relay_enter 衝入戰場；全程維持無武器本體演出。",
-      "boss_master_rule": "BOSS 擔任主控角色並統御追隨者（第二隻同場或車輪戰後備）；切換本體與追隨者招式組時播放 boss_moveset_switch，號召或喚出追隨者上場時播放 boss_summon_follower（含 2 秒切換冷卻與冷卻凍結規則）。"
+      "boss_master_rule": "BOSS 擔任主控角色並統御追隨者（第二隻同場或車輪戰後備）；切換本體與追隨者招式組時播放 boss_moveset_switch，號召或喚出追隨者上場時播放 boss_summon_follower（含 2 秒切換冷卻與冷卻凍結規則）。",
+      "hatch_rule": "孵化破殼專屬演出 hatch_emerge（210f，7 秒）對齊蛋核心掛點 Socket_EggCore 並由蜷曲縮態展開；保留既有 hatch（45f）相容鍵，破殼過程不持握任何武器。"
     },
     "clips": [
       {
@@ -792,6 +890,26 @@
           }
         ],
         "motion_notes": "in-place 疾跑；低俯身姿，雙前肢／翼向後掠開。",
+        "weapon_distance": "any"
+      },
+      {
+        "action_id": "climb",
+        "description": "攀爬／岩壁移動（依解剖構造附著攀登）",
+        "category": "locomotion",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 5,
+            "time_ms": 167
+          }
+        ],
+        "motion_notes": "Generic Rig 30 fps（dual_wield）：依對應 body_plan 解剖構造附著攀登（足爪／吸盤／觸手），預留雙側空掛點安全間距。",
         "weapon_distance": "any"
       },
       {
@@ -1486,6 +1604,30 @@
           }
         ],
         "motion_notes": "36 幀；BOSS 號召第二隻追隨者或車輪戰後備登場，第 16 幀釋放召喚衝擊波（無武器）。"
+      },
+      {
+        "action_id": "hatch_emerge",
+        "description": "孵化破殼登場（7秒從縮在蛋內的蜷曲姿勢破殼展開）",
+        "category": "hatch",
+        "hand": "none",
+        "frames": 210,
+        "duration_ms": 7000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_EggCore",
+          "Socket_Core_FX",
+          "Socket_Ground_FX"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 120,
+            "time_ms": 4000
+          }
+        ],
+        "motion_notes": "Generic Rig 30 fps（dual_wield）：對齊 Socket_EggCore 由蜷曲蛋內姿態破殼展開為待機站姿，全程 210f（7 秒）且不持握武器。",
+        "weapon_distance": "any"
       }
     ],
     "weapon_types": {
@@ -1506,10 +1648,36 @@
   {
     "id": "grip_anim_one_hand_shield",
     "spec": "cosmimera-creature-grip-anim/1",
+    "rig_type": "unity_generic",
+    "max_bones": 120,
+    "egg_alignment_socket": "Socket_EggCore",
     "grip_mode": "one_hand_shield",
     "fps": 30,
     "clip_prefix_pattern": "cr_<stage>_",
     "alternates_hands": false,
+    "body_plans": [
+      "humanoid",
+      "beast",
+      "avian",
+      "saurian",
+      "serpent",
+      "amphibian",
+      "fish",
+      "insect",
+      "crustacean",
+      "mollusk",
+      "cephalopod",
+      "radial",
+      "plant",
+      "fungus",
+      "machine",
+      "artifact",
+      "matter",
+      "fluid",
+      "spirit",
+      "amorphous",
+      "swarm"
+    ],
     "sockets": [
       {
         "name": "Socket_Weapon_R",
@@ -1531,7 +1699,8 @@
       "ranged_rule": "遠程技能由宙獸本體發出；左側維持穩健防禦重心、右側微探發力並帶出射擊後座回彈，不繪製武器與盾牌。",
       "virtual_hand_rule": "裝備已全數改為角色專屬，宙獸不再穿戴個人裝備；本體專注於本體攻擊與追隨者／BOSS主控協同作戰。武器與盾牌的虛擬大手規格僅保留為遺留與特定 BOSS 演出參考，技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX）；因此宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。Socket_Weapon_R／Socket_Weapon_L 僅作為空掛點預留於身體兩側適當安全間距，宙獸本體仍依持有模式節奏做出相應的軀幹、頭頸與四肢／羽翼動作。",
       "follower_rule": "在場宙獸擔任玩家角色的獨立 AI 追隨者（最多 2 隻同場）；非戰鬥或切換補位時保持貼身護衛姿態（follow_idle／follow_dash），被玩家選用招式組與特性時以 link_channel 與玩家共鳴，車輪戰／後備上場時播 relay_enter 衝入戰場；全程維持無武器本體演出。",
-      "boss_master_rule": "BOSS 擔任主控角色並統御追隨者（第二隻同場或車輪戰後備）；切換本體與追隨者招式組時播放 boss_moveset_switch，號召或喚出追隨者上場時播放 boss_summon_follower（含 2 秒切換冷卻與冷卻凍結規則）。"
+      "boss_master_rule": "BOSS 擔任主控角色並統御追隨者（第二隻同場或車輪戰後備）；切換本體與追隨者招式組時播放 boss_moveset_switch，號召或喚出追隨者上場時播放 boss_summon_follower（含 2 秒切換冷卻與冷卻凍結規則）。",
+      "hatch_rule": "孵化破殼專屬演出 hatch_emerge（210f，7 秒）對齊蛋核心掛點 Socket_EggCore 並由蜷曲縮態展開；保留既有 hatch（45f）相容鍵，破殼過程不持握任何武器。"
     },
     "clips": [
       {
@@ -1622,6 +1791,26 @@
           }
         ],
         "motion_notes": "in-place 奔跑；左側置前破風、右側向後帶出。",
+        "weapon_distance": "any"
+      },
+      {
+        "action_id": "climb",
+        "description": "攀爬／岩壁移動（依解剖構造附著攀登）",
+        "category": "locomotion",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [],
+        "events": [
+          {
+            "name": "ev_footstep",
+            "frame": 5,
+            "time_ms": 167
+          }
+        ],
+        "motion_notes": "Generic Rig 30 fps（one_hand_shield）：依對應 body_plan 解剖構造附著攀登（足爪／吸盤／觸手），預留雙側空掛點安全間距。",
         "weapon_distance": "any"
       },
       {
@@ -2158,6 +2347,30 @@
           }
         ],
         "motion_notes": "36 幀；BOSS 號召第二隻追隨者或車輪戰後備登場，第 16 幀釋放召喚衝擊波（無武器）。"
+      },
+      {
+        "action_id": "hatch_emerge",
+        "description": "孵化破殼登場（7秒從縮在蛋內的蜷曲姿勢破殼展開）",
+        "category": "hatch",
+        "hand": "none",
+        "frames": 210,
+        "duration_ms": 7000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_EggCore",
+          "Socket_Core_FX",
+          "Socket_Ground_FX"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 120,
+            "time_ms": 4000
+          }
+        ],
+        "motion_notes": "Generic Rig 30 fps（one_hand_shield）：對齊 Socket_EggCore 由蜷曲蛋內姿態破殼展開為待機站姿，全程 210f（7 秒）且不持握武器。",
+        "weapon_distance": "any"
       }
     ],
     "weapon_types": {

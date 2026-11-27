@@ -1,7 +1,7 @@
 # Cosmos Chimera Forge — Google Drive 通用目錄結構與管線規範
 
 - **專案根目錄**：`cosmos_chimera_forge/`（Drive Folder ID: `1AQR7UfEk7lL85rHHiZTK9PBOHc4GcEC0`）
-- **最後維護日期**：2026-11-20
+- **最後維護日期**：2026-11-27
 - **維護正本**：此 GitHub 文件為通用目錄與流程契約的正本，Drive 根目錄 `DIRECTORY.md` 為唯讀鏡像，需在 GitHub PR 合併後由授權流程單向發布及驗證。個別主體成果與索引仍以 Drive 為正本。詳見 [STORAGE_BOUNDARY](../STORAGE_BOUNDARY.md)。
 
 ## 1. Google Drive 目錄結構與命名規範
@@ -108,7 +108,7 @@ cosmos_chimera_forge/                              [1AQR7UfEk7lL85rHHiZTK9PBOHc4
 | `03b_blender` | `<kind>/prompts/03b_blender.prompt.md` | AI Blender（圖生／文生 3D） | 第三層保留 `<id>[_<stage>]_03b_blender[_<ver>].glb`；其餘（`.blend`、`_manifest.json`、貼圖、渲染圖）存於 `03b_blender/[<ver>/]` |
 | `04_review_3d` | `<kind>/prompts/04_review_3d.prompt.md` | 3D 最終驗收 | `04_review_3d/[<ver>/]<id>[_<stage>]_04_review_3d[_<ver>].json` |
 | `05_wiki` | `<kind>/prompts/05_encyclopedia.prompt.md` | 獨立圖鑑生成 | 第三層保留 `<id>[_<stage>]_05_wiki[_<ver>].md`（僅於目標檔案不存在時建立） |
-| `skeleton_actions` | `<kind>/prompts/skeleton_actions.md` | 骨架與動作規格 | 角色（85 動作含蹲下 4 支＋七槽裝備掛點）／宙獸（68 動作含蹲下 4 支、追隨者與 BOSS 主控＋無武器空掛點）／招式（雙端施放動作與掛點對照） |
+| `skeleton_actions` | `<kind>/prompts/skeleton_actions.md` | 骨架與動作規格 | 角色（91 動作含立體移動／蹲下、`sw_*` 與七槽裝備掛點）／宙獸（69 動作含 `climb`、21 類 `body_plan`、`Socket_EggCore` 與無武器空掛點）／招式（雙端施放動作與掛點對照） |
 | — | `docs/pipeline/TRIGGERS.md` | 簡易觸發語句 | 各步驟觸發指令與管線分支說明 |
 
 

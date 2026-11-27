@@ -5747,7 +5747,7 @@
   // ==================== 3D 模型與骨骼動作檢視引擎 (Three.js) ====================
   function getClipCategory(clipName) {
     const name = (clipName || "").toLowerCase();
-    if (name.includes("idle") || name.includes("walk") || name.includes("run") || name.includes("sneak") || name.includes("dodge") || name.includes("roll") || name.includes("jump") || name.includes("move") || name.includes("swim") || name.includes("dive") || name.includes("fly") || name.includes("glide") || name.includes("mount") || name.includes("follow")) return "基礎移動";
+    if (name.includes("idle") || name.includes("walk") || name.includes("run") || name.includes("sneak") || name.includes("dodge") || name.includes("roll") || name.includes("jump") || name.includes("move") || name.includes("swim") || name.includes("dive") || name.includes("fly") || name.includes("climb") || name.includes("glide") || name.includes("mount") || name.includes("follow")) return "基礎移動";
     if (name.includes("block") || name.includes("hit") || name.includes("knock") || name.includes("getup") || name.includes("faint") || name.includes("defeat") || name.includes("victory") || name.includes("guard_break") || name.includes("stagger") || name.includes("enrage") || name.includes("weapon_")) return "戰鬥受擊";
     if (name.includes("command") || name.includes("summon") || name.includes("recall") || name.includes("capture") || name.includes("hatch") || name.includes("moveset") || name.includes("relay")) return "指令召喚";
     if (name.startsWith("atk") || name.includes("_atk_") || name.includes("slash") || name.includes("strike") || name.includes("cleave") || name.includes("burst")) return "主動技攻擊";

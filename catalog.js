@@ -2,7 +2,7 @@
 // 改動規則見 README.md：新增選項 → minor；改既有 ID / 刪除 / 改動作事件 → major。
 // 權重 w 為相對值，不必加總為 100。
 window.COSMI_CATALOG = {
-  version: "2.15.0",
+  version: "2.16.0",
 
   ELEMENTS: [
     { v: "metal",   zh: "金", palette: "銀白、淡金、鋼藍高光" },
@@ -1934,6 +1934,53 @@ window.COSMI_CATALOG = {
     { v: "adult", zh: "成年" }, { v: "overload", zh: "超載（戰鬥中短暫進化）" }
   ],
 
+  BODY_PLANS: [
+    { v: "humanoid", zh: "人型雙足（含獸人、人型幻靈）" },
+    { v: "beast", zh: "四足／走獸（犬、狼、貓、獅、熊、有蹄類）" },
+    { v: "avian", zh: "鳥翼／有羽翼雙足（猛禽、鳥、翼龍形）" },
+    { v: "saurian", zh: "爬行龍形（蜥蜴、鱷魚、四足或半直立龍）" },
+    { v: "serpent", zh: "蛇蟒長條（無肢蜿蜒型）" },
+    { v: "amphibian", zh: "兩棲蛙蠑（低趴伏臥與跳躍型）" },
+    { v: "fish", zh: "魚鯨水生（無步足純泳鰭型）" },
+    { v: "insect", zh: "六足昆蟲／節肢（甲蟲、螳螂、蜂蝶）" },
+    { v: "crustacean", zh: "多足甲殼／蛛蟹（八足及以上重甲步足）" },
+    { v: "mollusk", zh: "軟體貝螺（背殼／腹足滑行型）" },
+    { v: "cephalopod", zh: "頭足觸腕（章魚、烏賊、放射觸手群）" },
+    { v: "radial", zh: "放射對稱（海星、海膽、對稱水母／晶花）" },
+    { v: "plant", zh: "植生根莖（樹精、花妖、藤蔓群落）" },
+    { v: "fungus", zh: "菌蕈孢體（傘蓋、菌絲共生型）" },
+    { v: "machine", zh: "機械構裝（齒輪、連桿、剛體關節機甲）" },
+    { v: "artifact", zh: "器物擬態（浮空武器、活體燈籠、秘寶器靈）" },
+    { v: "matter", zh: "礦晶岩土（岩石巨人、純結晶浮體、熔岩凝塊）" },
+    { v: "fluid", zh: "液態流體（水靈、泥漿、高黏度非牛頓體）" },
+    { v: "spirit", zh: "靈體氣態（鬼火、煙霧、能量投影）" },
+    { v: "amorphous", zh: "變形膠質（史萊姆、無定形團塊）" },
+    { v: "swarm", zh: "群聚蜂群（多微小個體聚合成的單一單位）" }
+  ],
+
+  SKELETON_SPECS: {
+    character: {
+      rig_type: "unity_humanoid",
+      max_bones: 75,
+      bind_pose: "t_pose",
+      showcase_clip: "Idle_Art",
+      rig_conventions: ["unity_humanoid", "mpfb_game_engine"],
+      spring_bone_prefix: "sw_",
+      spring_end_suffix: "_end",
+      equipment_slots: ["main_hand", "off_hand", "head", "upper", "hands", "lower", "accessory"],
+      animator_parameters: [
+        "Speed", "IsGrounded", "IsCrouching", "InCombat", "IsBlocking",
+        "IsRolling", "IsStaggered", "IsGuardBroken", "Attack",
+        "MoveSetSwitch", "StandUp", "CrouchJump", "UseItem", "ThrowCapture"
+      ]
+    },
+    creature: {
+      rig_type: "unity_generic",
+      max_bones: 120,
+      egg_alignment_socket: "Socket_EggCore"
+    }
+  },
+
   ACTIONS: {
     character: [
       { id: "idle", zh: "待機", f: 60, loop: true },
@@ -1949,6 +1996,12 @@ window.COSMI_CATALOG = {
       { id: "jump", zh: "跳躍（起跳/滯空/落地）", f: 30 },
       { id: "swim_idle", zh: "水面漂浮待機", f: 60, loop: true },
       { id: "swim_move", zh: "游泳移動", f: 36, loop: true },
+      { id: "dive_idle", zh: "潛水懸停待機", f: 60, loop: true },
+      { id: "dive_move", zh: "潛水游動（立體水下推進）", f: 36, loop: true },
+      { id: "fly_idle", zh: "飛行／浮空懸停待機", f: 60, loop: true },
+      { id: "fly_move", zh: "飛行／浮空移動", f: 32, loop: true },
+      { id: "climb_idle", zh: "攀爬靜止懸掛（岩壁待機）", f: 60, loop: true },
+      { id: "climb_move", zh: "攀爬移動（四肢交替上攀）", f: 32, loop: true },
       { id: "glide", zh: "滑翔滯空（乘風／高空移動）", f: 45, loop: true },
       { id: "mount_idle", zh: "騎乘待機（坐姿握鞍）", f: 60, loop: true },
       { id: "mount_run", zh: "騎乘奔跑（騎乘衝刺）", f: 24, loop: true },
@@ -2037,6 +2090,7 @@ window.COSMI_CATALOG = {
       { id: "dive", zh: "潛水／水下移動", f: 36, loop: true },
       { id: "fly_idle", zh: "飛行／懸浮待機", f: 60, loop: true },
       { id: "fly_move", zh: "飛行／滑翔移動", f: 32, loop: true },
+      { id: "climb", zh: "攀爬／岩壁移動（依解剖構造附著攀登）", f: 32, loop: true, ev: ["ev_footstep@5"] },
       { id: "mount_idle", zh: "被騎乘待機（穩定承載姿態）", f: 60, loop: true },
       { id: "mount_run", zh: "被騎乘奔跑（高速載騎衝刺）", f: 22, loop: true, ev: ["ev_footstep@5"] },
       { id: "block", zh: "格擋", f: 30 },

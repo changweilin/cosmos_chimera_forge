@@ -2,5 +2,5 @@
 # {{subject_label}}3D 模型最終驗收
 模型：{{input_path}}/
 {{source_reference}}
-核對 .glb、.blend、manifest、拓撲、材質、骨架（含角色七槽掛點與 85 支動作，含蹲下移動／翻滾／跳躍／格擋與蹲下起身銜接規範）及本對象的動作變形和各方向外觀。
+核對 .glb、.blend、manifest、拓撲、材質、骨架（含 T-pose / MPFB `game_engine` 相容、`sw_*`/`..._end` 彈簧骨、`Idle_Art` 展示、`acg_prop`/`acg_hidden` 屬性、角色七槽掛點與 91 支動作，含立體移動／蹲下動作與 `StandUp` 起身銜接規範）及本對象的動作變形和各方向外觀。
 逐檔記錄問題與通過／退件建議，由人工審核。

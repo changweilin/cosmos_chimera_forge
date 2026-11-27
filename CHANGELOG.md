@@ -1,3 +1,10 @@
+## 2026-11-27 · catalog@2.16.0 · template@(character-model-rig@5.3.0, creature-model-rig@5.3.0) · 對齊最新 cosmos_chimera 角色與宙獸動作／骨架格式
+
+- `catalog.js`（v2.15.0 → v2.16.0）：新增 21 類封閉 `BODY_PLANS`、`SKELETON_SPECS`（character/creature runtime 合約），角色動作擴充至 **91** 支（新增 `dive_idle`、`dive_move`、`fly_idle`、`fly_move`、`climb_idle`、`climb_move` 6 支立體移動），宙獸動作擴充至 **69** 支（新增 `climb` 攀爬移動 1 支）。
+- `anatomy-profiles.js`、`pipeline.js`、`forge.js`：支援 21 類 `body_plan` 對應解剖與骨架策略（匯出 `COSMI_ANATOMY.bodyPlans`）、`visualFields` 納入 `body_plan`、`getClipCategory()` 辨識 `climb`。
+- `Data/schemas/{character-anim,creature-grip-anim}.schema.json` 與 `Data/{character-anims/character-anims,creature-grip-anims/creature-grip-anims}.json`：補齊角色 `bind_pose` (`t_pose`)、`showcase_clip` (`Idle_Art`)、`rig_conventions`（`unity_humanoid`／`mpfb_game_engine`）、`sw_*`/`_end` 彈簧骨前綴與 14 個 `CharacterAnimatorDriver` 參數（含 `StandUp`）；補齊宙獸 `rig_type`、`max_bones` (`120`)、`egg_alignment_socket` (`Socket_EggCore`)、`body_plans`（21 類）、`pose_rules.hatch_rule`、`climb` 及 `hatch_emerge`（210f）clip 定義。
+- `tasks.js`、`docs/pipeline/`、`docs/drive/` 與 `Drive/` 鏡像：更新 `character-model-rig@5.3.0` 與 `creature-model-rig@5.3.0`（修正角色 7 槽正式名稱 `main_hand`/`off_hand`/`head`/`upper`/`hands`/`lower`/`accessory`、`acg_prop`/`acg_hidden` 屬性、ADR-0015 NPC UMA 撤回說明與各流程模板／骨架規格文件）。
+
 ## 2026-11-26 · catalog@2.14.0 · template@(passive-vfx@1.0.0) · 新增被動技效果動畫 Prompt 模板
 
 - `catalog.js` 新增 `PASSIVE_VFX`（6 種發揮影響力觸發時刻 `impact_moments`、4 種輕量提示樣式 `cue_styles`、3 階星級提示強度 `intensities`）。

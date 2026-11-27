@@ -23,7 +23,7 @@ function loadStack() {
 test('CREATURE defines 4 base entities and 8 morphology tags matching .agents/skills', () => {
   const c = loadStack();
   const C = c.COSMI_CATALOG;
-  assert.equal(C.version, '2.15.0');
+  assert.equal(C.version, '2.16.0');
   assert.deepEqual(
     [...C.CREATURE.base_entities.map(b => b.v)],
     ['natural-bio', 'supernatural-bio', 'humanoid-bio', 'non-bio']

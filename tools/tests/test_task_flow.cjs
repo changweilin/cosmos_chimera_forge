@@ -137,6 +137,23 @@ test('browser anatomy planner respects mixed origins and explicit wings', () => 
   assert.equal(mixed.review_required,true);
 });
 
+test('browser anatomy planner maps all 21 closed body_plan values', () => {
+  const ctx={window:{}};
+  vm.runInNewContext(fs.readFileSync(path.join(root,'catalog.js'),'utf8'),ctx);
+  vm.runInNewContext(fs.readFileSync(path.join(root,'anatomy-profiles.js'),'utf8'),ctx);
+  const {plan,bodyPlans,labels,rigs}=ctx.window.COSMI_ANATOMY;
+  const catalogPlans=ctx.window.COSMI_CATALOG.BODY_PLANS.map(b=>b.v);
+  assert.equal(catalogPlans.length,21);
+  for(const bp of catalogPlans) {
+    assert.ok(Object.prototype.hasOwnProperty.call(bodyPlans,bp),`missing body_plan mapping: ${bp}`);
+    const out=plan('creature',{body_plan:bp},'image');
+    assert.equal(out.body_plan,bp);
+    assert.equal(out.anatomy,bodyPlans[bp]);
+    assert.ok(labels[out.anatomy],`missing label for ${out.anatomy}`);
+    assert.ok(rigs[out.anatomy],`missing rig strategy for ${out.anatomy}`);
+  }
+});
+
 test('minimal rail diagram exposes simplified linear tracks per category', () => {
   const flow=loadFlow();
   assert.deepEqual(Array.from(flow.diagram('character'),r=>r.steps[0].id),

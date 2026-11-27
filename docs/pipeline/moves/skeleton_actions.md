@@ -1,7 +1,7 @@
 # 招式施放動作與特效骨架掛點規格（`moves`）
 
-> 對應資料來源：`Data/schemas/move.schema.json`、`catalog.js`（v2.15.0 `VFX`、`ACTIONS.character`、`ACTIONS.creature`、`GRIP_MODES`）、`tasks.js`（`move-vfx`）。  
-> 更新日期：2026-11-26（對齊「玩家主控＋宙獸追隨／供招＋BOSS 宙獸主控」雙端施放機制與換手／車輪戰通用特效）。
+> 對應資料來源：`Data/schemas/move.schema.json`、`catalog.js`（v2.16.0 `VFX`、`ACTIONS.character`、`ACTIONS.creature`、`GRIP_MODES`）、`tasks.js`（`move-vfx`）。  
+> 更新日期：2026-11-27（對齊「玩家主控＋宙獸追隨／供招＋BOSS 宙獸主控」雙端施放機制與換手／車輪戰通用特效，同步 v2.16.0 動作擴充）。
 
 ---
 

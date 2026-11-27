@@ -430,8 +430,8 @@
     },
 
     {
-      // REQ: 使用者 2026-11-09 — 宙獸 img-to-3D 極致精簡與立繪規格對齊；2026-11-19 — 追蹤允許的武器/持有組合、虛擬大手動作規範。
-      id: "creature-model-rig", version: "5.2.0", zh: "宙獸 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
+      // REQ: 使用者 2026-11-09 — 宙獸 img-to-3D 極致精簡與立繪規格對齊；2026-11-19 — 追蹤允許的武器/持有組合、虛擬大手動作規範；2026-11-27 — 21 類 body_plan、Socket_EggCore、climb 與 hatch_emerge。
+      id: "creature-model-rig", version: "5.3.0", zh: "宙獸 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
       needs: "creature", drop: "Art/_incoming", drive: true,
       options: [
         { key: "scope", type: "select", label: "模式", items: () => [{ v: "single", zh: "指定處理（單一立繪包）" }, { v: "batch", zh: "批量處理（01_portraits 內宙獸目錄）" }], def: "single" },
@@ -500,7 +500,11 @@
           "| `cr_" + stageTag + "_" + a.id + "` | " + a.zh + " | " + a.f + " | " + (a.loop ? "✓" : "") + " | " + (a.rm ? "✓" : "") + " | " + (a.ev || []).join(", ") + " |"
         ).join("\n");
 
-        const rigRule = "Generic 骨架（≤ 60 骨骼）：`Root`（地面原點 pivot）→ `Hips` → `Spine_01..n` → `Neck` → `Head`；四肢以 `L_`/`R_` 為前綴；尾部 `Tail_01..n`；翅膀 `Wing_L_01..n`；插槽骨 `Socket_Mouth`、`Socket_Head`、`Socket_Front`、`Socket_Core_FX`、`Socket_PetTouch`、`Socket_Ground_FX`、`Socket_Weapon_R`、`Socket_Weapon_L`（預留空掛點，不建武器網格）。";
+        const rigRule = "Generic 骨架（≤ 120 骨骼，推薦 ≤ 60 骨骼）：`Root`（地面原點 pivot）→ `Hips` → `Spine_01..n` → `Neck` → `Head`；四肢以 `L_`/`R_` 為前綴；尾部 `Tail_01..n`；翅膀 `Wing_L_01..n`；插槽骨 `Socket_Mouth`、`Socket_Head`、`Socket_Front`、`Socket_Core_FX`、`Socket_PetTouch`、`Socket_Ground_FX`、`Socket_EggCore`、`Socket_Weapon_R`、`Socket_Weapon_L`（預留空掛點，不建武器網格）。";
+        const bodyPlan = (!batch && c.body_plan) ? c.body_plan : "";
+        const bodyPlanLine = "- **核心體態原型 (`body_plan`)**：" + (bodyPlan
+          ? `\`${bodyPlan}\`（依此決定肢體拓撲、攀爬 \`climb\`／飛行／潛行與破殼動作基準）。`
+          : "依立繪指定 21 類封閉結構（humanoid / beast / avian / saurian / serpent / amphibian / fish / insect / crustacean / mollusk / cephalopod / radial / plant / fungus / machine / artifact / matter / fluid / spirit / amorphous / swarm）擇一對齊。");
 
         const weaponAllowLines = [];
         if (gripInfo) {
@@ -513,6 +517,7 @@
           `  - ${C.GRIP_MODES?.virtual_hand_rule || "裝備已全部改為角色專屬，宙獸不再穿戴裝備；技能仍由宙獸本體發出（Socket_Front／Socket_Mouth／Socket_Core_FX），宙獸本體模型與骨架動畫不繪製、不包含任何武器、盾牌或虛擬大手。"}`,
           "  - 追隨者與 BOSS 主控動作：含 `follow_idle`（護衛待機）、`follow_dash`（跟進補位）、`link_channel`（共鳴供招）、`relay_enter`（車輪戰輪替上場）、`boss_moveset_switch`（BOSS 主控切換招式組）、`boss_summon_follower`（BOSS 號召追隨者），完整規格見 `Data/creature-grip-anims/creature-grip-anims.json`（`cosmimera-creature-grip-anim/1`）。",
           "  - **蹲下與起身銜接規範**：蹲下狀態提供 `crouch_move`、`crouch_roll`、`crouch_jump`、`crouch_block`（維持無武器本體與 `Socket_Weapon_R`/`L` 空掛點安全間距）；蹲下時發動攻擊、輔助／場地／生活能力、或與道具／投擲／捕獲等互動動作銜接時，必須先站立回歸站姿再執行標準站立 clip，不另製作獨立蹲下攻擊或互動動畫。",
+          "  - **立體移動與破殼孵化規範**：包含攀爬 `climb`（32f，依 `body_plan` 對應肢體／吸盤／觸手攀附岩壁）及破殼登場 `hatch_emerge`（210f／7 秒，對齊 `Socket_EggCore` 從蛋內蜷曲姿態破殼展開；並保留既有 `hatch` 相容鍵）。",
           batch
             ? "- **持有組合追蹤（批量）**：依各宙獸已定案之 `grip_mode`（`two_handed`／`dual_wield`／`one_hand_shield`）過濾對應 clip（僅 `dual_wield` 需拆 `_r`/`_l` 交替動作），勿為不支援的持握方式製作無用動作。"
             : `- **允許持握組合**：\`${gripMode}\`（${gripInfo?.zh || gripMode}）· 掛點：${gripInfo?.sockets || "Socket_Weapon_R + Socket_Weapon_L"} · 對應動作節奏參考（勿於宙獸內繪製武器）：${weaponAllowLines.join(" ｜ ")}。${gripInfo?.pose || ""}`
@@ -560,6 +565,7 @@
           "",
           "## 3. 骨架體系（Generic Rig）",
           "- " + rigRule,
+          bodyPlanLine,
           virtualHandBlock,
           "",
           "## 4. 動畫動作清單（30 fps）",
@@ -592,15 +598,15 @@
     },
 
     {
-      // REQ: 使用者 2026-11-09 — 角色 img-to-3D 極致精簡與立繪規格對齊；2026-11-26 — 主控戰鬥與 7 槽角色裝備動作擴充。
-      id: "character-model-rig", version: "5.2.0", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
+      // REQ: 使用者 2026-11-09 — 角色 img-to-3D 極致精簡與立繪規格對齊；2026-11-26 — 主控戰鬥與 7 槽角色裝備動作擴充；2026-11-27 — MPFB game_engine / sw_* 彈簧骨 / Idle_Art / 空間移動 / 14 Animator 參數與 ADR-0015 撤回對齊。
+      id: "character-model-rig", version: "5.3.0", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
       needs: "character", drop: "Art/_incoming", drive: true,
       options: [
         { key: "scope", type: "select", label: "模式", items: () => [{ v: "single", zh: "指定處理（單一立繪包）" }, { v: "batch", zh: "批量處理（01_portraits 內角色目錄）" }], def: "single" },
         { key: "source_pack", type: "text", label: "參照角色立繪包 ID (source_pack)", def: "", placeholder: "例：chr-20261106-7f3a-2105", when: o => o.scope !== "batch" },
         { key: "input_img", type: "text", label: "指定輸入 img", def: "", placeholder: "選填，留空預設使用正面正交 + turnaround 三視圖", when: o => o.scope !== "batch" },
         { key: "grip_mode", type: "select", label: "武器持握模式", items: () => [
-          { v: "all", zh: "全持握模式（輸出全部 85 支角色動作，預設）" },
+          { v: "all", zh: "全持握模式（輸出全部 91 支角色動作，預設）" },
           { v: "two_handed", zh: "雙手武器（two_handed）" },
           { v: "dual_wield", zh: "雙持單手（dual_wield）" },
           { v: "one_hand_shield", zh: "單手＋盾（one_hand_shield）" }
@@ -639,12 +645,14 @@
           "| `chr_" + a.id + "` | " + a.zh + " | " + a.f + " | " + (a.loop ? "✓" : "") + " | " + (a.rm ? "✓" : "") + " | " + (a.ev || []).join(", ") + " |"
         ).join("\n");
 
-        const rigRule = "Unity Humanoid 相容骨架（≤ 75 骨骼）：標準 Humanoid 命名（Hips, Spine, Chest, UpperChest, Neck, Head, Shoulder, Arm, Hand, 手指三節 Thumb/Index/Middle/Ring/Little, Leg, Foot, Toes）；頭髮/披風以 `Extra_*` 前綴；插槽骨 `Socket_HandR_Prop`、`Socket_HandL_Prop`、`Socket_Head_Armor`、`Socket_Hands_Armor`、`Socket_Back_Pack`、`Socket_Throw`、`Socket_Head_FX`。";
+        const rigRule = "Unity Humanoid 相容骨架（≤ 75 骨骼，T-pose 綁定；支援標準 Unity Humanoid 命名（Hips, Spine, Chest, UpperChest, Neck, Head, Shoulder, Arm, Hand, 手指三節 Thumb/Index/Middle/Ring/Little, Leg, Foot, Toes）與 MPFB `game_engine` 命名（`pelvis`, `spine_01..03`, `neck_01`, `head`, `thigh_l/r`, `calf_l/r`, `foot_l/r`, `upperarm_l/r`, `lowerarm_l/r`, `hand_l/r`））：頭髮／裙襬／披風物理鏈以 `sw_*` 前綴（如 `sw_hair_*`、`sw_skirt*`），末端接零權重 `..._end` 骨供 `SpringBones` 驅動（非彈簧鏈附屬骨保留 `Extra_*`）；左側手持道具物件（`cube`/`bead`/`talisman`）須標註 `acg_prop` 與 `acg_hidden` FBX user properties；插槽骨 `Socket_HandR_Prop`、`Socket_HandL_Prop`、`Socket_Head_Armor`、`Socket_Hands_Armor`、`Socket_Back_Pack`、`Socket_Throw`、`Socket_Head_FX`。";
         const masterCombatBlock = [
           "- **角色專屬 7 槽與主控戰鬥規範**：",
+          "  - **適用範圍（ADR-0015 已撤回）**：僅玩家主角與可控英雄走本 Humanoid / MPFB (`game_engine`) 產線；路人、訓練家與任務 NPC 維持純程式化 `NpcMeshes`，不製作 UMA／獨立高模動作。",
           "  - **7 槽裝備間距**：裝備全歸角色穿戴（右手 `main_hand`、左手 `off_hand`、頭盔 `head`→`Socket_Head_Armor`、上身 `upper`、手套 `hands`→`Socket_Hands_Armor`、下身 `lower`、飾品 `accessory`）；手臂揮砍與舉盾須避開頭盔、手套與背包穿模。",
-          "  - **主控戰鬥與招式切換**：角色親自以手中武器／盾牌施放當前追隨宙獸的招式組，含拔收武器（`weapon_draw`/`weapon_sheathe`）、格擋彈反與破防（`block_hit`/`perfect_block`/`guard_break`/`stagger`）、切換宙獸招式（`moveset_switch` 2 秒冷卻 / `moveset_forced_switch` 死亡強制輪替），完整格式見 `Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。",
-          "  - **蹲下與起身銜接規範**：蹲下狀態提供 `crouch_move`、`crouch_roll`、`crouch_jump`、`crouch_block` 四支低姿動作（保留 7 槽裝備安全間距）；蹲下時發動攻擊、使用道具（`item_use_self`/`item_use_other`）、投擲或捕獲（`throw_card`/`throw_bead`/`throw_cube`）等動作，必須先站立回歸站姿再接續標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。"
+          "  - **立體移動與立繪展示 clip**：移動動作需覆蓋水面游泳（`swim_idle`/`swim_move`）、水下潛行（`dive_idle`/`dive_move`）、空中飛行（`fly_idle`/`fly_move`）、滑翔（`glide`）與岩壁攀爬（`climb_idle`/`climb_move`）；另可於獨立僅骨架 FBX（`<id>_acg@Idle_Art.fbx`）提供立繪擺拍展示 clip `Idle_Art`。",
+          "  - **主控戰鬥與 Animator 參數合約**：角色親自以手中武器／盾牌施放當前追隨宙獸的招式組，含拔收武器（`weapon_draw`/`weapon_sheathe`）、格擋彈反與破防（`block_hit`/`perfect_block`/`guard_break`/`stagger`）、切換宙獸招式（`moveset_switch` 2 秒冷卻 / `moveset_forced_switch` 死亡強制輪替）；`CharacterAnimatorDriver` 共用 14 個參數：`Speed`, `IsGrounded`, `IsCrouching`, `InCombat`, `IsBlocking`, `IsRolling`, `IsStaggered`, `IsGuardBroken`, `Attack`, `MoveSetSwitch`, `StandUp`, `CrouchJump`, `UseItem`, `ThrowCapture`（完整格式見 `Data/character-anims/character-anims.json` `cosmimera-character-anim/1`）。",
+          "  - **蹲下與起身銜接規範**：蹲下狀態提供 `crouch_move`、`crouch_roll`、`crouch_jump`、`crouch_block` 四支低姿動作（保留 7 槽裝備安全間距）；蹲下時發動攻擊、使用道具（`item_use_self`/`item_use_other`）、投擲或捕獲（`throw_card`/`throw_bead`/`throw_cube`）等動作，必須先站立回歸站姿（經 120 ms `StandUp`／`CrouchPosture` 過渡）再接續標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。"
         ].join("\n");
 
         const manifestObj = {

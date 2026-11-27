@@ -1,36 +1,41 @@
 # 角色骨架與動作規格（`characters`）
 
-> 對應資料來源：`catalog.js`（v2.15.0 `ACTIONS.character`）、`tasks.js`（`character-model-rig` v5.2.0）、`Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。  
-> 更新日期：2026-11-26（共 **85** 支動作：含新增蹲下移動／蹲下翻滾／蹲下跳躍／蹲下格擋 **4** 支＋主控戰鬥七槽裝備／格擋彈反／拔收武器／招式組切換與 22 支主控攻擊輔助 **31** 支＋既有 **50** 支完整相容）。
+> 對應資料來源：`catalog.js`（v2.16.0 `ACTIONS.character`、`SKELETON_SPECS.character`）、`tasks.js`（`character-model-rig` v5.3.0）、`Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。  
+> 更新日期：2026-11-27（共 **91** 支動作：含新增水中潛行 `dive_idle`/`dive_move`、飛行 `fly_idle`/`fly_move`、攀爬 `climb_idle`/`climb_move` **6** 支＋蹲下移動／翻滾／跳躍／格擋 **4** 支＋主控戰鬥 **31** 支＋既有 **50** 支完整相容；對齊 T-pose、MPFB `game_engine`、`sw_*` 彈簧骨、`Idle_Art`、14 個 `CharacterAnimatorDriver` 參數與 ADR-0015 撤回）。
 
 ---
 
-## 1. 骨架體系與七槽角色專屬裝備（Unity Humanoid）
+## 1. 骨架體系與七槽角色專屬裝備（Unity Humanoid／MPFB `game_engine`）
 
-- **骨骼上限**：≤ 75 骨骼，採 Unity Humanoid 標準命名：
-  - 核心軀幹：`Hips` → `Spine` → `Chest` → `UpperChest` → `Neck` → `Head`
-  - 四肢：`Shoulder` → `Arm` → `ForeArm` → `Hand`（含手指三節 `Thumb` / `Index` / `Middle` / `Ring` / `Little`）；`UpLeg` → `Leg` → `Foot` → `Toes`
-  - 附屬物理：`Extra_*`（頭髮、披風、飾帶等）
+- **適用範圍（ADR-0015 已撤回）**：本 Humanoid／MPFB（`game_engine`）高模產線僅適用於**玩家主角與可控英雄**（`chr_roen` 等）；路人、訓練家與任務 NPC 維持純程式化 `NpcMeshes`，不製作 UMA 或獨立高模動作。
+- **骨骼上限與綁定基準**：≤ 75 骨骼，**T-pose** 綁定（`bind_pose: "t_pose"`）；立繪擺拍展示 clip `Idle_Art` 須另外匯出為獨立僅骨架 FBX（`<id>_acg@Idle_Art.fbx`）。
+- **雙命名相容（`AcgCharacterImport.cs`）**：
+  - **標準 Unity Humanoid 命名**：`Hips` → `Spine` → `Chest` → `UpperChest` → `Neck` → `Head`；`Shoulder` → `Arm` → `ForeArm` → `Hand`（含手指三節 `Thumb` / `Index` / `Middle` / `Ring` / `Little`）；`UpLeg` → `Leg` → `Foot` → `Toes`
+  - **MPFB `game_engine` 命名**：`pelvis` → `spine_01..03` → `neck_01` → `head`；`upperarm_l/r` → `lowerarm_l/r` → `hand_l/r`；`thigh_l/r` → `calf_l/r` → `foot_l/r`
+- **彈簧物理與左側道具屬性**：
+  - 頭髮、裙襬、披風物理鏈改用 `sw_*` 前綴（如 `sw_hair_*`、`sw_skirt*`），末端接零權重 `..._end` 骨由 `SpringBones.cs` 與 `AcgSpringImport.cs` 驅動（非彈簧鏈附屬骨保留 `Extra_*`）。
+  - 左側手持收服道具網格（`cube`／`bead`／`talisman`）須於 Blender／FBX 標註 user properties `acg_prop` 與 `acg_hidden`（供 `AcgPropImport.cs` 識別）。
 - **插槽骨（Sockets · 7 個，對應全遊戲唯一的角色七槽裝備系統）**：
-  - `Socket_HandR_Prop`（`weapon` 主手武器／礦鎬／釣竿／廚具／收服器掛點）
-  - `Socket_HandL_Prop`（`weapon` 副手武器／盾牌／冒險手冊掛點）
+  - `Socket_HandR_Prop`（`main_hand` 主手武器／礦鎬／釣竿／廚具／收服器掛點）
+  - `Socket_HandL_Prop`（`off_hand` 副手武器／盾牌／手持道具／冒險手冊掛點）
   - `Socket_Head_Armor`（`head` 頭盔防具掛點，對應 2× 防具詞綴／數值擴充）
   - `Socket_Hands_Armor`（`hands` 手套／護手防具掛點，對應 2× 防具詞綴／數值擴充）
-  - `Socket_Back_Pack`（背包／披風掛點；另含 `body` 胸甲、`legs` 腿甲由蒙皮更換，`accessory` 飾品無獨立網格）
+  - `Socket_Back_Pack`（背包／披風掛點；另含 `upper` 上身護甲、`lower` 下身護甲由蒙皮更換，`accessory` 飾品無獨立網格）
   - `Socket_Throw`（投擲收服道具／道具出手基準點）
   - `Socket_Head_FX`（頭頂／共鳴狀態／情緒特效掛點）
-- **裝備歸屬與雙持過濾規則**：
-  - 全部 7 個裝備槽位（`weapon`、`head`、`body`、`hands`、`legs`、`accessory`、`backpack`）皆由玩家角色穿戴與持握，宙獸無個人裝備。
+- **裝備歸屬、雙持過濾與 Runtime Animator 14 參數**：
+  - 全部 7 個裝備槽位（`main_hand`、`off_hand`、`head`、`upper`、`hands`、`lower`、`accessory`）皆由玩家角色穿戴與持握，宙獸無個人裝備。
+  - `CharacterAnimatorDriver` 共用 14 個 Animator 參數：`Speed`, `IsGrounded`, `IsCrouching`, `InCombat`, `IsBlocking`, `IsRolling`, `IsStaggered`, `IsGuardBroken`, `Attack`, `MoveSetSwitch`, `StandUp`（`CrouchPosture` 120 ms 起身過渡）, `CrouchJump`, `UseItem`, `ThrowCapture`。
   - 角色預設產出支援全持握模式（`two_handed`／`dual_wield`／`one_hand_shield`）；若指定單一 `grip_mode`，則依 `Data/character-anims/character-anims.json` 過濾 `_r`/`_l` 與通用攻擊 clip（`dual_wield` 僅用 `_r`/`_l`＋全模式 clip，其餘僅用無 `_r`/`_l` 通用 clip）。
 
 ---
 
-## 2. 動作清單（30 fps · 共 85 支）
+## 2. 動作清單（30 fps · 共 91 支）
 
-> 標記 `[主控新增]` 為「玩家主控作戰＋兩隻宙獸追隨／供招」機制擴充的 31 支動作；`[蹲下新增]` 為 v2.15 新增的 4 支蹲下動作；既有 50 支 clip ID 全數保留相容。  
-> **蹲下與起身銜接規範**：蹲下狀態僅額外製作 `chr_crouch_move`、`chr_crouch_roll`、`chr_crouch_jump`、`chr_crouch_block` 四支低姿動作；蹲下時發動攻擊（`chr_atk_*`／`chr_sup_*`）、使用道具（`chr_item_use_*`）、投擲或捕獲（`chr_throw_*`）、佈署場地或召喚／指令等動作，**須先站立回歸站姿後再接續對應標準站立 clip**，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。
+> 標記 `[立體移動新增]` 為 v2.16 新增之潛水／飛行／攀爬 **6** 支；`[主控新增]` 為「玩家主控作戰＋兩隻宙獸追隨／供招」機制擴充的 31 支動作；`[蹲下新增]` 為 v2.15 新增的 4 支蹲下動作；既有 50 支 clip ID 全數保留相容。  
+> **蹲下與起身銜接規範**：蹲下狀態僅額外製作 `chr_crouch_move`、`chr_crouch_roll`、`chr_crouch_jump`、`chr_crouch_block` 四支低姿動作；蹲下時發動攻擊（`chr_atk_*`／`chr_sup_*`）、使用道具（`chr_item_use_*`）、投擲或捕獲（`chr_throw_*`）、佈署場地或召喚／指令等動作，**須先經 `StandUp`（120 ms）回歸站姿後再接續對應標準站立 clip**，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。
 
-### 2.1 基礎移動與穿越（16 支）
+### 2.1 基礎移動與穿越（22 支）
 
 | clip | 說明 | 幀數 | loop | RM | 事件@幀 | 備註 |
 |---|---|---:|:---:|:---:|---|---|
@@ -47,6 +52,12 @@
 | `chr_jump` | 跳躍（起跳／滯空／落地） | 30 | | | | 既有 |
 | `chr_swim_idle` | 水面漂浮待機 | 60 | ✓ | | | 既有 |
 | `chr_swim_move` | 游泳移動 | 36 | ✓ | | | 既有 |
+| `chr_dive_idle` | 潛水懸停待機 | 60 | ✓ | | | `[立體移動新增]` |
+| `chr_dive_move` | 潛水游動（立體水下推進） | 36 | ✓ | | | `[立體移動新增]` |
+| `chr_fly_idle` | 飛行／浮空懸停待機 | 60 | ✓ | | | `[立體移動新增]` |
+| `chr_fly_move` | 飛行／浮空移動 | 32 | ✓ | | | `[立體移動新增]` |
+| `chr_climb_idle` | 攀爬靜止懸掛（岩壁待機） | 60 | ✓ | | | `[立體移動新增]` |
+| `chr_climb_move` | 攀爬移動（四肢交替上攀） | 32 | ✓ | | | `[立體移動新增]` |
 | `chr_glide` | 滑翔滯空（乘風／高空移動） | 45 | ✓ | | | 既有 |
 | `chr_mount_idle` | 騎乘待機（坐姿握鞍） | 60 | ✓ | | | 既有 |
 | `chr_mount_run` | 騎乘奔跑（騎乘衝刺） | 24 | ✓ | | | 既有 |

@@ -29,12 +29,28 @@
       "spec": { "const": "cosmimera-character-anim/1" },
       "rig_type": { "const": "unity_humanoid" },
       "max_bones": { "const": 75 },
+      "bind_pose": { "const": "t_pose" },
+      "showcase_clip": { "const": "Idle_Art" },
+      "rig_conventions": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": { "enum": ["unity_humanoid", "mpfb_game_engine"] }
+      },
+      "spring_bone_prefix": { "const": "sw_" },
+      "spring_end_suffix": { "const": "_end" },
       "grip_mode": {
         "enum": ["two_handed", "dual_wield", "one_hand_shield"]
       },
       "fps": { "const": 30 },
       "clip_prefix_pattern": { "const": "chr_" },
       "alternates_hands": { "type": "boolean" },
+      "animator_parameters": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": { "type": "string", "minLength": 1 }
+      },
       "equipment_slots": {
         "type": "array",
         "minItems": 7,

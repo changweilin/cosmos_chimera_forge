@@ -4,10 +4,34 @@
     "spec": "cosmimera-character-anim/1",
     "rig_type": "unity_humanoid",
     "max_bones": 75,
+    "bind_pose": "t_pose",
+    "showcase_clip": "Idle_Art",
+    "rig_conventions": [
+      "unity_humanoid",
+      "mpfb_game_engine"
+    ],
+    "spring_bone_prefix": "sw_",
+    "spring_end_suffix": "_end",
     "grip_mode": "two_handed",
     "fps": 30,
     "clip_prefix_pattern": "chr_",
     "alternates_hands": false,
+    "animator_parameters": [
+      "Speed",
+      "IsGrounded",
+      "IsCrouching",
+      "InCombat",
+      "IsBlocking",
+      "IsRolling",
+      "IsStaggered",
+      "IsGuardBroken",
+      "Attack",
+      "MoveSetSwitch",
+      "StandUp",
+      "CrouchJump",
+      "UseItem",
+      "ThrowCapture"
+    ],
     "equipment_slots": [
       "main_hand",
       "off_hand",
@@ -56,7 +80,7 @@
     ],
     "pose_rules": {
       "idle_stance": "雙手握持重型武器主戰待機；Socket_HandR_Prop 與 Socket_HandL_Prop 雙點承托並兼顧頭盔與手套防具輪廓清淨。",
-      "locomotion_rule": "移動與翻滾保留雙手武器擺幅與安全間距，不穿插背包、上身護甲與手套。",
+      "locomotion_rule": "移動與翻滾保留雙手武器擺幅與安全間距，不穿插背包、上身護甲與手套；並涵蓋水中潛行（dive_idle/dive_move）、空中飛行（fly_idle/fly_move）與岩壁攀爬（climb_idle/climb_move）循環。",
       "crouch_rule": "蹲下狀態提供 crouch_move（38f 循環）、crouch_roll（20f，RM）、crouch_jump（30f）、crouch_block（28f，雙手橫架格擋），保留雙手武器安全間距與 7 槽防具空間；蹲下期間發動攻擊、使用道具（item_use_self／item_use_other）、投擲（throw_card／throw_bead／throw_cube）或捕獲／召喚／佈署場地等動作時，必須先站立回歸站姿，再接續對應標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。",
       "guard_rule": "橫架雙手武器於胸前格擋（基礎 35%＋防具格擋詞綴）；完美格擋於 150 ms 內彈開震擊（perfect_block）。",
       "attack_rule": "角色親自施展主動技之雙手近戰揮砍／突進動作；第 1 幀至 ev_hit 完成蓄力重擊與 +35% 雙手威力節奏。",
@@ -330,6 +354,108 @@
         ],
         "events": [],
         "motion_notes": "Unity Humanoid 30 fps（two_handed）：游泳移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dive_idle",
+        "description": "潛水懸停待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：潛水懸停待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dive_move",
+        "description": "潛水游動（立體水下推進）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：潛水游動（立體水下推進）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fly_idle",
+        "description": "飛行／浮空懸停待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：飛行／浮空懸停待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fly_move",
+        "description": "飛行／浮空移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：飛行／浮空移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "climb_idle",
+        "description": "攀爬靜止懸掛（岩壁待機）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：攀爬靜止懸掛（岩壁待機）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "climb_move",
+        "description": "攀爬移動（四肢交替上攀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed）：攀爬移動（四肢交替上攀）；保留七槽裝備安全間距。"
       },
       {
         "action_id": "glide",
@@ -1687,10 +1813,34 @@
     "spec": "cosmimera-character-anim/1",
     "rig_type": "unity_humanoid",
     "max_bones": 75,
+    "bind_pose": "t_pose",
+    "showcase_clip": "Idle_Art",
+    "rig_conventions": [
+      "unity_humanoid",
+      "mpfb_game_engine"
+    ],
+    "spring_bone_prefix": "sw_",
+    "spring_end_suffix": "_end",
     "grip_mode": "dual_wield",
     "fps": 30,
     "clip_prefix_pattern": "chr_",
     "alternates_hands": true,
+    "animator_parameters": [
+      "Speed",
+      "IsGrounded",
+      "IsCrouching",
+      "InCombat",
+      "IsBlocking",
+      "IsRolling",
+      "IsStaggered",
+      "IsGuardBroken",
+      "Attack",
+      "MoveSetSwitch",
+      "StandUp",
+      "CrouchJump",
+      "UseItem",
+      "ThrowCapture"
+    ],
     "equipment_slots": [
       "main_hand",
       "off_hand",
@@ -1739,7 +1889,7 @@
     ],
     "pose_rules": {
       "idle_stance": "低重心雙持警戒姿態；左右手分別掛載單手武器（+25% 攻速），預留雙臂揮動空間。",
-      "locomotion_rule": "敏捷奔跑與翻滾貼合雙刀／雙銃收腰姿態，避免左右武器互相穿插或切過腿部防具。",
+      "locomotion_rule": "敏捷奔跑與翻滾貼合雙刀／雙銃收腰姿態，避免左右武器互相穿插或切過腿部防具；並涵蓋水中潛行（dive_idle/dive_move）、空中飛行（fly_idle/fly_move）與岩壁攀爬（climb_idle/climb_move）循環。",
       "crouch_rule": "蹲下狀態提供 crouch_move（38f 循環）、crouch_roll（20f，RM）、crouch_jump（30f）、crouch_block（28f，雙持交叉低姿格擋），保留雙持安全間距與 7 槽防具空間；蹲下期間發動攻擊、使用道具（item_use_self／item_use_other）、投擲（throw_card／throw_bead／throw_cube）或捕獲／召喚／佈署場地等動作時，必須先站立回歸站姿，再接續對應標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。",
       "guard_rule": "雙持交叉招架格擋（基礎 35%）；完美格擋於 150 ms 內交叉彈反（perfect_block）。",
       "attack_rule": "依雙持左右交替規則拆分 _r / _l（先右手後左手），節奏俐落配合高攻速連段。",
@@ -2013,6 +2163,108 @@
         ],
         "events": [],
         "motion_notes": "Unity Humanoid 30 fps（dual_wield）：游泳移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dive_idle",
+        "description": "潛水懸停待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：潛水懸停待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dive_move",
+        "description": "潛水游動（立體水下推進）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：潛水游動（立體水下推進）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fly_idle",
+        "description": "飛行／浮空懸停待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：飛行／浮空懸停待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fly_move",
+        "description": "飛行／浮空移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：飛行／浮空移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "climb_idle",
+        "description": "攀爬靜止懸掛（岩壁待機）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：攀爬靜止懸掛（岩壁待機）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "climb_move",
+        "description": "攀爬移動（四肢交替上攀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield）：攀爬移動（四肢交替上攀）；保留七槽裝備安全間距。"
       },
       {
         "action_id": "glide",
@@ -3543,10 +3795,34 @@
     "spec": "cosmimera-character-anim/1",
     "rig_type": "unity_humanoid",
     "max_bones": 75,
+    "bind_pose": "t_pose",
+    "showcase_clip": "Idle_Art",
+    "rig_conventions": [
+      "unity_humanoid",
+      "mpfb_game_engine"
+    ],
+    "spring_bone_prefix": "sw_",
+    "spring_end_suffix": "_end",
     "grip_mode": "one_hand_shield",
     "fps": 30,
     "clip_prefix_pattern": "chr_",
     "alternates_hands": false,
+    "animator_parameters": [
+      "Speed",
+      "IsGrounded",
+      "IsCrouching",
+      "InCombat",
+      "IsBlocking",
+      "IsRolling",
+      "IsStaggered",
+      "IsGuardBroken",
+      "Attack",
+      "MoveSetSwitch",
+      "StandUp",
+      "CrouchJump",
+      "UseItem",
+      "ThrowCapture"
+    ],
     "equipment_slots": [
       "main_hand",
       "off_hand",
@@ -3595,7 +3871,7 @@
     ],
     "pose_rules": {
       "idle_stance": "右手 Socket_HandR_Prop 持單手武器、左手 Socket_HandL_Prop 舉盾斜護左胸，重心均衡。",
-      "locomotion_rule": "奔跑與跳躍時左臂自然內收護身，塔盾與重盔不遮擋玩家前向視線或穿入胸甲。",
+      "locomotion_rule": "奔跑與跳躍時左臂自然內收護身，塔盾與重盔不遮擋玩家前向視線或穿入胸甲；並涵蓋水中潛行（dive_idle/dive_move）、空中飛行（fly_idle/fly_move）與岩壁攀爬（climb_idle/climb_move）循環。",
       "crouch_rule": "蹲下狀態提供 crouch_move（38f 循環）、crouch_roll（20f，RM）、crouch_jump（30f）、crouch_block（28f，左手低姿舉盾防禦），保留盾牌／單手武器安全間距與 7 槽防具空間；蹲下期間發動攻擊、使用道具（item_use_self／item_use_other）、投擲（throw_card／throw_bead／throw_cube）或捕獲／召喚／佈署場地等動作時，必須先站立回歸站姿，再接續對應標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。",
       "guard_rule": "左手舉盾正前防禦（持盾 75% 格擋值）；受擊播 block_hit，150 ms 內放開彈反播 perfect_block，架勢條滿播 guard_break。",
       "attack_rule": "左盾穩固護前、右臂大開大合揮斬或突進衝鋒，不因盾牌遮擋武器判定軌跡。",
@@ -3869,6 +4145,108 @@
         ],
         "events": [],
         "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：游泳移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dive_idle",
+        "description": "潛水懸停待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：潛水懸停待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "dive_move",
+        "description": "潛水游動（立體水下推進）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：潛水游動（立體水下推進）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fly_idle",
+        "description": "飛行／浮空懸停待機",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：飛行／浮空懸停待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "fly_move",
+        "description": "飛行／浮空移動",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：飛行／浮空移動；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "climb_idle",
+        "description": "攀爬靜止懸掛（岩壁待機）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：攀爬靜止懸掛（岩壁待機）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "climb_move",
+        "description": "攀爬移動（四肢交替上攀）",
+        "category": "locomotion",
+        "weapon_distance": "any",
+        "hand": "none",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_Head_Armor",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：攀爬移動（四肢交替上攀）；保留七槽裝備安全間距。"
       },
       {
         "action_id": "glide",
