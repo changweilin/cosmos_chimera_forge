@@ -17,7 +17,7 @@ blender -b --factory-startup --python tools/object-kit/build.py -- [--functions 
 | `kit_lib.py` | 幾何基本形（box、cyl、lathe、ring、tube、plate）；各時代工藝語彙 `STYLE`（倒角、表面雜訊、材質角色）；時代綁帶 `band`（繩、鐵箍、黃銅、螺栓、鉚釘、發光縫、鐵絲、符文）；收尾 `finish` |
 | `kit_forms.py` | 每個功能的 8 個時代等價形體 |
 | `forms_<組>.py` | 其他功能組的形體（家具、燈具、工具、容器、機械、載具 `forms_vehicle`、塑像 `forms_figure`、樂器與學術 `forms_instrument`…）；`build.py` 自動匯入，用 `kit_forms.function` 註冊。載具的原點在車體中央下方的地面（船在水線、飛行器在吊艙下方地面），行進方向 +X、側面朝 -Y；役畜與轎夫不在部件內 |
-| `forms_region_<批>.py` | 四星球形體：先導批 `forms_region_pilot.py`（9 個功能）、柄具 `forms_region_hafted.py`（8 個手工具，沿用先導的地區柄／接合／柄尾）；桿具 `forms_region_rods.py`（釣竿、紡錘、筆刷、手杖、笛、號角；機構依時代分三層，形體依地區）；家具 `forms_region_furniture.py`（7 個功能，沿用共用版各時代的檯面高度：海洋靈屋與角形鞍頂、疾風雕凳與泥柱祭壇、日耀圓頂亭與蓮座、鋼鐵依時代）；燈具 `forms_region_lamp.py`（6 個功能；光源槽一律發光：手工時代火焰、機械時代火焰或燈泡、高科技時代的光）；地區招牌語彙 `lash`／`horn`（海洋）、`pegs`／`zig`（疾風）、`dome`／`petals`（日耀）、`fins`／`steps`（鋼鐵）；殼體器依時代分三層機構（手工／機械／高科技） |
+| `forms_region_<批>.py` | 四星球形體：先導批 `forms_region_pilot.py`（9 個功能）、柄具 `forms_region_hafted.py`（8 個手工具，沿用先導的地區柄／接合／柄尾）；桿具 `forms_region_rods.py`（釣竿、紡錘、筆刷、手杖、笛、號角；機構依時代分三層，形體依地區）；家具 `forms_region_furniture.py`（7 個功能，沿用共用版各時代的檯面高度：海洋靈屋與角形鞍頂、疾風雕凳與泥柱祭壇、日耀圓頂亭與蓮座、鋼鐵依時代）；容器 `forms_region_vessel.py`（13 個功能，沿用共用版尺寸：海洋竹桶、藤編、炒鍋與 tudung 罩、tumpeng 托盤；疾風葫蘆、盤編籃、三腳鍋、塔吉鍋、長嘴茶壺；日耀黃銅 lota 與 handi、ghanta 鈴、thali；鋼鐵依時代）；燈具 `forms_region_lamp.py`（6 個功能；光源槽一律發光：手工時代火焰、機械時代火焰或燈泡、高科技時代的光）；地區招牌語彙 `lash`／`horn`（海洋）、`pegs`／`zig`（疾風）、`dome`／`petals`（日耀）、`fins`／`steps`（鋼鐵）；殼體器依時代分三層機構（手工／機械／高科技） |
 | `build.py` | 建置、預算檢查、FBX 匯出、manifest、預覽圖 |
 
 ## 規則
