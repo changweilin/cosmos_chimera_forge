@@ -1633,6 +1633,7 @@
     "weapon_types": {
       "melee": [
         "dagger_claw",
+        "fist_katar",
         "sword_1h",
         "axe_1h",
         "mace_1h"
@@ -2376,6 +2377,7 @@
     "weapon_types": {
       "melee": [
         "dagger_claw",
+        "fist_katar",
         "sword_1h",
         "axe_1h",
         "mace_1h"

@@ -2,7 +2,7 @@
 // 改動規則見 README.md：新增選項 → minor；改既有 ID / 刪除 / 改動作事件 → major。
 // 權重 w 為相對值，不必加總為 100。
 window.COSMI_CATALOG = {
-  version: "2.16.0",
+  version: "2.17.0",
 
   ELEMENTS: [
     { v: "metal",   zh: "金", palette: "銀白、淡金、鋼藍高光" },
@@ -1970,8 +1970,9 @@ window.COSMI_CATALOG = {
       equipment_slots: ["main_hand", "off_hand", "head", "upper", "hands", "lower", "accessory"],
       animator_parameters: [
         "Speed", "IsGrounded", "IsCrouching", "InCombat", "IsBlocking",
-        "IsRolling", "IsStaggered", "IsGuardBroken", "Attack",
-        "MoveSetSwitch", "StandUp", "CrouchJump", "UseItem", "ThrowCapture"
+        "IsRolling", "IsStaggered", "IsGuardBroken", "WeaponAnimGroup",
+        "Attack", "BlockAttack", "MoveSetSwitch", "StandUp", "CrouchJump",
+        "UseItem", "ThrowCapture"
       ]
     },
     creature: {
@@ -1980,6 +1981,19 @@ window.COSMI_CATALOG = {
       egg_alignment_socket: "Socket_EggCore"
     }
   },
+
+  WEAPON_ANIM_GROUPS: [
+    { id: "unarmed_fist", index: 0, zh: "空手／拳套拳劍共用", weaponTypes: ["unarmed", "fist_katar"], guardAttack: false },
+    { id: "sword_1h", index: 1, zh: "單手劍（搭盾可格擋反擊半傷）", weaponTypes: ["sword_1h"], guardAttack: true },
+    { id: "sword_2h", index: 2, zh: "雙手大劍", weaponTypes: ["greatsword"], guardAttack: false },
+    { id: "axe_1h", index: 3, zh: "單手斧／錘共用", weaponTypes: ["axe_1h", "mace_1h"], guardAttack: false },
+    { id: "axe_hammer_2h", index: 4, zh: "雙手巨斧／重錘共用", weaponTypes: ["greataxe_hammer"], guardAttack: false },
+    { id: "dagger_wand_1h", index: 5, zh: "單手匕首／飛刃／手銃短杖共用", weaponTypes: ["dagger_claw", "thrown_shuriken", "wand_gun"], guardAttack: false },
+    { id: "staff_2h", index: 6, zh: "雙手長法杖", weaponTypes: ["magic_staff"], guardAttack: false },
+    { id: "spear_2h", index: 7, zh: "雙頭刃／槍戟／標槍共用", weaponTypes: ["twinblade_staff", "spear_halberd", "javelin"], guardAttack: false },
+    { id: "bow_shield_offhand", index: 8, zh: "弓／弩共用（手弩可搭盾）", weaponTypes: ["hand_crossbow", "repeater_bow", "longbow"], guardAttack: false },
+    { id: "staff_cannon_2h", index: 9, zh: "重弩／重砲", weaponTypes: ["heavy_crossbow_cannon"], guardAttack: false }
+  ],
 
   ACTIONS: {
     character: [
@@ -2073,7 +2087,58 @@ window.COSMI_CATALOG = {
       { id: "throw_bead", zh: "投擲：琉璃珠（下手拋擲）", f: 28, ev: ["ev_release@15"] },
       { id: "throw_cube", zh: "投擲：魔術方塊（轉動後上手投）", f: 32, ev: ["ev_release@18"] },
       { id: "victory", zh: "勝利", f: 60 },
-      { id: "defeated", zh: "戰敗", f: 45 }
+      { id: "defeated", zh: "戰敗", f: 45 },
+      { id: "wpn_unarmed_fist_idle", group: "unarmed_fist", zh: "空手／拳劍待機（共用）", f: 60, loop: true, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "wpn_unarmed_fist_block", group: "unarmed_fist", zh: "空手／拳劍架招格擋（共用）", f: 28, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "atk_unarmed_fist_front", group: "unarmed_fist", zh: "空手／拳劍連拳直擊（共用）", f: 20, ev: ["ev_hit@8"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_unarmed_fist_sweep", group: "unarmed_fist", zh: "空手／拳劍迴旋橫掃（共用）", f: 24, ev: ["ev_hit@10"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_unarmed_fist_dash", group: "unarmed_fist", zh: "空手／拳劍突進衝拳（共用）", f: 22, rm: true, ev: ["ev_hit@9"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "wpn_sword_1h_idle", group: "sword_1h", zh: "單手劍待機", f: 60, loop: true, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "wpn_sword_1h_block", group: "sword_1h", zh: "單手劍／劍盾格擋", f: 28, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "atk_sword_1h_front", group: "sword_1h", zh: "單手劍正面斬擊", f: 24, ev: ["ev_hit@10"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_sword_1h_sweep", group: "sword_1h", zh: "單手劍弧線橫斬", f: 28, ev: ["ev_hit@12"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_sword_1h_dash", group: "sword_1h", zh: "單手劍踏步突刺", f: 26, rm: true, ev: ["ev_hit@11"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_sword_shield_guard_front", group: "sword_1h", zh: "劍盾格擋反擊（舉盾持守同步直刺，傷害減半）", f: 24, ev: ["ev_hit@10"], grips: ["one_hand_shield"], dist: "melee" },
+      { id: "atk_sword_shield_guard_sweep", group: "sword_1h", zh: "劍盾格擋反擊（舉盾持守護身橫斬，傷害減半）", f: 26, ev: ["ev_hit@12"], grips: ["one_hand_shield"], dist: "melee" },
+      { id: "atk_sword_shield_guard_dash", group: "sword_1h", zh: "劍盾格擋突刺（舉盾前衝同步刺擊，傷害減半）", f: 26, rm: true, ev: ["ev_hit@11"], grips: ["one_hand_shield"], dist: "melee" },
+      { id: "wpn_sword_2h_idle", group: "sword_2h", zh: "大劍雙手待機", f: 60, loop: true, grips: ["two_handed"] },
+      { id: "wpn_sword_2h_block", group: "sword_2h", zh: "大劍雙手橫架格擋", f: 32, grips: ["two_handed"] },
+      { id: "atk_sword_2h_front", group: "sword_2h", zh: "大劍雙手縱劈", f: 30, ev: ["ev_hit@14"], grips: ["two_handed"], dist: "melee" },
+      { id: "atk_sword_2h_sweep", group: "sword_2h", zh: "大劍大範圍橫掃", f: 34, ev: ["ev_hit@16"], grips: ["two_handed"], dist: "melee" },
+      { id: "atk_sword_2h_dash", group: "sword_2h", zh: "大劍踏步突進重劈", f: 30, rm: true, ev: ["ev_hit@14"], grips: ["two_handed"], dist: "melee" },
+      { id: "wpn_axe_1h_idle", group: "axe_1h", zh: "單手斧／錘待機", f: 60, loop: true, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "wpn_axe_1h_block", group: "axe_1h", zh: "單手斧／錘格擋", f: 28, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "atk_axe_1h_front", group: "axe_1h", zh: "單手斧／錘前劈重砸", f: 26, ev: ["ev_hit@12"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_axe_1h_sweep", group: "axe_1h", zh: "單手斧／錘橫揮", f: 30, ev: ["ev_hit@14"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_axe_1h_dash", group: "axe_1h", zh: "單手斧／錘衝鋒劈擊", f: 28, rm: true, ev: ["ev_hit@12"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "wpn_axe_hammer_2h_idle", group: "axe_hammer_2h", zh: "雙手巨斧／重錘待機", f: 60, loop: true, grips: ["two_handed"] },
+      { id: "wpn_axe_hammer_2h_block", group: "axe_hammer_2h", zh: "雙手巨斧／重錘架撐格擋", f: 34, grips: ["two_handed"] },
+      { id: "atk_axe_hammer_2h_front", group: "axe_hammer_2h", zh: "雙手巨斧／重錘全力下砸", f: 34, ev: ["ev_hit@16"], grips: ["two_handed"], dist: "melee" },
+      { id: "atk_axe_hammer_2h_sweep", group: "axe_hammer_2h", zh: "雙手巨斧／重錘重旋橫掃", f: 36, ev: ["ev_hit@18"], grips: ["two_handed"], dist: "melee" },
+      { id: "atk_axe_hammer_2h_dash", group: "axe_hammer_2h", zh: "雙手巨斧／重錘突進砸地", f: 32, rm: true, ev: ["ev_hit@15"], grips: ["two_handed"], dist: "melee" },
+      { id: "wpn_dagger_wand_1h_idle", group: "dagger_wand_1h", zh: "匕首／飛刃／手銃待機", f: 60, loop: true, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "wpn_dagger_wand_1h_block", group: "dagger_wand_1h", zh: "匕首／短持靈巧招架", f: 26, grips: ["dual_wield", "one_hand_shield"] },
+      { id: "atk_dagger_wand_1h_front", group: "dagger_wand_1h", zh: "匕首二連穿刺", f: 20, ev: ["ev_hit@8"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_dagger_wand_1h_sweep", group: "dagger_wand_1h", zh: "匕首迴身弧斬", f: 24, ev: ["ev_hit@10"], grips: ["dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_dagger_wand_1h_ranged", group: "dagger_wand_1h", zh: "飛刃／手銃／魔杖單手射擊", f: 24, ev: ["ev_spawn_fx@11"], grips: ["dual_wield", "one_hand_shield"], dist: "ranged" },
+      { id: "wpn_staff_2h_idle", group: "staff_2h", zh: "雙手法杖待機", f: 60, loop: true, grips: ["two_handed"] },
+      { id: "atk_staff_2h_line", group: "staff_2h", zh: "雙手法杖直線施法", f: 30, ev: ["ev_spawn_fx@14"], grips: ["two_handed"], dist: "ranged" },
+      { id: "atk_staff_2h_cone", group: "staff_2h", zh: "雙手法杖扇面詠唱", f: 30, ev: ["ev_spawn_fx@14"], grips: ["two_handed"], dist: "ranged" },
+      { id: "atk_staff_2h_arc", group: "staff_2h", zh: "雙手法杖高舉拋射", f: 34, ev: ["ev_spawn_fx@18"], grips: ["two_handed"], dist: "ranged" },
+      { id: "wpn_spear_2h_idle", group: "spear_2h", zh: "槍戟／長柄／標槍待機", f: 60, loop: true, grips: ["two_handed", "dual_wield", "one_hand_shield"] },
+      { id: "wpn_spear_2h_block", group: "spear_2h", zh: "槍戟／長柄橫欄格擋", f: 30, grips: ["two_handed", "dual_wield", "one_hand_shield"] },
+      { id: "atk_spear_2h_front", group: "spear_2h", zh: "槍戟／雙頭刃直刺", f: 26, ev: ["ev_hit@12"], grips: ["two_handed", "dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_spear_2h_sweep", group: "spear_2h", zh: "槍戟／雙頭刃長柄橫掃", f: 30, ev: ["ev_hit@14"], grips: ["two_handed", "dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_spear_2h_dash", group: "spear_2h", zh: "槍戟疾衝突刺", f: 28, rm: true, ev: ["ev_hit@12"], grips: ["two_handed", "dual_wield", "one_hand_shield"], dist: "melee" },
+      { id: "atk_spear_2h_ranged", group: "spear_2h", zh: "標槍助跑投擲／長柄能量投射", f: 28, ev: ["ev_spawn_fx@14"], grips: ["two_handed", "dual_wield", "one_hand_shield"], dist: "ranged" },
+      { id: "wpn_bow_idle", group: "bow_shield_offhand", zh: "弓／弩搭箭瞄準待機", f: 60, loop: true, grips: ["two_handed", "dual_wield", "one_hand_shield"] },
+      { id: "atk_bow_line", group: "bow_shield_offhand", zh: "弓／弩直線射擊", f: 26, ev: ["ev_spawn_fx@12"], grips: ["two_handed", "dual_wield", "one_hand_shield"], dist: "ranged" },
+      { id: "atk_bow_cone", group: "bow_shield_offhand", zh: "弓／弩多矢扇射", f: 28, ev: ["ev_spawn_fx@13"], grips: ["two_handed", "dual_wield", "one_hand_shield"], dist: "ranged" },
+      { id: "atk_bow_arc", group: "bow_shield_offhand", zh: "弓／弩曲射齊發", f: 30, ev: ["ev_spawn_fx@15"], grips: ["two_handed", "dual_wield", "one_hand_shield"], dist: "ranged" },
+      { id: "wpn_cannon_2h_idle", group: "staff_cannon_2h", zh: "重弩重砲肩扛待機", f: 60, loop: true, grips: ["two_handed"] },
+      { id: "atk_cannon_2h_line", group: "staff_cannon_2h", zh: "重弩重砲貫穿直射", f: 34, ev: ["ev_spawn_fx@16"], grips: ["two_handed"], dist: "ranged" },
+      { id: "atk_cannon_2h_cone", group: "staff_cannon_2h", zh: "重弩重砲擴散砲擊", f: 34, ev: ["ev_spawn_fx@16"], grips: ["two_handed"], dist: "ranged" },
+      { id: "atk_cannon_2h_arc", group: "staff_cannon_2h", zh: "重弩重砲曲射砲擊", f: 36, ev: ["ev_spawn_fx@18"], grips: ["two_handed"], dist: "ranged" }
     ],
     creature: [
       { id: "idle", zh: "待機", f: 60, loop: true },

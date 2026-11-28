@@ -21,6 +21,7 @@
       "equipment_slots",
       "sockets",
       "pose_rules",
+      "weapon_anim_groups",
       "weapon_types",
       "clips"
     ],
@@ -121,6 +122,32 @@
           "equipment_clearance_rule": { "type": "string", "minLength": 1 }
         }
       },
+      "weapon_anim_groups": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "group_id",
+            "shares_with_unarmed",
+            "allows_guard_attack",
+            "weapon_types",
+            "motion_notes"
+          ],
+          "properties": {
+            "group_id": { "$ref": "common.schema.json#/$defs/id" },
+            "shares_with_unarmed": { "type": "boolean" },
+            "allows_guard_attack": { "type": "boolean" },
+            "weapon_types": {
+              "type": "array",
+              "items": { "$ref": "common.schema.json#/$defs/id" },
+              "uniqueItems": true
+            },
+            "motion_notes": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
       "weapon_types": {
         "type": "object",
         "additionalProperties": false,
@@ -167,6 +194,7 @@
           ],
           "properties": {
             "action_id": { "$ref": "common.schema.json#/$defs/id" },
+            "weapon_anim_group": { "$ref": "common.schema.json#/$defs/id" },
             "description": { "type": "string", "minLength": 1 },
             "category": {
               "enum": [

@@ -36,7 +36,7 @@ function extractGetClipCategory() {
 }
 
 test('ACTIONS preserves all legacy clip IDs and expands character & creature sets', () => {
-  assert.equal(C.version, '2.16.0');
+  assert.equal(C.version, '2.17.0');
   const chrIds = C.ACTIONS.character.map(a => a.id);
   const crIds = C.ACTIONS.creature.map(a => a.id);
 
@@ -62,10 +62,14 @@ test('ACTIONS preserves all legacy clip IDs and expands character & creature set
   }
   assert.ok(crIds.includes('climb'), 'missing v2.16 creature clip: climb');
 
-  assert.equal(chrIds.length, 91);
+  for (const id of ['wpn_unarmed_fist_idle', 'atk_unarmed_fist_front', 'atk_sword_shield_guard_front', 'wpn_cannon_2h_idle']) {
+    assert.ok(chrIds.includes(id), `missing v2.17 weapon group clip: ${id}`);
+  }
+  assert.equal(chrIds.length, 142);
   assert.equal(crIds.length, 69);
   assert.equal(C.BODY_PLANS.length, 21);
-  assert.equal(C.SKELETON_SPECS.character.animator_parameters.length, 14);
+  assert.equal(C.SKELETON_SPECS.character.animator_parameters.length, 16);
+  assert.equal(C.WEAPON_ANIM_GROUPS.length, 10);
   assert.equal(C.SKELETON_SPECS.creature.egg_alignment_socket, 'Socket_EggCore');
   assert.ok(C.GRIP_MODES && C.GRIP_MODES.two_handed && C.GRIP_MODES.dual_wield && C.GRIP_MODES.one_hand_shield);
   assert.match(C.GRIP_MODES.crouch_rule, /先站立/);
@@ -209,7 +213,7 @@ test('character-model-rig emits 7-slot sockets and filters clips by grip_mode', 
   assert.match(shieldPrompt, /先站立回歸站姿/);
 });
 
-test('Data character-anims and creature-grip-anims JSON match catalog.js v2.16.0', () => {
+test('Data character-anims and creature-grip-anims JSON match catalog.js v2.17.0', () => {
   const chrAnims = JSON.parse(fs.readFileSync(path.join(root, 'Data/character-anims/character-anims.json'), 'utf8'));
   const crAnims = JSON.parse(fs.readFileSync(path.join(root, 'Data/creature-grip-anims/creature-grip-anims.json'), 'utf8'));
 
@@ -225,7 +229,8 @@ test('Data character-anims and creature-grip-anims JSON match catalog.js v2.16.0
     assert.deepEqual(entry.rig_conventions, ['unity_humanoid', 'mpfb_game_engine']);
     assert.equal(entry.spring_bone_prefix, 'sw_');
     assert.equal(entry.spring_end_suffix, '_end');
-    assert.equal(entry.animator_parameters.length, 14);
+    assert.equal(entry.animator_parameters.length, 16);
+    assert.ok(Array.isArray(entry.weapon_anim_groups) && entry.weapon_anim_groups.length >= 6);
     assert.match(entry.pose_rules.crouch_rule, /先站立回歸站姿/);
     const clipIds = new Set(entry.clips.map(c => c.action_id));
     for (const req of [...crouchIds, ...traversalIds]) {

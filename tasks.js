@@ -599,14 +599,14 @@
 
     {
       // REQ: 使用者 2026-11-09 — 角色 img-to-3D 極致精簡與立繪規格對齊；2026-11-26 — 主控戰鬥與 7 槽角色裝備動作擴充；2026-11-27 — MPFB game_engine / sw_* 彈簧骨 / Idle_Art / 空間移動 / 14 Animator 參數與 ADR-0015 撤回對齊。
-      id: "character-model-rig", version: "5.3.0", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
+      id: "character-model-rig", version: "5.4.0", zh: "角色 Image-to-3D 建模、綁骨與動作（雲端硬碟立繪包）", prefix: "mdl", platform: "gemini",
       needs: "character", drop: "Art/_incoming", drive: true,
       options: [
         { key: "scope", type: "select", label: "模式", items: () => [{ v: "single", zh: "指定處理（單一立繪包）" }, { v: "batch", zh: "批量處理（01_portraits 內角色目錄）" }], def: "single" },
         { key: "source_pack", type: "text", label: "參照角色立繪包 ID (source_pack)", def: "", placeholder: "例：chr-20261106-7f3a-2105", when: o => o.scope !== "batch" },
         { key: "input_img", type: "text", label: "指定輸入 img", def: "", placeholder: "選填，留空預設使用正面正交 + turnaround 三視圖", when: o => o.scope !== "batch" },
         { key: "grip_mode", type: "select", label: "武器持握模式", items: () => [
-          { v: "all", zh: "全持握模式（輸出全部 91 支角色動作，預設）" },
+          { v: "all", zh: "全持握模式（輸出全部 142 支角色動作，預設）" },
           { v: "two_handed", zh: "雙手武器（two_handed）" },
           { v: "dual_wield", zh: "雙持單手（dual_wield）" },
           { v: "one_hand_shield", zh: "單手＋盾（one_hand_shield）" }
@@ -651,7 +651,7 @@
           "  - **適用範圍（ADR-0015 已撤回）**：僅玩家主角與可控英雄走本 Humanoid / MPFB (`game_engine`) 產線；路人、訓練家與任務 NPC 維持純程式化 `NpcMeshes`，不製作 UMA／獨立高模動作。",
           "  - **7 槽裝備間距**：裝備全歸角色穿戴（右手 `main_hand`、左手 `off_hand`、頭盔 `head`→`Socket_Head_Armor`、上身 `upper`、手套 `hands`→`Socket_Hands_Armor`、下身 `lower`、飾品 `accessory`）；手臂揮砍與舉盾須避開頭盔、手套與背包穿模。",
           "  - **立體移動與立繪展示 clip**：移動動作需覆蓋水面游泳（`swim_idle`/`swim_move`）、水下潛行（`dive_idle`/`dive_move`）、空中飛行（`fly_idle`/`fly_move`）、滑翔（`glide`）與岩壁攀爬（`climb_idle`/`climb_move`）；另可於獨立僅骨架 FBX（`<id>_acg@Idle_Art.fbx`）提供立繪擺拍展示 clip `Idle_Art`。",
-          "  - **主控戰鬥與 Animator 參數合約**：角色親自以手中武器／盾牌施放當前追隨宙獸的招式組，含拔收武器（`weapon_draw`/`weapon_sheathe`）、格擋彈反與破防（`block_hit`/`perfect_block`/`guard_break`/`stagger`）、切換宙獸招式（`moveset_switch` 2 秒冷卻 / `moveset_forced_switch` 死亡強制輪替）；`CharacterAnimatorDriver` 共用 14 個參數：`Speed`, `IsGrounded`, `IsCrouching`, `InCombat`, `IsBlocking`, `IsRolling`, `IsStaggered`, `IsGuardBroken`, `Attack`, `MoveSetSwitch`, `StandUp`, `CrouchJump`, `UseItem`, `ThrowCapture`（完整格式見 `Data/character-anims/character-anims.json` `cosmimera-character-anim/1`）。",
+          "  - **主控戰鬥與 Animator 參數合約**：角色親自以手中武器／盾牌施放當前追隨宙獸的招式組，含拔收武器（`weapon_draw`/`weapon_sheathe`）、格擋彈反與破防（`block_hit`/`perfect_block`/`guard_break`/`stagger`）、切換宙獸招式（`moveset_switch` 2 秒冷卻 / `moveset_forced_switch` 死亡強制輪替）、10 類共用武器動作組（空手與拳套／拳劍共用 `unarmed_fist`），以及單手劍配盾於格擋中同步攻擊（`BlockAttack` → `chr_atk_sword_shield_guard_*`，傷害減半）；`CharacterAnimatorDriver` 共用 16 個參數：`Speed`, `IsGrounded`, `IsCrouching`, `InCombat`, `IsBlocking`, `IsRolling`, `IsStaggered`, `IsGuardBroken`, `WeaponAnimGroup`, `Attack`, `BlockAttack`, `MoveSetSwitch`, `StandUp`, `CrouchJump`, `UseItem`, `ThrowCapture`（完整格式見 `Data/character-anims/character-anims.json` `cosmimera-character-anim/1`）。",
           "  - **蹲下與起身銜接規範**：蹲下狀態提供 `crouch_move`、`crouch_roll`、`crouch_jump`、`crouch_block` 四支低姿動作（保留 7 槽裝備安全間距）；蹲下時發動攻擊、使用道具（`item_use_self`/`item_use_other`）、投擲或捕獲（`throw_card`/`throw_bead`/`throw_cube`）等動作，必須先站立回歸站姿（經 120 ms `StandUp`／`CrouchPosture` 過渡）再接續標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。"
         ].join("\n");
 

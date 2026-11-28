@@ -30,7 +30,9 @@
       "StandUp",
       "CrouchJump",
       "UseItem",
-      "ThrowCapture"
+      "ThrowCapture",
+      "WeaponAnimGroup",
+      "BlockAttack"
     ],
     "equipment_slots": [
       "main_hand",
@@ -1791,6 +1793,651 @@
         ],
         "events": [],
         "motion_notes": "Unity Humanoid 30 fps（two_handed）：戰敗；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_sword_2h_idle",
+        "weapon_anim_group": "sword_2h",
+        "description": "大劍雙手待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / sword_2h）：大劍雙手待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_sword_2h_block",
+        "weapon_anim_group": "sword_2h",
+        "description": "大劍雙手橫架格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / sword_2h）：大劍雙手橫架格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_2h_front",
+        "weapon_anim_group": "sword_2h",
+        "description": "大劍雙手縱劈",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / sword_2h）：大劍雙手縱劈；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_2h_sweep",
+        "weapon_anim_group": "sword_2h",
+        "description": "大劍大範圍橫掃",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / sword_2h）：大劍大範圍橫掃；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_2h_dash",
+        "weapon_anim_group": "sword_2h",
+        "description": "大劍踏步突進重劈",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / sword_2h）：大劍踏步突進重劈；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_axe_hammer_2h_idle",
+        "weapon_anim_group": "axe_hammer_2h",
+        "description": "雙手巨斧／重錘待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / axe_hammer_2h）：雙手巨斧／重錘待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_axe_hammer_2h_block",
+        "weapon_anim_group": "axe_hammer_2h",
+        "description": "雙手巨斧／重錘架撐格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / axe_hammer_2h）：雙手巨斧／重錘架撐格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_hammer_2h_front",
+        "weapon_anim_group": "axe_hammer_2h",
+        "description": "雙手巨斧／重錘全力下砸",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / axe_hammer_2h）：雙手巨斧／重錘全力下砸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_hammer_2h_sweep",
+        "weapon_anim_group": "axe_hammer_2h",
+        "description": "雙手巨斧／重錘重旋橫掃",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / axe_hammer_2h）：雙手巨斧／重錘重旋橫掃；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_hammer_2h_dash",
+        "weapon_anim_group": "axe_hammer_2h",
+        "description": "雙手巨斧／重錘突進砸地",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 32,
+        "duration_ms": 1067,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 15,
+            "time_ms": 500
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / axe_hammer_2h）：雙手巨斧／重錘突進砸地；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_staff_2h_idle",
+        "weapon_anim_group": "staff_2h",
+        "description": "雙手法杖待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_2h）：雙手法杖待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_staff_2h_line",
+        "weapon_anim_group": "staff_2h",
+        "description": "雙手法杖直線施法",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_2h）：雙手法杖直線施法；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_staff_2h_cone",
+        "weapon_anim_group": "staff_2h",
+        "description": "雙手法杖扇面詠唱",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_2h）：雙手法杖扇面詠唱；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_staff_2h_arc",
+        "weapon_anim_group": "staff_2h",
+        "description": "雙手法杖高舉拋射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_2h）：雙手法杖高舉拋射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_spear_2h_idle",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／長柄／標槍待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / spear_2h）：槍戟／長柄／標槍待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_spear_2h_block",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／長柄橫欄格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / spear_2h）：槍戟／長柄橫欄格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_front",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／雙頭刃直刺",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / spear_2h）：槍戟／雙頭刃直刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_sweep",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／雙頭刃長柄橫掃",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / spear_2h）：槍戟／雙頭刃長柄橫掃；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_dash",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟疾衝突刺",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / spear_2h）：槍戟疾衝突刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_ranged",
+        "weapon_anim_group": "spear_2h",
+        "description": "標槍助跑投擲／長柄能量投射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / spear_2h）：標槍助跑投擲／長柄能量投射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_bow_idle",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩搭箭瞄準待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / bow_shield_offhand）：弓／弩搭箭瞄準待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_line",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩直線射擊",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / bow_shield_offhand）：弓／弩直線射擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_cone",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩多矢扇射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 13,
+            "time_ms": 433
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / bow_shield_offhand）：弓／弩多矢扇射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_arc",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩曲射齊發",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 15,
+            "time_ms": 500
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / bow_shield_offhand）：弓／弩曲射齊發；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_cannon_2h_idle",
+        "weapon_anim_group": "staff_cannon_2h",
+        "description": "重弩重砲肩扛待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_cannon_2h）：重弩重砲肩扛待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_cannon_2h_line",
+        "weapon_anim_group": "staff_cannon_2h",
+        "description": "重弩重砲貫穿直射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_cannon_2h）：重弩重砲貫穿直射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_cannon_2h_cone",
+        "weapon_anim_group": "staff_cannon_2h",
+        "description": "重弩重砲擴散砲擊",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 34,
+        "duration_ms": 1133,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 16,
+            "time_ms": 533
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_cannon_2h）：重弩重砲擴散砲擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_cannon_2h_arc",
+        "weapon_anim_group": "staff_cannon_2h",
+        "description": "重弩重砲曲射砲擊",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 36,
+        "duration_ms": 1200,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 18,
+            "time_ms": 600
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（two_handed / staff_cannon_2h）：重弩重砲曲射砲擊；保留七槽裝備安全間距。"
       }
     ],
     "weapon_types": {
@@ -1806,7 +2453,67 @@
         "magic_staff",
         "heavy_crossbow_cannon"
       ]
-    }
+    },
+    "weapon_anim_groups": [
+      {
+        "group_id": "sword_2h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "greatsword"
+        ],
+        "motion_notes": "大劍重型雙手揮砍與縱劈動作組。"
+      },
+      {
+        "group_id": "axe_hammer_2h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "greataxe_hammer"
+        ],
+        "motion_notes": "雙手巨斧與重錘共用蓄力旋揮與砸地動作組。"
+      },
+      {
+        "group_id": "staff_2h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "magic_staff"
+        ],
+        "motion_notes": "雙手長法杖導引與施法舉杖動作組。"
+      },
+      {
+        "group_id": "spear_2h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "twinblade_staff",
+          "spear_halberd",
+          "javelin"
+        ],
+        "motion_notes": "雙頭刃杖、長槍戟與標槍共用刺擊、橫掃與投擲動作組。"
+      },
+      {
+        "group_id": "bow_shield_offhand",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "hand_crossbow",
+          "repeater_bow",
+          "longbow"
+        ],
+        "motion_notes": "手弩、連弩與長弓共用舉弓瞄準與齊射動作組。"
+      },
+      {
+        "group_id": "staff_cannon_2h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "heavy_crossbow_cannon"
+        ],
+        "motion_notes": "重弩重砲共用雙手肩扛架設與後座射擊動作組。"
+      }
+    ]
   },
   {
     "id": "chr_anim_dual_wield",
@@ -1839,7 +2546,9 @@
       "StandUp",
       "CrouchJump",
       "UseItem",
-      "ThrowCapture"
+      "ThrowCapture",
+      "WeaponAnimGroup",
+      "BlockAttack"
     ],
     "equipment_slots": [
       "main_hand",
@@ -3773,11 +4482,666 @@
         ],
         "events": [],
         "motion_notes": "Unity Humanoid 30 fps（dual_wield）：戰敗；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_unarmed_fist_idle",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍待機（共用）",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / unarmed_fist）：空手／拳劍待機（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_unarmed_fist_block",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍架招格擋（共用）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / unarmed_fist）：空手／拳劍架招格擋（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_unarmed_fist_front",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍連拳直擊（共用）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 8,
+            "time_ms": 267
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / unarmed_fist）：空手／拳劍連拳直擊（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_unarmed_fist_sweep",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍迴旋橫掃（共用）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / unarmed_fist）：空手／拳劍迴旋橫掃（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_unarmed_fist_dash",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍突進衝拳（共用）",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 9,
+            "time_ms": 300
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / unarmed_fist）：空手／拳劍突進衝拳（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_sword_1h_idle",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / sword_1h）：單手劍待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_sword_1h_block",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍／劍盾格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / sword_1h）：單手劍／劍盾格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_1h_front",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍正面斬擊",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / sword_1h）：單手劍正面斬擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_1h_sweep",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍弧線橫斬",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / sword_1h）：單手劍弧線橫斬；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_1h_dash",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍踏步突刺",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 11,
+            "time_ms": 367
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / sword_1h）：單手劍踏步突刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_axe_1h_idle",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / axe_1h）：單手斧／錘待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_axe_1h_block",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / axe_1h）：單手斧／錘格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_1h_front",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘前劈重砸",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / axe_1h）：單手斧／錘前劈重砸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_1h_sweep",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘橫揮",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / axe_1h）：單手斧／錘橫揮；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_1h_dash",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘衝鋒劈擊",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / axe_1h）：單手斧／錘衝鋒劈擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_dagger_wand_1h_idle",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首／飛刃／手銃待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / dagger_wand_1h）：匕首／飛刃／手銃待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_dagger_wand_1h_block",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首／短持靈巧招架",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / dagger_wand_1h）：匕首／短持靈巧招架；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dagger_wand_1h_front",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首二連穿刺",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 8,
+            "time_ms": 267
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / dagger_wand_1h）：匕首二連穿刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dagger_wand_1h_sweep",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首迴身弧斬",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / dagger_wand_1h）：匕首迴身弧斬；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dagger_wand_1h_ranged",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "飛刃／手銃／魔杖單手射擊",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 11,
+            "time_ms": 367
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / dagger_wand_1h）：飛刃／手銃／魔杖單手射擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_spear_2h_idle",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／長柄／標槍待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / spear_2h）：槍戟／長柄／標槍待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_spear_2h_block",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／長柄橫欄格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / spear_2h）：槍戟／長柄橫欄格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_front",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／雙頭刃直刺",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / spear_2h）：槍戟／雙頭刃直刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_sweep",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／雙頭刃長柄橫掃",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / spear_2h）：槍戟／雙頭刃長柄橫掃；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_dash",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟疾衝突刺",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / spear_2h）：槍戟疾衝突刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_ranged",
+        "weapon_anim_group": "spear_2h",
+        "description": "標槍助跑投擲／長柄能量投射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / spear_2h）：標槍助跑投擲／長柄能量投射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_bow_idle",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩搭箭瞄準待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / bow_shield_offhand）：弓／弩搭箭瞄準待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_line",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩直線射擊",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / bow_shield_offhand）：弓／弩直線射擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_cone",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩多矢扇射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 13,
+            "time_ms": 433
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / bow_shield_offhand）：弓／弩多矢扇射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_arc",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩曲射齊發",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 15,
+            "time_ms": 500
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（dual_wield / bow_shield_offhand）：弓／弩曲射齊發；保留七槽裝備安全間距。"
       }
     ],
     "weapon_types": {
       "melee": [
         "dagger_claw",
+        "fist_katar",
         "sword_1h",
         "axe_1h",
         "mace_1h"
@@ -3788,7 +5152,71 @@
         "wand_gun",
         "javelin"
       ]
-    }
+    },
+    "weapon_anim_groups": [
+      {
+        "group_id": "unarmed_fist",
+        "shares_with_unarmed": true,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "unarmed",
+          "fist_katar"
+        ],
+        "motion_notes": "空手與拳套／拳劍共用近身搏擊與突進拳勢。"
+      },
+      {
+        "group_id": "sword_1h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": true,
+        "weapon_types": [
+          "sword_1h"
+        ],
+        "motion_notes": "單手劍／彎刀共用迅捷斬擊；搭盾時可於格擋中同時發動護盾反擊／刺擊（傷害減半）。"
+      },
+      {
+        "group_id": "axe_1h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "axe_1h",
+          "mace_1h"
+        ],
+        "motion_notes": "單手斧與單手錘共用重揮與砸擊動作組。"
+      },
+      {
+        "group_id": "dagger_wand_1h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "dagger_claw",
+          "thrown_shuriken",
+          "wand_gun"
+        ],
+        "motion_notes": "短匕首、飛刃與手銃／短魔杖共用單手靈巧揮甩動作組。"
+      },
+      {
+        "group_id": "spear_2h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "twinblade_staff",
+          "spear_halberd",
+          "javelin"
+        ],
+        "motion_notes": "雙頭刃杖、長槍戟與標槍共用刺擊、橫掃與投擲動作組。"
+      },
+      {
+        "group_id": "bow_shield_offhand",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "hand_crossbow",
+          "repeater_bow",
+          "longbow"
+        ],
+        "motion_notes": "手弩、連弩與長弓共用舉弓瞄準與齊射動作組。"
+      }
+    ]
   },
   {
     "id": "chr_anim_one_hand_shield",
@@ -3821,7 +5249,9 @@
       "StandUp",
       "CrouchJump",
       "UseItem",
-      "ThrowCapture"
+      "ThrowCapture",
+      "WeaponAnimGroup",
+      "BlockAttack"
     ],
     "equipment_slots": [
       "main_hand",
@@ -3873,7 +5303,7 @@
       "idle_stance": "右手 Socket_HandR_Prop 持單手武器、左手 Socket_HandL_Prop 舉盾斜護左胸，重心均衡。",
       "locomotion_rule": "奔跑與跳躍時左臂自然內收護身，塔盾與重盔不遮擋玩家前向視線或穿入胸甲；並涵蓋水中潛行（dive_idle/dive_move）、空中飛行（fly_idle/fly_move）與岩壁攀爬（climb_idle/climb_move）循環。",
       "crouch_rule": "蹲下狀態提供 crouch_move（38f 循環）、crouch_roll（20f，RM）、crouch_jump（30f）、crouch_block（28f，左手低姿舉盾防禦），保留盾牌／單手武器安全間距與 7 槽防具空間；蹲下期間發動攻擊、使用道具（item_use_self／item_use_other）、投擲（throw_card／throw_bead／throw_cube）或捕獲／召喚／佈署場地等動作時，必須先站立回歸站姿，再接續對應標準站立 clip，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。",
-      "guard_rule": "左手舉盾正前防禦（持盾 75% 格擋值）；受擊播 block_hit，150 ms 內放開彈反播 perfect_block，架勢條滿播 guard_break。",
+      "guard_rule": "左手舉盾正前防禦（持盾 75% 格擋值）；受擊播 block_hit，150 ms 內放開彈反播 perfect_block，架勢條滿播 guard_break。 單手劍配盾於格擋期間可觸發 BlockAttack 同步護盾反擊／突刺（chr_atk_sword_shield_guard_*），代價為本次攻擊傷害減半（50%）。",
       "attack_rule": "左盾穩固護前、右臂大開大合揮斬或突進衝鋒，不因盾牌遮擋武器判定軌跡。",
       "ranged_rule": "遠程單手弩／投矛／魔導銃由右肩盾側探出瞄準擊發，左手維持掩護姿態。",
       "moveset_switch_rule": "敲盾或武器回鞘換式播 moveset_switch（20f）／moveset_forced_switch（22f），於頭頂與雙手伴隨共鳴光效。",
@@ -5577,11 +7007,771 @@
         ],
         "events": [],
         "motion_notes": "Unity Humanoid 30 fps（one_hand_shield）：戰敗；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_unarmed_fist_idle",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍待機（共用）",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / unarmed_fist）：空手／拳劍待機（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_unarmed_fist_block",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍架招格擋（共用）",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / unarmed_fist）：空手／拳劍架招格擋（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_unarmed_fist_front",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍連拳直擊（共用）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 8,
+            "time_ms": 267
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / unarmed_fist）：空手／拳劍連拳直擊（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_unarmed_fist_sweep",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍迴旋橫掃（共用）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / unarmed_fist）：空手／拳劍迴旋橫掃（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_unarmed_fist_dash",
+        "weapon_anim_group": "unarmed_fist",
+        "description": "空手／拳劍突進衝拳（共用）",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 22,
+        "duration_ms": 733,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 9,
+            "time_ms": 300
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / unarmed_fist）：空手／拳劍突進衝拳（共用）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_sword_1h_idle",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：單手劍待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_sword_1h_block",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍／劍盾格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：單手劍／劍盾格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_1h_front",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍正面斬擊",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：單手劍正面斬擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_1h_sweep",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍弧線橫斬",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：單手劍弧線橫斬；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_1h_dash",
+        "weapon_anim_group": "sword_1h",
+        "description": "單手劍踏步突刺",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 11,
+            "time_ms": 367
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：單手劍踏步突刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_shield_guard_front",
+        "weapon_anim_group": "sword_1h",
+        "description": "劍盾格擋反擊（舉盾持守同步直刺，傷害減半）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：劍盾格擋反擊（舉盾持守同步直刺，傷害減半）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_shield_guard_sweep",
+        "weapon_anim_group": "sword_1h",
+        "description": "劍盾格擋反擊（舉盾持守護身橫斬，傷害減半）",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：劍盾格擋反擊（舉盾持守護身橫斬，傷害減半）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_sword_shield_guard_dash",
+        "weapon_anim_group": "sword_1h",
+        "description": "劍盾格擋突刺（舉盾前衝同步刺擊，傷害減半）",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 11,
+            "time_ms": 367
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / sword_1h）：劍盾格擋突刺（舉盾前衝同步刺擊，傷害減半）；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_axe_1h_idle",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / axe_1h）：單手斧／錘待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_axe_1h_block",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / axe_1h）：單手斧／錘格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_1h_front",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘前劈重砸",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / axe_1h）：單手斧／錘前劈重砸；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_1h_sweep",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘橫揮",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / axe_1h）：單手斧／錘橫揮；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_axe_1h_dash",
+        "weapon_anim_group": "axe_1h",
+        "description": "單手斧／錘衝鋒劈擊",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / axe_1h）：單手斧／錘衝鋒劈擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_dagger_wand_1h_idle",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首／飛刃／手銃待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "right",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / dagger_wand_1h）：匕首／飛刃／手銃待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_dagger_wand_1h_block",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首／短持靈巧招架",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / dagger_wand_1h）：匕首／短持靈巧招架；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dagger_wand_1h_front",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首二連穿刺",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 20,
+        "duration_ms": 667,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 8,
+            "time_ms": 267
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / dagger_wand_1h）：匕首二連穿刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dagger_wand_1h_sweep",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "匕首迴身弧斬",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 10,
+            "time_ms": 333
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / dagger_wand_1h）：匕首迴身弧斬；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_dagger_wand_1h_ranged",
+        "weapon_anim_group": "dagger_wand_1h",
+        "description": "飛刃／手銃／魔杖單手射擊",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 24,
+        "duration_ms": 800,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 11,
+            "time_ms": 367
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / dagger_wand_1h）：飛刃／手銃／魔杖單手射擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_spear_2h_idle",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／長柄／標槍待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / spear_2h）：槍戟／長柄／標槍待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_spear_2h_block",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／長柄橫欄格擋",
+        "category": "guard",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / spear_2h）：槍戟／長柄橫欄格擋；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_front",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／雙頭刃直刺",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / spear_2h）：槍戟／雙頭刃直刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_sweep",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟／雙頭刃長柄橫掃",
+        "category": "melee",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / spear_2h）：槍戟／雙頭刃長柄橫掃；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_dash",
+        "weapon_anim_group": "spear_2h",
+        "description": "槍戟疾衝突刺",
+        "category": "dash",
+        "weapon_distance": "melee",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": true,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_hit",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / spear_2h）：槍戟疾衝突刺；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_spear_2h_ranged",
+        "weapon_anim_group": "spear_2h",
+        "description": "標槍助跑投擲／長柄能量投射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "right",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 14,
+            "time_ms": 467
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / spear_2h）：標槍助跑投擲／長柄能量投射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "wpn_bow_idle",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩搭箭瞄準待機",
+        "category": "stance",
+        "weapon_distance": "any",
+        "hand": "both",
+        "frames": 60,
+        "duration_ms": 2000,
+        "loop": true,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / bow_shield_offhand）：弓／弩搭箭瞄準待機；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_line",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩直線射擊",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 26,
+        "duration_ms": 867,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 12,
+            "time_ms": 400
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / bow_shield_offhand）：弓／弩直線射擊；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_cone",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩多矢扇射",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 28,
+        "duration_ms": 933,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 13,
+            "time_ms": 433
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / bow_shield_offhand）：弓／弩多矢扇射；保留七槽裝備安全間距。"
+      },
+      {
+        "action_id": "atk_bow_arc",
+        "weapon_anim_group": "bow_shield_offhand",
+        "description": "弓／弩曲射齊發",
+        "category": "ranged",
+        "weapon_distance": "ranged",
+        "hand": "both",
+        "frames": 30,
+        "duration_ms": 1000,
+        "loop": false,
+        "root_motion": false,
+        "active_sockets": [
+          "Socket_HandR_Prop",
+          "Socket_Hands_Armor",
+          "Socket_HandL_Prop"
+        ],
+        "events": [
+          {
+            "name": "ev_spawn_fx",
+            "frame": 15,
+            "time_ms": 500
+          }
+        ],
+        "motion_notes": "Unity Humanoid 30 fps（one_hand_shield / bow_shield_offhand）：弓／弩曲射齊發；保留七槽裝備安全間距。"
       }
     ],
     "weapon_types": {
       "melee": [
         "dagger_claw",
+        "fist_katar",
         "sword_1h",
         "axe_1h",
         "mace_1h"
@@ -5600,6 +7790,70 @@
         "rune_shield",
         "plank_shield"
       ]
-    }
+    },
+    "weapon_anim_groups": [
+      {
+        "group_id": "unarmed_fist",
+        "shares_with_unarmed": true,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "unarmed",
+          "fist_katar"
+        ],
+        "motion_notes": "空手與拳套／拳劍共用近身搏擊與突進拳勢。"
+      },
+      {
+        "group_id": "sword_1h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": true,
+        "weapon_types": [
+          "sword_1h"
+        ],
+        "motion_notes": "單手劍／彎刀共用迅捷斬擊；搭盾時可於格擋中同時發動護盾反擊／刺擊（傷害減半）。"
+      },
+      {
+        "group_id": "axe_1h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "axe_1h",
+          "mace_1h"
+        ],
+        "motion_notes": "單手斧與單手錘共用重揮與砸擊動作組。"
+      },
+      {
+        "group_id": "dagger_wand_1h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "dagger_claw",
+          "thrown_shuriken",
+          "wand_gun"
+        ],
+        "motion_notes": "短匕首、飛刃與手銃／短魔杖共用單手靈巧揮甩動作組。"
+      },
+      {
+        "group_id": "spear_2h",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "twinblade_staff",
+          "spear_halberd",
+          "javelin"
+        ],
+        "motion_notes": "雙頭刃杖、長槍戟與標槍共用刺擊、橫掃與投擲動作組。"
+      },
+      {
+        "group_id": "bow_shield_offhand",
+        "shares_with_unarmed": false,
+        "allows_guard_attack": false,
+        "weapon_types": [
+          "hand_crossbow",
+          "repeater_bow",
+          "longbow"
+        ],
+        "motion_notes": "手弩、連弩與長弓共用舉弓瞄準與齊射動作組。"
+      }
+    ]
   }
 ]
