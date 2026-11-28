@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "batch_id": "p5-12-three-star-specialists-draft-01",
+  "target_repo_name": "cosmos_chimera",
+  "files": [
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/creatures/creatures.json",
+      "action": "create",
+      "staged_sha256": "7cd4532d39b4b1595cd13fe801943983e439386362fd1c55f15236f9741a968c"
+    },
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/moves/moves.json",
+      "action": "create",
+      "staged_sha256": "24d706b0807a913cd6a9753eaaf4cf40a53a207f1263d767c3bc4b50f8e198a3"
+    },
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/traits/traits.json",
+      "action": "create",
+      "staged_sha256": "922cfd6fd6d8c73e149c439b0440909f0ba2be7fe3cab27a26d68fea0b9d4499"
+    },
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/eggs/eggs.json",
+      "action": "create",
+      "staged_sha256": "1f02985ca9d77c9bf48a43fdb8b6f76001aeef3b38374afc1d25476930029e8c"
+    },
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/relations/edges.json",
+      "action": "create",
+      "staged_sha256": "233fa5cbaf7ae87e8532779d26408bcfbe8286009add045c5d8a05b64aac5a95"
+    },
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/copy-terra.json",
+      "action": "create",
+      "staged_sha256": "8076300d9b7e19a2cf75beb615a61122e3b6e11d9356f1746823b008d46087f9"
+    },
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/encyclopedia/entries.json",
+      "action": "create",
+      "staged_sha256": "5f0c078b82e45b5cad35d42ba279734bf7221a36313ccf2e7c9366376d4d3496"
+    },
+    {
+      "path": "Data/_incoming/p5-12-three-star-specialists-draft-01/README.md",
+      "action": "create",
+      "staged_sha256": "22bf39d807699384d8b79ec7ddce8826ccb3767ee548aa133684bc5eeb64a6a7"
+    },
+    {
+      "path": "Data/_catalog/creatures/p5-12-three-star-specialists-draft-01--creatures.json",
+      "action": "create",
+      "staged_sha256": "7cd4532d39b4b1595cd13fe801943983e439386362fd1c55f15236f9741a968c"
+    },
+    {
+      "path": "Data/_catalog/moves/p5-12-three-star-specialists-draft-01--moves.json",
+      "action": "create",
+      "staged_sha256": "24d706b0807a913cd6a9753eaaf4cf40a53a207f1263d767c3bc4b50f8e198a3"
+    },
+    {
+      "path": "Data/_catalog/relations/p5-12-three-star-specialists-draft-01--edges.json",
+      "action": "create",
+      "staged_sha256": "233fa5cbaf7ae87e8532779d26408bcfbe8286009add045c5d8a05b64aac5a95"
+    },
+    {
+      "path": "docs/design/creatures.md",
+      "action": "update",
+      "staged_sha256": "cf8a591ccdf78a70434b4ddb117c84e2353836d84df50d9342570eb8cff3e3b9",
+      "expected_base_sha256": "95144996b13a3c8b2a7516aa7896495f22752c1357ed4be17196b993fa0266f4",
+      "base_path": "_base/docs/design/creatures.md"
+    },
+    {
+      "path": "tools/tests/test_move_balance.py",
+      "action": "update",
+      "staged_sha256": "2f24c61f9cd41b346660113fe11de4371f3aaf9902978252fcf4c0bdf77279f7",
+      "expected_base_sha256": "dd0d28a157a0dd4d7e1ee4dfe50202b47cfc2bfd6761cc7e438107dd1f0fd002",
+      "base_path": "_base/tools/tests/test_move_balance.py"
+    }
+  ],
+  "default_commit_subject": "feat(creatures,moves): add general 3-star skills across all 10 elements and p5-12 data batch",
+  "default_commit_body": [
+    "- Add 4 general 3-star active moves (metal, wood, ice, wind) and 7 general 3-star passive traits (metal, wood, water, fire, earth, ice, wind) so every element has 1 non-mythic 3-star active and 1 non-mythic 3-star passive.",
+    "- Add 11 four-stage non-mythic creature lines (44 forms) with 1-star/2-star secondary skills in 8:3 ratio (72.7% / 27.3%), eggs, relation edges, copy-terra.json, and encyclopedia entries.",
+    "- Update docs/design/creatures.md skill pool totals (274 general moves, 147 general traits) and tools/tests/test_move_balance.py assertions."
+  ]
+}
