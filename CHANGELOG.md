@@ -1,3 +1,9 @@
+## 2026-11-28 · catalog@2.17.0 · template@(character-model-rig@5.4.0) · 拳套／拳劍、10 類武器共用動作組與劍盾格擋同步攻擊
+
+- `catalog.js`（v2.16.0 → v2.17.0）：新增 10 類 `WEAPON_ANIM_GROUPS`（空手與 `fist_katar` 拳套／拳劍共用 `unarmed_fist`）、`SKELETON_SPECS.character.animator_parameters` 擴充至 **16** 個（新增 `WeaponAnimGroup`、`BlockAttack`）、`ACTIONS.character` 擴充至 **142** 支（新增 51 支各武器共用動作組待機／格擋／攻擊與劍盾格擋中同步攻擊 `atk_sword_shield_guard_*`）。
+- `Data/schemas/{craft-item,character-anim}.schema.json` 與 `Data/{character-anims/character-anims,creature-grip-anims/creature-grip-anims}.json`：加入 `fist_katar`、`weapon_anim_groups`（與 clip `weapon_anim_group`）及 `pose_rules.guard_rule` 劍盾格擋反擊傷害減半說明。
+- `tasks.js`、`docs/pipeline/`、`docs/drive/`、本機 `Drive/` 及遠端 Google Drive 唯讀鏡像同步更新至 `v2.17.0` / `character-model-rig@5.4.0`（共 142 支角色動作、16 個 Animator 參數）。
+
 ## 2026-11-27 · catalog@2.16.0 · template@(character-model-rig@5.3.0, creature-model-rig@5.3.0) · 對齊最新 cosmos_chimera 角色與宙獸動作／骨架格式
 
 - `catalog.js`（v2.15.0 → v2.16.0）：新增 21 類封閉 `BODY_PLANS`、`SKELETON_SPECS`（character/creature runtime 合約），角色動作擴充至 **91** 支（新增 `dive_idle`、`dive_move`、`fly_idle`、`fly_move`、`climb_idle`、`climb_move` 6 支立體移動），宙獸動作擴充至 **69** 支（新增 `climb` 攀爬移動 1 支）。

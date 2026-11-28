@@ -21,7 +21,7 @@ cosmos_chimera_forge/
       portraits/<asset_id>/
       models/<asset_id>/
     wiki/<subject_id>[_<stage>]_wiki.md
-    prompts/                      # 角色專屬階段模板（8 份）＋ skeleton_actions.md（91 動作、MPFB/sw_* 與七槽掛點）
+    prompts/                      # 角色專屬階段模板（8 份）＋ skeleton_actions.md（142 動作含 10 類武器組／劍盾格擋同步攻擊、MPFB/sw_* 與七槽掛點）
       jobs/                       # HTML 填入參數後的角色工作 prompt
     reviews/<asset_id>.json       # 審查結果、來源立繪 ID、時間、意見
     backup/

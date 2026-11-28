@@ -1,7 +1,7 @@
 # 角色骨架與動作規格（`characters`）
 
-> 對應資料來源：`catalog.js`（v2.16.0 `ACTIONS.character`、`SKELETON_SPECS.character`）、`tasks.js`（`character-model-rig` v5.3.0）、`Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。  
-> 更新日期：2026-11-27（共 **91** 支動作：含新增水中潛行 `dive_idle`/`dive_move`、飛行 `fly_idle`/`fly_move`、攀爬 `climb_idle`/`climb_move` **6** 支＋蹲下移動／翻滾／跳躍／格擋 **4** 支＋主控戰鬥 **31** 支＋既有 **50** 支完整相容；對齊 T-pose、MPFB `game_engine`、`sw_*` 彈簧骨、`Idle_Art`、14 個 `CharacterAnimatorDriver` 參數與 ADR-0015 撤回）。
+> 對應資料來源：`catalog.js`（v2.17.0 `ACTIONS.character`、`WEAPON_ANIM_GROUPS`、`SKELETON_SPECS.character`）、`tasks.js`（`character-model-rig` v5.4.0）、`Data/character-anims/character-anims.json`（`cosmimera-character-anim/1`）。  
+> 更新日期：2026-11-28（共 **142** 支動作：新增 **51** 支 10 類武器共用動作組與劍盾格擋同步攻擊＋水中潛行／飛行／攀爬 **6** 支＋蹲下 **4** 支＋主控戰鬥 **31** 支＋既有 **50** 支完整相容；對齊 T-pose、MPFB `game_engine`、`sw_*` 彈簧骨、`Idle_Art`、16 個 `CharacterAnimatorDriver` 參數與 ADR-0015 撤回）。
 
 ---
 
@@ -23,16 +23,31 @@
   - `Socket_Back_Pack`（背包／披風掛點；另含 `upper` 上身護甲、`lower` 下身護甲由蒙皮更換，`accessory` 飾品無獨立網格）
   - `Socket_Throw`（投擲收服道具／道具出手基準點）
   - `Socket_Head_FX`（頭頂／共鳴狀態／情緒特效掛點）
-- **裝備歸屬、雙持過濾與 Runtime Animator 14 參數**：
+- **裝備歸屬、雙持過濾與 Runtime Animator 16 參數**：
   - 全部 7 個裝備槽位（`main_hand`、`off_hand`、`head`、`upper`、`hands`、`lower`、`accessory`）皆由玩家角色穿戴與持握，宙獸無個人裝備。
-  - `CharacterAnimatorDriver` 共用 14 個 Animator 參數：`Speed`, `IsGrounded`, `IsCrouching`, `InCombat`, `IsBlocking`, `IsRolling`, `IsStaggered`, `IsGuardBroken`, `Attack`, `MoveSetSwitch`, `StandUp`（`CrouchPosture` 120 ms 起身過渡）, `CrouchJump`, `UseItem`, `ThrowCapture`。
-  - 角色預設產出支援全持握模式（`two_handed`／`dual_wield`／`one_hand_shield`）；若指定單一 `grip_mode`，則依 `Data/character-anims/character-anims.json` 過濾 `_r`/`_l` 與通用攻擊 clip（`dual_wield` 僅用 `_r`/`_l`＋全模式 clip，其餘僅用無 `_r`/`_l` 通用 clip）。
+  - `CharacterAnimatorDriver` 共用 16 個 Animator 參數：`Speed`, `IsGrounded`, `IsCrouching`, `InCombat`, `IsBlocking`, `IsRolling`, `IsStaggered`, `IsGuardBroken`, `WeaponAnimGroup`（`0..9`，對應下表 10 類武器共用動作組）, `Attack`, `BlockAttack`（劍盾於格擋中同步攻擊觸發器）, `MoveSetSwitch`, `StandUp`（`CrouchPosture` 120 ms 起身過渡）, `CrouchJump`, `UseItem`, `ThrowCapture`。
+  - 角色預設產出支援全持握模式（`two_handed`／`dual_wield`／`one_hand_shield`）；若指定單一 `grip_mode`，則依 `Data/character-anims/character-anims.json` 過濾 `_r`/`_l`、通用攻擊與各武器動作組 clip（`dual_wield` 僅用 `_r`/`_l`＋雙持適用武器組＋全模式 clip，其餘僅用無 `_r`/`_l` 通用 clip 與對應武器組）。
+
+### 1.1 10 類共用武器動作組（`WEAPON_ANIM_GROUPS`）
+
+| `WeaponAnimGroup` | index | 共用武器類型 (`weapon_types`) | 與空手共用 | 格擋同步攻擊 | 說明 |
+|---|---:|---|:---:|:---:|---|
+| `unarmed_fist` | 0 | `unarmed`, `fist_katar` | ✓ | | 空手與拳套／拳劍共用近身搏擊與突進拳勢 |
+| `sword_1h` | 1 | `sword_1h` | | ✓ | 單手劍／彎刀；搭盾時可於格擋中觸發 `BlockAttack` 同步攻擊（傷害 50%） |
+| `sword_2h` | 2 | `greatsword` | | | 雙手大劍重型揮砍與縱劈動作組 |
+| `axe_1h` | 3 | `axe_1h`, `mace_1h` | | | 單手斧與單手錘共用重揮與砸擊動作組 |
+| `axe_hammer_2h` | 4 | `greataxe_hammer` | | | 雙手巨斧與重錘共用蓄力旋揮與砸地動作組 |
+| `dagger_wand_1h` | 5 | `dagger_claw`, `thrown_shuriken`, `wand_gun` | | | 匕首、飛刃與手銃／短魔杖共用單手靈巧揮甩動作組 |
+| `staff_2h` | 6 | `magic_staff` | | | 雙手長法杖導引與施法舉杖動作組 |
+| `spear_2h` | 7 | `twinblade_staff`, `spear_halberd`, `javelin` | | | 雙頭刃杖、長槍戟與標槍共用刺擊、橫掃與投擲動作組 |
+| `bow_shield_offhand` | 8 | `hand_crossbow`, `repeater_bow`, `longbow` | | | 手弩、連弩與長弓共用舉弓瞄準與齊射動作組（手弩可搭盾） |
+| `staff_cannon_2h` | 9 | `heavy_crossbow_cannon` | | | 重弩重砲共用雙手肩扛架設與後座射擊動作組 |
 
 ---
 
-## 2. 動作清單（30 fps · 共 91 支）
+## 2. 動作清單（30 fps · 共 142 支）
 
-> 標記 `[立體移動新增]` 為 v2.16 新增之潛水／飛行／攀爬 **6** 支；`[主控新增]` 為「玩家主控作戰＋兩隻宙獸追隨／供招」機制擴充的 31 支動作；`[蹲下新增]` 為 v2.15 新增的 4 支蹲下動作；既有 50 支 clip ID 全數保留相容。  
+> 標記 `[武器組新增]` 為 v2.17 新增之 10 類武器共用動作組與劍盾格擋同步攻擊 **51** 支；`[立體移動新增]` 為 v2.16 新增之潛水／飛行／攀爬 **6** 支；`[主控新增]` 為「玩家主控作戰＋兩隻宙獸追隨／供招」機制擴充的 31 支動作；`[蹲下新增]` 為 v2.15 新增的 4 支蹲下動作；既有 50 支 clip ID 全數保留相容。  
 > **蹲下與起身銜接規範**：蹲下狀態僅額外製作 `chr_crouch_move`、`chr_crouch_roll`、`chr_crouch_jump`、`chr_crouch_block` 四支低姿動作；蹲下時發動攻擊（`chr_atk_*`／`chr_sup_*`）、使用道具（`chr_item_use_*`）、投擲或捕獲（`chr_throw_*`）、佈署場地或召喚／指令等動作，**須先經 `StandUp`（120 ms）回歸站姿後再接續對應標準站立 clip**，不另製作獨立蹲下攻擊／道具／投擲／捕獲動畫。
 
 ### 2.1 基礎移動與穿越（22 支）
@@ -160,3 +175,59 @@
 | `chr_pet_xl` | 撫摸 XL 體型（宙獸低頭，雙手撫摸） | 72 | | | `ev_spawn_fx@36` | 既有 |
 | `chr_victory` | 勝利 | 60 | | | | 既有 |
 | `chr_defeated` | 戰敗 | 45 | | | | 既有 |
+
+### 2.8 各武器共用動作組與劍盾格擋同步攻擊（51 支）
+
+| clip | `weapon_anim_group` | 說明 | 幀數 | loop | RM | 事件@幀 | 適用 `grip_mode` / 距離 |
+|---|---|---|---:|:---:|:---:|---|---|
+| `chr_wpn_unarmed_fist_idle` | `unarmed_fist` | 空手／拳劍待機（共用） | 60 | ✓ | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_wpn_unarmed_fist_block` | `unarmed_fist` | 空手／拳劍架招格擋（共用） | 28 | | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_atk_unarmed_fist_front` | `unarmed_fist` | 空手／拳劍連拳直擊（共用） | 20 | | | `ev_hit@8` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_unarmed_fist_sweep` | `unarmed_fist` | 空手／拳劍迴旋橫掃（共用） | 24 | | | `ev_hit@10` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_unarmed_fist_dash` | `unarmed_fist` | 空手／拳劍突進衝拳（共用） | 22 | | ✓ | `ev_hit@9` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_wpn_sword_1h_idle` | `sword_1h` | 單手劍待機 | 60 | ✓ | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_wpn_sword_1h_block` | `sword_1h` | 單手劍／劍盾格擋 | 28 | | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_atk_sword_1h_front` | `sword_1h` | 單手劍正面斬擊 | 24 | | | `ev_hit@10` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_sword_1h_sweep` | `sword_1h` | 單手劍弧線橫斬 | 28 | | | `ev_hit@12` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_sword_1h_dash` | `sword_1h` | 單手劍踏步突刺 | 26 | | ✓ | `ev_hit@11` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_sword_shield_guard_front` | `sword_1h` | 劍盾格擋反擊（舉盾持守同步直刺，傷害減半） | 24 | | | `ev_hit@10` | `one_hand_shield` / `melee` |
+| `chr_atk_sword_shield_guard_sweep` | `sword_1h` | 劍盾格擋反擊（舉盾持守護身橫斬，傷害減半） | 26 | | | `ev_hit@12` | `one_hand_shield` / `melee` |
+| `chr_atk_sword_shield_guard_dash` | `sword_1h` | 劍盾格擋突刺（舉盾前衝同步刺擊，傷害減半） | 26 | | ✓ | `ev_hit@11` | `one_hand_shield` / `melee` |
+| `chr_wpn_sword_2h_idle` | `sword_2h` | 大劍雙手待機 | 60 | ✓ | | | `two_handed` / `any` |
+| `chr_wpn_sword_2h_block` | `sword_2h` | 大劍雙手橫架格擋 | 32 | | | | `two_handed` / `any` |
+| `chr_atk_sword_2h_front` | `sword_2h` | 大劍雙手縱劈 | 30 | | | `ev_hit@14` | `two_handed` / `melee` |
+| `chr_atk_sword_2h_sweep` | `sword_2h` | 大劍大範圍橫掃 | 34 | | | `ev_hit@16` | `two_handed` / `melee` |
+| `chr_atk_sword_2h_dash` | `sword_2h` | 大劍踏步突進重劈 | 30 | | ✓ | `ev_hit@14` | `two_handed` / `melee` |
+| `chr_wpn_axe_1h_idle` | `axe_1h` | 單手斧／錘待機 | 60 | ✓ | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_wpn_axe_1h_block` | `axe_1h` | 單手斧／錘格擋 | 28 | | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_atk_axe_1h_front` | `axe_1h` | 單手斧／錘前劈重砸 | 26 | | | `ev_hit@12` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_axe_1h_sweep` | `axe_1h` | 單手斧／錘橫揮 | 30 | | | `ev_hit@14` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_axe_1h_dash` | `axe_1h` | 單手斧／錘衝鋒劈擊 | 28 | | ✓ | `ev_hit@12` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_wpn_axe_hammer_2h_idle` | `axe_hammer_2h` | 雙手巨斧／重錘待機 | 60 | ✓ | | | `two_handed` / `any` |
+| `chr_wpn_axe_hammer_2h_block` | `axe_hammer_2h` | 雙手巨斧／重錘架撐格擋 | 34 | | | | `two_handed` / `any` |
+| `chr_atk_axe_hammer_2h_front` | `axe_hammer_2h` | 雙手巨斧／重錘全力下砸 | 34 | | | `ev_hit@16` | `two_handed` / `melee` |
+| `chr_atk_axe_hammer_2h_sweep` | `axe_hammer_2h` | 雙手巨斧／重錘重旋橫掃 | 36 | | | `ev_hit@18` | `two_handed` / `melee` |
+| `chr_atk_axe_hammer_2h_dash` | `axe_hammer_2h` | 雙手巨斧／重錘突進砸地 | 32 | | ✓ | `ev_hit@15` | `two_handed` / `melee` |
+| `chr_wpn_dagger_wand_1h_idle` | `dagger_wand_1h` | 匕首／飛刃／手銃待機 | 60 | ✓ | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_wpn_dagger_wand_1h_block` | `dagger_wand_1h` | 匕首／短持靈巧招架 | 26 | | | | `dual_wield`, `one_hand_shield` / `any` |
+| `chr_atk_dagger_wand_1h_front` | `dagger_wand_1h` | 匕首二連穿刺 | 20 | | | `ev_hit@8` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_dagger_wand_1h_sweep` | `dagger_wand_1h` | 匕首迴身弧斬 | 24 | | | `ev_hit@10` | `dual_wield`, `one_hand_shield` / `melee` |
+| `chr_atk_dagger_wand_1h_ranged` | `dagger_wand_1h` | 飛刃／手銃／魔杖單手射擊 | 24 | | | `ev_spawn_fx@11` | `dual_wield`, `one_hand_shield` / `ranged` |
+| `chr_wpn_staff_2h_idle` | `staff_2h` | 雙手法杖待機 | 60 | ✓ | | | `two_handed` / `any` |
+| `chr_atk_staff_2h_line` | `staff_2h` | 雙手法杖直線施法 | 30 | | | `ev_spawn_fx@14` | `two_handed` / `ranged` |
+| `chr_atk_staff_2h_cone` | `staff_2h` | 雙手法杖扇面詠唱 | 30 | | | `ev_spawn_fx@14` | `two_handed` / `ranged` |
+| `chr_atk_staff_2h_arc` | `staff_2h` | 雙手法杖高舉拋射 | 34 | | | `ev_spawn_fx@18` | `two_handed` / `ranged` |
+| `chr_wpn_spear_2h_idle` | `spear_2h` | 槍戟／長柄／標槍待機 | 60 | ✓ | | | 全模式 / `any` |
+| `chr_wpn_spear_2h_block` | `spear_2h` | 槍戟／長柄橫欄格擋 | 30 | | | | 全模式 / `any` |
+| `chr_atk_spear_2h_front` | `spear_2h` | 槍戟／雙頭刃直刺 | 26 | | | `ev_hit@12` | 全模式 / `melee` |
+| `chr_atk_spear_2h_sweep` | `spear_2h` | 槍戟／雙頭刃長柄橫掃 | 30 | | | `ev_hit@14` | 全模式 / `melee` |
+| `chr_atk_spear_2h_dash` | `spear_2h` | 槍戟疾衝突刺 | 28 | | ✓ | `ev_hit@12` | 全模式 / `melee` |
+| `chr_atk_spear_2h_ranged` | `spear_2h` | 標槍助跑投擲／長柄能量投射 | 28 | | | `ev_spawn_fx@14` | 全模式 / `ranged` |
+| `chr_wpn_bow_idle` | `bow_shield_offhand` | 弓／弩搭箭瞄準待機 | 60 | ✓ | | | 全模式 / `any` |
+| `chr_atk_bow_line` | `bow_shield_offhand` | 弓／弩直線射擊 | 26 | | | `ev_spawn_fx@12` | 全模式 / `ranged` |
+| `chr_atk_bow_cone` | `bow_shield_offhand` | 弓／弩多矢扇射 | 28 | | | `ev_spawn_fx@13` | 全模式 / `ranged` |
+| `chr_atk_bow_arc` | `bow_shield_offhand` | 弓／弩曲射齊發 | 30 | | | `ev_spawn_fx@15` | 全模式 / `ranged` |
+| `chr_wpn_cannon_2h_idle` | `staff_cannon_2h` | 重弩重砲肩扛待機 | 60 | ✓ | | | `two_handed` / `any` |
+| `chr_atk_cannon_2h_line` | `staff_cannon_2h` | 重弩重砲貫穿直射 | 34 | | | `ev_spawn_fx@16` | `two_handed` / `ranged` |
+| `chr_atk_cannon_2h_cone` | `staff_cannon_2h` | 重弩重砲擴散砲擊 | 34 | | | `ev_spawn_fx@16` | `two_handed` / `ranged` |
+| `chr_atk_cannon_2h_arc` | `staff_cannon_2h` | 重弩重砲曲射砲擊 | 36 | | | `ev_spawn_fx@18` | `two_handed` / `ranged` |

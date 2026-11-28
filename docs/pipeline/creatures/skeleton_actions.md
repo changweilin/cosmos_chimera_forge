@@ -1,7 +1,7 @@
 # 宙獸骨架與動作規格（`creatures`）
 
-> 對應資料來源：`catalog.js`（v2.16.0 `BODY_PLANS`、`SKELETON_SPECS.creature`、`ACTIONS.creature`、`GRIP_MODES`）、`tasks.js`（`creature-model-rig` v5.3.0）、`Data/creature-grip-anims/creature-grip-anims.json`（`cosmimera-creature-grip-anim/1`）。  
-> 更新日期：2026-11-27（共 **69** 支動作：含新增攀爬 `climb` **1** 支＋完整 21 類封閉 `body_plan` 表、`Socket_EggCore` 孵化對位、`hatch_emerge` 完整 JSON 規格＋蹲下 4 支＋追隨者／BOSS 主控 **6** 支＋既有相容）。
+> 對應資料來源：`catalog.js`（v2.17.0 `BODY_PLANS`、`SKELETON_SPECS.creature`、`ACTIONS.creature`、`GRIP_MODES`）、`tasks.js`（`creature-model-rig` v5.3.0）、`Data/creature-grip-anims/creature-grip-anims.json`（`cosmimera-creature-grip-anim/1`）。  
+> 更新日期：2026-11-28（共 **69** 支動作：同步 `fist_katar` 武器清單＋攀爬 `climb` **1** 支＋完整 21 類封閉 `body_plan` 表、`Socket_EggCore` 孵化對位、`hatch_emerge` 完整 JSON 規格＋蹲下 4 支＋追隨者／BOSS 主控 **6** 支＋既有相容）。
 
 ---
 
@@ -45,7 +45,7 @@
 | 持有模式 (`grip_mode`) | 掛點配置 | 對應獨立武器／動作參考（勿繪於本體） | 本體動作節奏 | 過濾規則 |
 |---|---|---|---|---|
 | `two_handed`（雙手武器） | `Socket_Weapon_R`（主手）＋ `Socket_Weapon_L`（雙手輔助）空掛點 | 近戰：雙頭刃／長棍、長槍／戟、雙手大劍、巨斧／巨錘<br>遠程：連弩／獵弓、長弓、法杖、重弩／巨砲杖 | 重心沉穩，做出重型蓄力、大弧度揮身與射擊後座動作 | 使用通用攻擊 clip（無 `_r`/`_l`） |
-| `dual_wield`（雙持單手） | `Socket_Weapon_R`（主手）＋ `Socket_Weapon_L`（副手）空掛點 | 近戰：匕首／拳爪、單手劍／彎刀、單手斧、單手錘<br>遠程：飛刃／手裡劍、手弩、短杖／魔導銃、投矛 | 低重心敏捷側身，依 `_r` 與 `_l` 交替左右前探扭轉 | 近戰／突進／遠程改用 `_r` / `_l` 交替 clip |
+| `dual_wield`（雙持單手） | `Socket_Weapon_R`（主手）＋ `Socket_Weapon_L`（副手）空掛點 | 近戰：匕首／拳爪、拳套／拳劍（`fist_katar`，與空手共用 `unarmed_fist`）、單手劍／彎刀、單手斧、單手錘<br>遠程：飛刃／手裡劍、手弩、短杖／魔導銃、投矛 | 低重心敏捷側身，依 `_r` 與 `_l` 交替左右前探扭轉 | 近戰／突進／遠程改用 `_r` / `_l` 交替 clip |
 | `one_hand_shield`（單手＋盾） | `Socket_Weapon_R`（主手單手武器）＋ `Socket_Weapon_L`（副手盾牌）空掛點 | 近戰／遠程同單手武器；副手盾牌：圓盾、鳶盾、塔盾、木圓盾、符紋盾、長方木盾 | 左側穩固護前、右側俐落發力或微探後座 | 使用通用攻擊 clip（無 `_r`/`_l`） |
 
 ---

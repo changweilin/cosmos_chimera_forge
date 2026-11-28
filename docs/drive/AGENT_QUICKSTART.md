@@ -11,7 +11,7 @@
   - `DIRECTORY.md`：完整目錄結構、PR #11 型態化 3D 與 Wiki 規範
   - `docs/pipeline/TRIGGERS.md`：各步驟觸發語句與分支說明
   - `<kind>/prompts/*.prompt.md`：角色／宙獸分類專屬模板；主動技使用 `moves/prompts/01b_move_vfx.prompt.md`
-  - `<kind>/prompts/skeleton_actions.md`：角色（91 動作含立體移動／蹲下、`sw_*` 彈簧骨與七槽裝備掛點）、宙獸（69 動作含 `climb`、21 類 `body_plan`、`Socket_EggCore`、追隨者／BOSS 主控與無武器規範）、招式（雙端施放動作與掛點對照）
+  - `<kind>/prompts/skeleton_actions.md`：角色（142 動作含 10 類武器共用動作組、空手／拳劍共用、劍盾格擋同步攻擊、立體移動／蹲下、`sw_*` 彈簧骨與 16 個 Animator 參數）、宙獸（69 動作含 `climb`、21 類 `body_plan`、`Socket_EggCore`、追隨者／BOSS 主控與無武器規範）、招式（雙端施放動作與掛點對照）
 
 > **三層主目錄與過渡檔分層規範**：
 > 1. 第一層為 `characters/`、`creatures/`、`moves/`；第二層為 `<id>/`（主體 ID）。
