@@ -6,6 +6,7 @@
 blender -b --factory-startup --python tools/object-kit/build.py -- [--functions Hoe,Barrel] [--eras Primal,Future] [--no-export] [--render <dir>]
 ```
 - 輸出：每個（功能、時代）一個 `<Family>/<Function>/<Function>_<Era>.fbx`，內含 `<slot>_v<k>`（k = 0–5）各一個物件，全部在同一個功能座標系（Z 向上、正面 -Y，原點在握把或落地點）。遊戲端每槽取一個變體放在同一原點即可組裝。
+- 四星球形體（Q-A38，`everyday-objects.md#四星球形體`）：`kit_forms.regional(name, region)` 註冊的形體另外輸出 `<Function>_<Era>_<Region>.fbx`（`Ocean`／`Gale`／`Radiant`／`Metropolis`），manifest 記在 `functions.<F>.regions.<Region>.<Era>`；`--regions none` 只建共用版、`--skip-shared` 只建地區版（共用版 rng key 不含地區，加地區不會改到已交付的共用 FBX）。預覽圖為 `objects-<Function>-<Region>.png`。地區工藝（材質角色）見 `kit_lib.REGION_STYLE`，須與遊戲 `ObjectMeshes.RegionCraft` 一致。
 - `object-kit.json`：部件槽、各變體三角形數、`max_assembled`（每槽取最大者相加）、`distinct`（每槽有幾個不同的變體）。任一組合超出預算（手持 600、擺設 1500、機械 4000）時，建置失敗。
 - `--render`：每個功能一張 `objects-<Function>.png`，8 個時代 × 3 組隨機組合，用卡通預覽材質。
 - 遊戲端門檻：`Bootstrap/Tests/EditMode/ObjectKitImportTests`。
@@ -16,6 +17,7 @@ blender -b --factory-startup --python tools/object-kit/build.py -- [--functions 
 | `kit_lib.py` | 幾何基本形（box、cyl、lathe、ring、tube、plate）；各時代工藝語彙 `STYLE`（倒角、表面雜訊、材質角色）；時代綁帶 `band`（繩、鐵箍、黃銅、螺栓、鉚釘、發光縫、鐵絲、符文）；收尾 `finish` |
 | `kit_forms.py` | 每個功能的 8 個時代等價形體 |
 | `forms_<組>.py` | 其他功能組的形體（家具、燈具、工具、容器、機械、載具 `forms_vehicle`、塑像 `forms_figure`、樂器與學術 `forms_instrument`…）；`build.py` 自動匯入，用 `kit_forms.function` 註冊。載具的原點在車體中央下方的地面（船在水線、飛行器在吊艙下方地面），行進方向 +X、側面朝 -Y；役畜與轎夫不在部件內 |
+| `forms_region_<批>.py` | 四星球形體：先導批 `forms_region_pilot.py`（9 個功能）；地區招牌語彙 `lash`／`horn`（海洋）、`pegs`／`zig`（疾風）、`dome`／`petals`（日耀）、`fins`／`steps`（鋼鐵）；殼體器依時代分三層機構（手工／機械／高科技） |
 | `build.py` | 建置、預算檢查、FBX 匯出、manifest、預覽圖 |
 
 ## 規則

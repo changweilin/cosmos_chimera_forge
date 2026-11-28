@@ -1,12 +1,13 @@
 """Builds the everyday-object part kits and delivers them to the game repo (cosmos_chimera ADR-0016).
 
 blender -b --factory-startup --python tools/object-kit/build.py -- [--functions Hoe,Barrel] [--eras Primal,Future]
-        [--no-export] [--render <dir>]
+        [--regions Ocean,Gale|none] [--skip-shared] [--no-export] [--render <dir>]
 
 Per (function, era) writes Assets/_Project/Art/Objects/<Family>/<Function>/<Function>_<Era>.fbx holding every slot
 variant as an object named <slot>_v<k> (k < 6), all in the function frame, and updates
 Assets/_Project/Art/Objects/object-kit.json (slots, triangle counts, budget). Fails loudly when any assembled
 combination can exceed the budget. --render writes one lineup sheet per function: 8 era columns x 3 combos.
+Four-planet forms (kit_forms.regional) go to <Function>_<Era>_<Region>.fbx and functions.<F>.regions.<Region>.<Era>.
 """
 import argparse
 import json
@@ -26,7 +27,7 @@ import importlib  # noqa: E402
 # Each forms_<group>.py registers its functions into kit_forms.FUNCTIONS on import; sorted so the order is fixed.
 for _path in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "forms_*.py"))):
     importlib.import_module(os.path.splitext(os.path.basename(_path))[0])
-from kit_lib import ERAS, VARIANTS, Part, finish, morph, rng_for  # noqa: E402
+from kit_lib import ERAS, REGIONS, VARIANTS, Part, finish, morph, rng_for  # noqa: E402
 
 GENERATOR_VERSION = 1
 BUDGET = {"carried": 600, "scene": 1500, "machine": 4000}
@@ -35,10 +36,13 @@ GAME = os.environ.get("COSMIMERA_GAME") or os.path.join(os.path.dirname(_FORGE),
 OUT = os.path.join(GAME, "Assets", "_Project", "Art", "Objects")
 
 
-def build_one(name, era):
-    """Builds all slot variants of one (function, era) into a fresh collection; returns (collection, tris table)."""
+def build_one(name, era, region=None):
+    """Builds all slot variants of one (function, era[, region]) into a fresh collection; returns (collection, tris table).
+    The shared form keeps its original rng keys, so adding regions never changes a delivered shared kit."""
     spec = kit_forms.FUNCTIONS[name]
-    coll = bpy.data.collections.new("%s_%s" % (name, era))
+    form = kit_forms.REGIONAL[name][region] if region else spec["form"]
+    key = (name, era, region) if region else (name, era)
+    coll = bpy.data.collections.new("%s_%s_%s" % (name, era, region or "shared"))
     bpy.context.scene.collection.children.link(coll)
     tris = {}
     distinct = {}
@@ -47,8 +51,8 @@ def build_one(name, era):
             obs, tris[slot] = [], []
             seen = set()
             for k in range(VARIANTS):
-                part = Part(era, rng_for(name, era, slot, k), rng_for(name, era, "frame"))
-                spec["form"](part, slot)
+                part = Part(era, rng_for(*key, slot, k), rng_for(*key, "frame"), region)
+                form(part, slot)
                 morph(part, k, cut)
                 if not part.bm.faces:
                     raise SystemExit("empty slot %s/%s/%s v%d" % (name, era, slot, k))
@@ -86,7 +90,7 @@ def export(coll, path):
                              apply_scale_options="FBX_SCALE_UNITS", axis_forward="-Z", axis_up="Y")
 
 
-def render_sheet(name, colls, out_dir):
+def render_sheet(name, colls, out_dir, region=None):
     """8 era columns x 3 variant combos, 3/4 ortho view, preview toon materials."""
     sc = bpy.context.scene
     sheet = bpy.data.collections.new("sheet_" + name)
@@ -108,7 +112,7 @@ def render_sheet(name, colls, out_dir):
             pick = rng_for("sheet", name, row)
             for slot in spec["slots"]:
                 k = pick.randrange(VARIANTS)
-                src = coll.objects["%s:%s_v%d" % (era, slot, k)]
+                src = coll.objects["%s:%s_v%d" % (era if region is None else "%s@%s" % (era, region), slot, k)]
                 o = bpy.data.objects.new("%s_%s_%d_%s" % (name, era, row, slot), src.data)
                 o.matrix_world = Matrix.Translation((ci * cell, 0, -row * rowh))
                 sheet.objects.link(o)
@@ -149,7 +153,7 @@ def render_sheet(name, colls, out_dir):
     cam.rotation_euler = (math.radians(90) - pitch, 0, -yaw)
     sc.camera = cam
     os.makedirs(out_dir, exist_ok=True)
-    sc.render.filepath = os.path.join(out_dir, "objects-%s.png" % name)
+    sc.render.filepath = os.path.join(out_dir, "objects-%s%s.png" % (name, "-" + region if region else ""))
     bpy.ops.render.render(write_still=True)
     bpy.data.collections.remove(sheet)
     for coll in colls.values():
@@ -162,6 +166,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--functions", default=",".join(kit_forms.FUNCTIONS))
     ap.add_argument("--eras", default=",".join(ERAS))
+    ap.add_argument("--regions", default=",".join(REGIONS), help="'none' builds only the shared forms")
+    ap.add_argument("--skip-shared", action="store_true")
     ap.add_argument("--no-export", action="store_true")
     ap.add_argument("--render")
     a = ap.parse_args(argv)
@@ -175,35 +181,42 @@ def main():
         if old.get("generator_version") == GENERATOR_VERSION:
             manifest["functions"] = old.get("functions", {})
     over = []
+    regions = [] if a.regions == "none" else a.regions.split(",")
     for name in a.functions.split(","):
         spec = kit_forms.FUNCTIONS[name]
         entry = manifest["functions"].setdefault(name, {"family": spec["family"], "size": spec["size"],
                                                          "slots": list(spec["slots"]), "eras": {}})
-        colls = {}
-        for era in a.eras.split(","):
-            coll, tris, distinct = build_one(name, era)
-            same = [k for k, n in distinct.items() if n < 2]
-            if same:
-                print("SAME %s %s %s" % (name, era, same))
-            colls[era] = coll
-            worst = sum(max(v) for v in tris.values())
-            rel = "%s/%s/%s_%s.fbx" % (spec["family"], name, name, era)
-            entry["eras"][era] = {"file": rel, "tris": tris, "max_assembled": worst, "distinct": distinct}
-            if worst > BUDGET[spec["size"]]:
-                over.append("%s/%s: %d > %d %s" % (name, era, worst, BUDGET[spec["size"]], {k: max(v) for k, v in tris.items()}))
-            if not a.no_export:
-                export(coll, os.path.join(OUT, rel))
-            # Object names are global in a .blend: free "<slot>_v<k>" for the next era's export.
-            for o in coll.objects:
-                o.data.name = "%s:%s" % (era, o.data.name)
-                o.name = "%s:%s" % (era, o.name)
-            print("KIT %s %s max_assembled=%d" % (name, era, worst))
-        if a.render and len(colls) == len(ERAS):
-            print("SHEET", render_sheet(name, colls, a.render))
-        for coll in colls.values():
-            for o in list(coll.objects):
-                bpy.data.objects.remove(o)
-            bpy.data.collections.remove(coll)
+        targets = [] if a.skip_shared else [None]
+        targets += [r for r in regions if r in kit_forms.REGIONAL.get(name, {})]
+        for region in targets:
+            eras = entry["eras"] if region is None else entry.setdefault("regions", {}).setdefault(region, {})
+            colls = {}
+            for era in a.eras.split(","):
+                coll, tris, distinct = build_one(name, era, region)
+                same = [k for k, n in distinct.items() if n < 2]
+                if same:
+                    print("SAME %s %s %s %s" % (name, era, region or "", same))
+                colls[era] = coll
+                worst = sum(max(v) for v in tris.values())
+                rel = "%s/%s/%s_%s%s.fbx" % (spec["family"], name, name, era, "_" + region if region else "")
+                eras[era] = {"file": rel, "tris": tris, "max_assembled": worst, "distinct": distinct}
+                if worst > BUDGET[spec["size"]]:
+                    over.append("%s/%s/%s: %d > %d %s" % (name, era, region or "shared", worst, BUDGET[spec["size"]],
+                                                          {k: max(v) for k, v in tris.items()}))
+                if not a.no_export:
+                    export(coll, os.path.join(OUT, rel))
+                # Object names are global in a .blend: free "<slot>_v<k>" for the next era's export.
+                tag = era if region is None else "%s@%s" % (era, region)
+                for o in coll.objects:
+                    o.data.name = "%s:%s" % (tag, o.data.name)
+                    o.name = "%s:%s" % (tag, o.name)
+                print("KIT %s %s %s max_assembled=%d" % (name, era, region or "shared", worst))
+            if a.render and len(colls) == len(ERAS):
+                print("SHEET", render_sheet(name, colls, a.render, region))
+            for coll in colls.values():
+                for o in list(coll.objects):
+                    bpy.data.objects.remove(o)
+                bpy.data.collections.remove(coll)
     if not a.no_export:
         os.makedirs(OUT, exist_ok=True)
         with open(manifest_path, "w", encoding="utf-8", newline="\n") as f:

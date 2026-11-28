@@ -11,12 +11,22 @@ from mathutils import Matrix
 from kit_lib import M
 
 FUNCTIONS = {}
+REGIONAL = {}  # name -> {region: form}; separate from FUNCTIONS so a regional module may load before its base
 
 
 def function(name, family, slots, size):
     """Registers a form. size: 'carried' (<= 600 tris assembled) or 'scene' (<= 1500)."""
     def wrap(fn):
         FUNCTIONS[name] = dict(family=family, slots=slots, size=size, form=fn)
+        return fn
+    return wrap
+
+
+def regional(name, region):
+    """Registers a four-planet form of an already registered function (everyday-objects.md#四星球形體).
+    Same slots, variants and budget as the shared form; p.region is set while it runs."""
+    def wrap(fn):
+        REGIONAL.setdefault(name, {})[region] = fn
         return fn
     return wrap
 

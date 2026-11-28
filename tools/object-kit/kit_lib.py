@@ -14,6 +14,8 @@ from mathutils import Euler, Matrix, Vector
 
 ERAS = ("Primal", "Agrarian", "Mercantile", "Industrial", "Ancient", "Steampunk", "Future", "Wasteland")
 VARIANTS = 6
+# The four newer planets' own traditions (everyday-objects.md#四星球形體): each builds its own form of every function.
+REGIONS = ("Ocean", "Gale", "Radiant", "Metropolis")
 
 # Era craft language (everyday-objects.md#抽樣 圓潤度 drives bevel): material roles and surface treatment.
 STYLE = {
@@ -27,6 +29,51 @@ STYLE = {
     "Ancient": dict(bevel=0.20, seg=2, noise=0.0, body="stone", fit="stone_dark", grip="stone", accent="gold", metal="stone", glow="glow_rune"),
 }
 
+# Regional craft (planet-world.md#四星球時代造型 器物欄): role overrides on top of STYLE[era]; surface treatment
+# (bevel, noise) stays the era's. Must match the game's ObjectMeshes.RegionCraft for Retrofit material swaps.
+REGION_STYLE = {
+    "Ocean": {
+        "Primal": dict(body="bamboo", fit="rattan", grip="rattan", accent="bone"),
+        "Agrarian": dict(body="teak", fit="rattan", grip="rattan", accent="iron"),
+        "Mercantile": dict(body="lacquer", fit="brass", grip="rattan", accent="gold"),
+        "Industrial": dict(body="steel", fit="paint", grip="rattan", accent="paint"),
+        "Steampunk": dict(fit="copper", grip="rattan", accent="brass"),
+        "Future": dict(body="glass", fit="shell", grip="rubber", accent="shell", glow="glow_green"),
+        "Wasteland": dict(body="paint", fit="rope", grip="cloth", accent="paint"),
+        "Ancient": dict(accent="bone"),
+    },
+    "Gale": {
+        "Primal": dict(body="gourd", fit="hide", grip="hide", accent="bone"),
+        "Agrarian": dict(body="wood", fit="leather", grip="leather", accent="paint"),
+        "Mercantile": dict(body="wood_dark", fit="brass", grip="leather", accent="brass"),
+        "Industrial": dict(body="steel", fit="paint", grip="leather", accent="paint"),
+        "Steampunk": dict(fit="leather", grip="leather", accent="brass"),
+        "Future": dict(body="clay", fit="shell", grip="cloth", accent="shell", metal="clay", glow="glow_amber"),
+        "Wasteland": dict(body="rust", fit="rubber", grip="cloth", accent="paint"),
+        "Ancient": dict(body="clay", fit="stone_dark", grip="stone", accent="gold"),
+    },
+    "Radiant": {
+        "Primal": dict(body="clay", fit="rope", grip="cloth", accent="paint"),
+        "Agrarian": dict(body="wood", fit="copper", grip="cloth", accent="copper", metal="copper"),
+        "Mercantile": dict(body="wood_dark", fit="brass", grip="cloth", accent="enamel"),
+        "Industrial": dict(body="iron", fit="paint", grip="leather", accent="sandstone"),
+        "Steampunk": dict(fit="brass", grip="leather", accent="marble"),
+        "Future": dict(body="shell", fit="gold", grip="shell", accent="gold", glow="glow_amber"),
+        "Wasteland": dict(body="tarp", fit="iron", grip="cloth", accent="tarp", metal="iron"),
+        "Ancient": dict(body="sandstone", fit="marble", grip="sandstone", accent="gold"),
+    },
+    "Metropolis": {
+        "Primal": dict(body="iron", fit="stone_dark", grip="hide", accent="iron", metal="iron"),
+        "Agrarian": dict(body="wood", fit="iron", grip="leather", accent="iron"),
+        "Mercantile": dict(body="leather", fit="brass", grip="leather", accent="gold"),
+        "Industrial": dict(body="chrome", fit="paint", grip="rubber", accent="chrome", metal="chrome"),
+        "Steampunk": dict(fit="copper", grip="leather", accent="brass"),
+        "Future": dict(body="shell_dark", fit="chrome", grip="rubber", accent="chrome", metal="chrome"),
+        "Wasteland": dict(body="rust", fit="shell_dark", grip="cloth", accent="paint"),
+        "Ancient": dict(body="stone_dark", fit="chrome", accent="gold"),
+    },
+}
+
 # Preview palette (Verdant-like). The game recolours by material name per region; these are only for sheets.
 PALETTE = {
     "wood": "#8a5a34", "wood_dark": "#5e3b24", "bark": "#6b4a2e", "bone": "#e6dcc2", "hide": "#c9a27a",
@@ -35,8 +82,11 @@ PALETTE = {
     "shell": "#e9ece6", "shell_dark": "#56636a", "glass": "#a9d6dc", "stone": "#a39d8e", "stone_dark": "#6f6a60",
     "ceramic": "#c88a5a", "glaze": "#4e8c7a", "gold": "#e0b84a", "feather": "#d8d4cc",
     "glow_amber": "#ffb347", "glow_cyan": "#5ff3ff", "glow_rune": "#4fffd0", "glow_dim": "#ffd27a",
+    "bamboo": "#c9b46a", "rattan": "#b08a4e", "teak": "#9a6a3c", "lacquer": "#8e2a22", "gourd": "#c99a52",
+    "clay": "#a8603a", "sandstone": "#c4774f", "marble": "#ece6da", "chrome": "#c9d2da", "enamel": "#2f7fa8",
+    "tarp": "#d0683a", "glow_green": "#7dff9a",
 }
-GLOW = {"glow_amber", "glow_cyan", "glow_rune", "glow_dim"}
+GLOW = {"glow_amber", "glow_cyan", "glow_rune", "glow_dim", "glow_green"}
 
 
 def rng_for(*key):
@@ -54,12 +104,13 @@ def M(loc=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1)):
 class Part:
     """One slot variant under construction: a bmesh plus its material-name table."""
 
-    def __init__(self, era, rng, frame):
+    def __init__(self, era, rng, frame, region=None):
         self.frame = frame
         self.bm = bmesh.new()
         self.mats = []
         self.era = era
-        self.style = STYLE[era]
+        self.region = region
+        self.style = dict(STYLE[era], **REGION_STYLE[region][era]) if region else STYLE[era]
         self.rng = rng
 
     def role(self, r):
