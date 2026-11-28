@@ -17,7 +17,7 @@ blender -b --factory-startup --python tools/object-kit/build.py -- [--functions 
 | `kit_lib.py` | 幾何基本形（box、cyl、lathe、ring、tube、plate）；各時代工藝語彙 `STYLE`（倒角、表面雜訊、材質角色）；時代綁帶 `band`（繩、鐵箍、黃銅、螺栓、鉚釘、發光縫、鐵絲、符文）；收尾 `finish` |
 | `kit_forms.py` | 每個功能的 8 個時代等價形體 |
 | `forms_<組>.py` | 其他功能組的形體（家具、燈具、工具、容器、機械、載具 `forms_vehicle`、塑像 `forms_figure`、樂器與學術 `forms_instrument`…）；`build.py` 自動匯入，用 `kit_forms.function` 註冊。載具的原點在車體中央下方的地面（船在水線、飛行器在吊艙下方地面），行進方向 +X、側面朝 -Y；役畜與轎夫不在部件內 |
-| `forms_region_<批>.py` | 四星球形體：先導批 `forms_region_pilot.py`（9 個功能）；地區招牌語彙 `lash`／`horn`（海洋）、`pegs`／`zig`（疾風）、`dome`／`petals`（日耀）、`fins`／`steps`（鋼鐵）；殼體器依時代分三層機構（手工／機械／高科技） |
+| `forms_region_<批>.py` | 四星球形體：先導批 `forms_region_pilot.py`（9 個功能）、柄具 `forms_region_hafted.py`（8 個手工具，沿用先導的地區柄／接合／柄尾）；地區招牌語彙 `lash`／`horn`（海洋）、`pegs`／`zig`（疾風）、`dome`／`petals`（日耀）、`fins`／`steps`（鋼鐵）；殼體器依時代分三層機構（手工／機械／高科技） |
 | `build.py` | 建置、預算檢查、FBX 匯出、manifest、預覽圖 |
 
 ## 規則
