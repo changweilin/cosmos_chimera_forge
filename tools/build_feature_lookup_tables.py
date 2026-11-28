@@ -308,6 +308,8 @@ def parse_creature_prompt(path: Path, status: str, category: str, cid_override: 
 def _creature_category(name: str) -> str:
     if name.startswith("ch_starter_"):
         return "御三家(starter)"
+    if "mythic" in name:
+        return "神獸(mythic)"
     if "trial_boss" in name:
         return "試煉BOSS(trial_boss)"
     if name.startswith("ch_1st_batch_"):
@@ -394,7 +396,12 @@ def build_creatures_table(extra_prompts_dir: Path | None = None) -> dict[str, An
         seen_ids.add(item["id"])
 
     # 2. _designed_prompts
-    for sub, cat in (("_starters", "御三家(starter)"), ("_trial_bosses", "試煉BOSS(trial_boss)"), ("_lines", "一般演化線(line)")):
+    for sub, cat in (
+        ("_starters", "御三家(starter)"),
+        ("_trial_bosses", "試煉BOSS(trial_boss)"),
+        ("_mythics", "神獸(mythic)"),
+        ("_lines", "一般演化線(line)"),
+    ):
         sub_dir = dp_root / sub
         if not sub_dir.exists():
             continue

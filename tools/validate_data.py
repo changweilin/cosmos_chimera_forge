@@ -267,7 +267,7 @@ def _check_skill_stars(records: dict[str, list[Record]], findings: list[Finding]
         complete = isinstance(stats, dict) and all(isinstance(stats.get(k), int) for k in STAT_KEYS)
         if len(stars) != 2 or not complete or base is None:
             continue  # schema / dangling-ref findings already cover these
-        target = base * (100 - budget["per_extra_star_percent"] * (sum(stars) - 2)) / 100
+        target = base if c.get("mythic") is True else base * (100 - budget["per_extra_star_percent"] * (sum(stars) - 2)) / 100
         total = sum(stats[k] for k in STAT_KEYS)
         tol = target * budget["tolerance_percent"] / 100
         if abs(total - target) > tol:

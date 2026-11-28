@@ -13,6 +13,10 @@
       "properties": {
         "id": { "$ref": "common.schema.json#/$defs/id" },
         "line_id": { "$ref": "common.schema.json#/$defs/id" },
+        "mythic": {
+          "description": "True for mythic beasts: exempt from skill-star stat penalty, +10% resist/element budget.",
+          "type": "boolean"
+        },
         "stage": { "enum": ["juvenile", "adolescent", "adult", "overload"] },
         "overload_of": {
           "description": "Source adult creature id for an overload form (creatures.md#超載, Q-C12); null/absent otherwise.",
